@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronUp, Info } from 'lucide-react';
 
-const TopicAnalysis = ({ data = {}, title = "Topic Analysis" }) => {
+const TopicAnalysis = ({ data = {}, title = "Topic Analysis", className }) => {
     const [showAll, setShowAll] = useState(false);
 
     const sortedTopics = Object.entries(data)
@@ -14,7 +14,7 @@ const TopicAnalysis = ({ data = {}, title = "Topic Analysis" }) => {
 
     if (sortedTopics.length === 0) {
         return (
-            <div className="bg-white p-6 rounded-2xl shadow-xl border border-gray-100">
+            <div className={`bg-white p-6 rounded-2xl shadow-xl border border-gray-100 ${className}`}>
                 <h3 className="text-xl font-bold text-gray-800 mb-4">{title}</h3>
                 <div className="text-gray-400 text-center py-8">No topic data available</div>
             </div>
@@ -22,7 +22,7 @@ const TopicAnalysis = ({ data = {}, title = "Topic Analysis" }) => {
     }
 
     return (
-        <div className="bg-white p-6 rounded-2xl shadow-xl border border-gray-100 font-sans">
+        <div className={`bg-white p-6 rounded-2xl shadow-xl border border-gray-100 font-sans ${className}`}>
             <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-bold text-gray-800">{title}</h3>
                 <Info size={16} className="text-gray-400" />

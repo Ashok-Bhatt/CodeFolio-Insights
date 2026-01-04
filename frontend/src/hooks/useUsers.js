@@ -99,3 +99,12 @@ export const useAddProfileView = () => {
         }),
     })
 }
+
+export const useToggleProfileVisibility = () => {
+    return useMutation({
+        mutationFn: asyncWrapper(async () => {
+            const response = await axiosInstance.patch("/user/visibility", {}, { requiresAuth: true });
+            return response.data;
+        }),
+    })
+}

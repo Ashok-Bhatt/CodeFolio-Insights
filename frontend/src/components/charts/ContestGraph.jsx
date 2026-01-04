@@ -59,7 +59,7 @@ const ContestGraph = ({ contestData }) => {
     const domainMax = Math.ceil((maxRating + 100) / 100) * 100;
 
     return (
-        <div className="p-8 bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl flex flex-col max-w-4xl mx-auto border border-gray-100 hover:shadow-2xl transition-all group">
+        <div className="p-8 bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl flex flex-col border border-gray-100 hover:shadow-2xl transition-all group">
             <div className="flex justify-between items-start mb-8 border-b pb-6 border-gray-50">
                 <div>
                     <h3 className="text-xs uppercase font-black text-gray-400 tracking-widest mb-1">Rating</h3>

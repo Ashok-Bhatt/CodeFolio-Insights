@@ -26,7 +26,8 @@ const App = () => {
             <Route path="/" element={<HomeLayout />}>
                 <Route path="dashboard" element={<DashboardLayout />}>
                     <Route index element={<Navigate to="coding-profiles" replace />} />
-                    <Route path="coding-profiles" element={<CodingProfiles />}>
+                    <Route path="coding-profiles">
+                        <Route index element={<CodingProfiles />} />
                         <Route path="leetcode" element={<LeetCode />} />
                         <Route path="gfg" element={<GFG />} />
                         <Route path="code360" element={<Code360 />} />

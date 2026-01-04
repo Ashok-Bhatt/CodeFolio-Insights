@@ -1,26 +1,28 @@
 import UserModel from "../models/user.model.js";
+import ProfileModel from "../models/profiles.model.js";
 import { destroyFile, uploadFile } from "../utils/cloudinary.js";
 import bcrypt from "bcrypt";
 import { getSearchQuery, getSortQuery } from "../utils/query/userQuery.js"
 import asyncHandler from '../utils/asyncHandler.js';
 import ProfileViewModel from "../models/profileView.model.js";
 import { ENV } from "../config/config.js";
+import { addProfileView } from "../services/profileView.services.js";
 
 const getUser = asyncHandler(async (req, res) => {
     const userId = req.params.userId;
-    const viewerId = req.user._id;
+    const viewerId = req.user?._id;
     const viewerDeviceToken = req.cookies.deviceToken;
     const viewerSignedDeviceToken = req.signedCookies.deviceToken;
     let newDeviceToken = null;
 
-    if (viewerDeviceToken && !viewerSignedDeviceToken){ 
+    if (viewerDeviceToken && !viewerSignedDeviceToken) {
         console.log("Invalid device token!");
         return;
     }
-    
+
     newDeviceToken = await addProfileView(userId, viewerId, viewerDeviceToken);
 
-    if (newDeviceToken){
+    if (newDeviceToken) {
         res.cookie("deviceToken", newDeviceToken, {
             signed: true,
             httpOnly: true,
@@ -29,8 +31,13 @@ const getUser = asyncHandler(async (req, res) => {
         });
     }
 
-    const queriedUser = await UserModel.findById(userId).select("-googleId -password");
+    const queriedUser = await UserModel.findById(userId).select("-googleId -password").lean();
     if (!queriedUser) return res.status(404).json({ message: "Invalid user id!" });
+
+    const profileLinks = await ProfileModel.findOne({ userId }).select("-_id -userId -createdAt -updatedAt");
+    if (!profileLinks) return res.status(404).json({ message: "Something went wrong!" });
+
+    queriedUser.profileLinks = profileLinks;
 
     const userProfileViewsModels = await ProfileViewModel.find({ vieweeId: userId })
     const userProfileViews = userProfileViewsModels.reduce((totalCount, document) => {
@@ -159,9 +166,25 @@ const changePassword = asyncHandler(async (req, res) => {
     }
 });
 
+const toggleProfileVisibility = asyncHandler(async (req, res) => {
+    const userId = req.user._id;
+    const user = await UserModel.findById(userId);
+
+    if (!user) return res.status(404).json({ message: "User not found!" });
+
+    user.profileVisibility = !user.profileVisibility;
+    await user.save();
+
+    return res.status(200).json({
+        message: `Profile visibility set to ${user.profileVisibility ? "Public" : "Private"}`,
+        profileVisibility: user.profileVisibility
+    });
+});
+
 export {
     getUser,
     getUsers,
     updateUserInfo,
     changePassword,
+    toggleProfileVisibility,
 }

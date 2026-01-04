@@ -1,5 +1,3 @@
-import React from 'react';
-
 export const getPolishedGithubHeatmap = (githubData) => {
     const zeroPad = (numStr) => {
         const num = parseInt(numStr, 10);
@@ -157,9 +155,28 @@ export const getContestData = (data) => {
 
 export const getDsaProblemsData = (data) => {
     return [
-        { name: 'Easy', value: (data.leetcode?.problems?.acSubmissionNum[1]?.count || 0) + (data.interviewbit?.profile?.problems?.difficulty_problems_solved?.filter(difficulty => difficulty.difficulty_level === 'easy')?.[0]?.solved_problems_count || 0) + (data.gfg?.profile?.problemsSolved?.Easy || 0) + (data.code360?.profile?.dsa_domain_data?.problem_count_data?.difficulty_data?.[0]?.count || 0), color: '#10B981' },
-        { name: 'Medium', value: (data.leetcode?.problems?.acSubmissionNum[2]?.count || 0) + (data.interviewbit?.profile?.problems?.difficulty_problems_solved?.filter(difficulty => difficulty.difficulty_level === 'medium')?.[0]?.solved_problems_count || 0) + (data.gfg?.profile?.problemsSolved?.Medium || 0) + (data.code360?.profile?.dsa_domain_data?.problem_count_data?.difficulty_data?.[1]?.count || 0), color: '#FBBF24' },
-        { name: 'Hard', value: (data.leetcode?.problems?.acSubmissionNum[3]?.count || 0) + (data.interviewbit?.profile?.problems?.difficulty_problems_solved?.filter(difficulty => difficulty.difficulty_level === 'hard')?.[0]?.solved_problems_count || 0) + (data.gfg?.profile?.problemsSolved?.Hard || 0) + (data.code360?.profile?.dsa_domain_data?.problem_count_data?.difficulty_data?.[2]?.count || 0), color: '#FF4524' }
+        { 
+            name: 'Easy', 
+            value: (data.leetcode?.problems?.acSubmissionNum[1]?.count || 0) + 
+                (data.interviewbit?.profile?.problems?.difficulty_problems_solved?.filter(difficulty => difficulty.difficulty_level === 'easy')?.[0]?.solved_problems_count || 0) + 
+                (data.gfg?.profile?.problemsSolved?.Easy || 0) + 
+                (data.code360?.profile?.dsa_domain_data?.problem_count_data?.difficulty_data?.[0]?.count || 0), 
+            color: '#10B981' },
+        { 
+            name: 'Medium', 
+            value: (data.leetcode?.problems?.acSubmissionNum[2]?.count || 0) + 
+                (data.interviewbit?.profile?.problems?.difficulty_problems_solved?.filter(difficulty => difficulty.difficulty_level === 'medium')?.[0]?.solved_problems_count || 0) + 
+                (data.gfg?.profile?.problemsSolved?.Medium || 0) + 
+                (data.code360?.profile?.dsa_domain_data?.problem_count_data?.difficulty_data?.[1]?.count || 0), 
+            color: '#FBBF24' },
+        { 
+            name: 'Hard', 
+            value: (data.leetcode?.problems?.acSubmissionNum[3]?.count || 0) + 
+                (data.interviewbit?.profile?.problems?.difficulty_problems_solved?.filter(difficulty => difficulty.difficulty_level === 'hard')?.[0]?.solved_problems_count || 0) + 
+                (data.gfg?.profile?.problemsSolved?.Hard || 0) + 
+                (data.code360?.profile?.dsa_domain_data?.problem_count_data?.difficulty_data?.[2]?.count || 0), 
+            color: '#FF4524' 
+        }
     ];
 };
 

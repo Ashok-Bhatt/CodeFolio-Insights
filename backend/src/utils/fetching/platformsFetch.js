@@ -50,9 +50,8 @@ const fetchHackerRankData = async (username) => {
 const fetchGitHubData = async (username) => {
     return {
         profile: await githubFetching.getUserProfileData(username),
-        contributions: await githubFetching.getContributionCount(username),
-        commits: await githubFetching.getLastYearCommitsCount(username),
-        calendar: await githubFetching.getContributionCalendar(username),
+        contributions: await githubFetching.getMultiYearContributionCount(username),
+        calendar: await githubFetching.getMultiYearContributionCalendar(username),
         badges: await githubFetching.getGithubContributionBadges(username),
         languageStats: await githubFetching.getUserLanguageStats(username)
     }
