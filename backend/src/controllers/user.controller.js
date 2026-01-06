@@ -101,21 +101,13 @@ const getUsers = asyncHandler(async (req, res) => {
 
 const updateUserInfo = asyncHandler(async (req, res) => {
     const user = req.user;
-    const { name, ...updatedFields } = req.body;
+    const updatedFields = req.body;
     const file = req.file;
 
     const userId = user._id;
 
     const queriedUser = await UserModel.findById(userId).select("-googleId -password");
     if (!queriedUser) return res.status(404).json({ message: "Invalid user id!" });
-
-    // Checking if the user with name provided in the updatedField is already present or not
-    if (name) {
-        const existingUser = await UserModel.findOne({ name });
-        if (existingUser && !existingUser._id.equals(user._id)) return res.status(400).json({ message: "User with given name already exists" });
-        queriedUser.name = name;
-        await queriedUser.save();
-    }
 
     const updatedUser = await UserModel.findByIdAndUpdate(
         userId,

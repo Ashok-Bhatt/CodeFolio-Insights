@@ -54,10 +54,10 @@ const BadgeCollection = ({ badges, title = "Awards", defaultBadgesCount = 4, cla
             </div>
 
             {isModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-                    <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden shadow-2xl flex flex-col animate-in zoom-in-95 duration-200">
-                        <div className="flex items-center justify-between p-6 border-b border-gray-100">
-                            <h3 className="text-2xl font-bold text-gray-800">{title} ({badges.length})</h3>
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-300 overflow-hidden">
+                    <div className="bg-white rounded-3xl w-full max-w-5xl max-h-[85vh] overflow-hidden shadow-2xl flex flex-col animate-in zoom-in-95 duration-300 border border-white/20">
+                        <div className="flex items-center justify-between p-8 border-b border-gray-100 bg-slate-50/50">
+                            <h3 className="text-3xl font-black text-gray-800 tracking-tight">{title} <span className="text-blue-500 ml-2">({badges.length})</span></h3>
                             <button
                                 onClick={toggleModal}
                                 className="p-2 hover:bg-gray-100 rounded-full transition-colors"

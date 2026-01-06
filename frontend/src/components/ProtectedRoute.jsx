@@ -7,7 +7,7 @@ const ProtectedRoute = ({ children, requiresAuthentication = true }) => {
     if (requiresAuthentication && !user) {
         return <Navigate to="/login" replace />;
     } else if (!requiresAuthentication && user) {
-        return <Navigate to="/dashboard" replace />;
+        return <Navigate to={`/dashboard/${user._id}`} replace />;
     } else {
         return children;
     }

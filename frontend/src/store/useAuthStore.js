@@ -15,7 +15,7 @@ const useAuthStore = create(
                     const response = await axiosInstance.post(`${conf.SERVER_BASE_URL}/auth/login`, JSON.stringify(formData), { withCredentials: true });
                     const data = response.data;
                     set({ user: data.user, token: data.token });
-                    navigate("/dashboard");
+                    navigate(`/dashboard/${data.user._id}`);
                 } catch (err) {
                     console.error('Server error:', err);
                     toast.error(err.response.data.message);
@@ -27,7 +27,7 @@ const useAuthStore = create(
                     const response = await axiosInstance.post(`${conf.SERVER_BASE_URL}/auth/signup`, JSON.stringify(formData), { withCredentials: true });
                     const data = response.data;
                     set({ user: data.user, token: data.token });
-                    navigate("/dashboard");
+                    navigate(`/dashboard/${data.user._id}`);
                 } catch (err) {
                     console.error('Server error:', err);
                     toast.error(err.response.data.message);
@@ -54,7 +54,9 @@ const useAuthStore = create(
                 } catch (err) {
                     console.error('Server error:', err);
                 }
-            }
+            },
+
+            setUser: (user) => set({ user }),
         }),
         {
             name: "loggedInUser"

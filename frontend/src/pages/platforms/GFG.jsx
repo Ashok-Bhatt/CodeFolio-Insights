@@ -13,7 +13,6 @@ const GFG = () => {
     }
 
     const platformData = data.gfg;
-    console.log(platformData);
 
     const platformDsaProblemsData = [
         {

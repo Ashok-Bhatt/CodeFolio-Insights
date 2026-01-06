@@ -37,8 +37,6 @@ const LeetCode = () => {
         return acc;
     }, {});
 
-    console.log(platformData);
-
     return (
         <div className="space-y-8 animate-float-in">
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">

@@ -20,7 +20,7 @@ const LoginPage = () => {
         try {
             const data = await loginMutation.mutateAsync(formData);
             useAuthStore.setState({ user: data.user, token: data.token });
-            navigate("/dashboard");
+            navigate(`/dashboard/${data.user._id}`);
         } catch (err) {
             // Error handling is managed by the hook or manually if needed
             // The throwAxiosError in useUsers.js throws the message
@@ -28,41 +28,41 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-900 to-indigo-950 px-4">
-            <div className="w-full max-w-md p-8 bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700 shadow-2xl">
+        <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 to-indigo-100 px-4">
+            <div className="w-full max-w-md p-8 bg-white/80 backdrop-blur-md rounded-2xl border border-white shadow-2xl">
                 <div className="text-center mb-8">
-                    <h2 className="text-3xl font-bold text-white">Login</h2>
-                    <p className="mt-2 text-sm text-gray-400">
+                    <h2 className="text-3xl font-bold text-slate-800">Login</h2>
+                    <p className="mt-2 text-sm text-slate-500">
                         Don't have an account?{' '}
-                        <Link to="/signup" className="font-medium text-indigo-400 hover:text-indigo-500 transition-colors">Sign up</Link>
+                        <Link to="/signup" className="font-medium text-indigo-600 hover:text-indigo-700 transition-colors">Sign up</Link>
                     </p>
                 </div>
 
                 <form className="space-y-6" onSubmit={handleSubmit}>
                     <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">Email address</label>
+                        <label htmlFor="email" className="block text-sm font-medium text-slate-600 mb-1">Email address</label>
                         <input
                             id="email" name="email" type="email" value={email} onChange={handleChange} required
-                            className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                            className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
                             placeholder="you@example.com"
                         />
                     </div>
 
                     <div>
-                        <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-1">Password</label>
+                        <label htmlFor="password" className="block text-sm font-medium text-slate-600 mb-1">Password</label>
                         <input
                             id="password" name="password" type="password" value={password} onChange={handleChange} required
-                            className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                            className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
                             placeholder="••••••••"
                         />
                     </div>
 
                     <div className="flex items-center justify-between">
-                        <label className="flex items-center text-sm text-gray-300 cursor-pointer">
-                            <input type="checkbox" className="h-4 w-4 bg-slate-700 border-slate-600 rounded text-indigo-600 focus:ring-indigo-500" />
+                        <label className="flex items-center text-sm text-slate-600 cursor-pointer">
+                            <input type="checkbox" className="h-4 w-4 bg-white border-slate-200 rounded text-indigo-600 focus:ring-indigo-500" />
                             <span className="ml-2">Remember me</span>
                         </label>
-                        <Link to="#" className="text-sm font-medium text-indigo-400 hover:text-indigo-500">Forgot password?</Link>
+                        <Link to="#" className="text-sm font-medium text-indigo-600 hover:text-indigo-700">Forgot password?</Link>
                     </div>
 
                     <button type="submit" className="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg transform hover:scale-[1.02] transition-all">
@@ -71,13 +71,13 @@ const LoginPage = () => {
                 </form>
 
                 <div className="relative my-8">
-                    <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-700" /></div>
-                    <div className="relative flex justify-center text-sm"><span className="px-4 bg-slate-800 text-gray-400">Or continue with</span></div>
+                    <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-100" /></div>
+                    <div className="relative flex justify-center text-sm"><span className="px-4 bg-white text-slate-400 font-bold uppercase tracking-widest text-[10px]">Or continue with</span></div>
                 </div>
 
                 <button
                     onClick={() => window.location.href = `${conf.SERVER_BASE_URL}/auth/google`}
-                    className="w-full flex items-center justify-center py-3 px-4 bg-slate-700 hover:bg-slate-600 border border-slate-600 rounded-xl text-sm font-medium text-white transition-all transform hover:scale-[1.02]"
+                    className="w-full flex items-center justify-center py-3 px-4 bg-white hover:bg-slate-50 border-2 border-slate-50 rounded-xl text-sm font-bold text-slate-700 transition-all transform hover:scale-[1.02] shadow-sm"
                 >
                     <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24"><path fill="currentColor" d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z" /></svg>
                     Google

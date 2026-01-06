@@ -48,16 +48,19 @@ const fetchHackerRankData = async (username) => {
 }
 
 const fetchGitHubData = async (username) => {
+
+    const profileData = await githubFetching.getUserProfileData(username);
+
     return {
-        profile: await githubFetching.getUserProfileData(username),
-        contributions: await githubFetching.getMultiYearContributionCount(username),
-        calendar: await githubFetching.getMultiYearContributionCalendar(username),
+        profile: profileData,
+        contributions: profileData?.created_at ? await githubFetching.getMultiYearContributionCount(username, new Date(profileData.created_at).getFullYear(), new Date().getFullYear()) : null,
+        calendar: profileData?.created_at ? await githubFetching.getMultiYearContributionCalendar(username, new Date(profileData.created_at).getFullYear(), new Date().getFullYear()) : null,
         badges: await githubFetching.getGithubContributionBadges(username),
         languageStats: await githubFetching.getUserLanguageStats(username)
     }
 }
 
-export { 
+export {
     fetchGfgData,
     fetchCodeChefData,
     fetchInterviewbitData,

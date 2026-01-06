@@ -12,6 +12,6 @@ router.route("/fetch/:userId").get(optionalAuth, getAnalytics, validate(userIdVa
 router.route("/cache/:userId").get(optionalAuth, getAnalytics, validate(userIdValidationSchema), getProfileCache);
 router.route("/:userId").get(optionalAuth, getAnalytics, validate(userIdValidationSchema), getProfiles);
 router.route("/platform").patch(protectRoute, getAnalytics, validate(profileUpdateValidationSchema), updateProfile);
-router.route("/").patch(protectRoute, getAnalytics, validate(profilesUpdateValidationSchema), updateProfiles);
+router.route("/").patch(protectRoute, getAnalytics, updateProfiles);
 
 export default router;

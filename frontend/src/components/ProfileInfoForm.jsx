@@ -1,4 +1,5 @@
-import { User, Mail, Briefcase, MapPin, Globe, FileText, Sparkles, Save, EyeOff, Edit3 } from 'lucide-react';
+import { User, Mail, Briefcase, MapPin, Globe, FileText, Sparkles, Save, EyeOff, Edit3, Linkedin, Twitter, Phone, Quote } from 'lucide-react';
+import { getCountries, getCountryCallingCode } from 'libphonenumber-js';
 
 const ProfileInfoForm = ({ user, handleChange, isEditing, setIsEditing, handleSubmit, isLoading }) => {
     return (
@@ -61,21 +62,105 @@ const ProfileInfoForm = ({ user, handleChange, isEditing, setIsEditing, handleSu
 
                     <div className="space-y-2">
                         <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                            <Globe className="w-4 h-4 text-blue-500" /> Website
+                            <Quote className="w-4 h-4 text-blue-500" /> Headline
                         </label>
                         <input
-                            type="url" name="website" value={user.website || ''} onChange={handleChange} disabled={!isEditing}
+                            type="text" name="headline" value={user.headline || ''} onChange={handleChange} disabled={!isEditing}
                             className="w-full px-4 py-3 bg-white/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 disabled:opacity-50"
+                            placeholder="A short punchy headline"
                         />
                     </div>
 
                     <div className="space-y-2">
                         <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                            <FileText className="w-4 h-4 text-blue-500" /> Phone
+                            <Phone className="w-4 h-4 text-blue-500" /> Country Code
+                        </label>
+                        {isEditing ? (
+                            <select
+                                name="countryCode"
+                                value={user.countryCode || ''}
+                                onChange={handleChange}
+                                className="w-full px-4 py-3 bg-white/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+                            >
+                                <option value="">Select Code</option>
+                                {getCountries()
+                                    .map((country) => {
+                                        const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
+                                        return {
+                                            code: country,
+                                            name: regionNames.of(country),
+                                            callingCode: getCountryCallingCode(country)
+                                        };
+                                    })
+                                    .sort((a, b) => a.name.localeCompare(b.name))
+                                    .map(({ code, name, callingCode }) => (
+                                        <option key={code} value={`+${callingCode}`}>
+                                            {name} (+{callingCode})
+                                        </option>
+                                    ))}
+                            </select>
+                        ) : (
+                            <input
+                                type="text"
+                                value={user.countryCode ? (user.countryCode.startsWith('+') ? user.countryCode : `+${user.countryCode}`) : ''}
+                                disabled
+                                className="w-full px-4 py-3 bg-white/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 disabled:opacity-50"
+                            />
+                        )}
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                            <Phone className="w-4 h-4 text-blue-500" /> Phone
                         </label>
                         <input
                             type="tel" name="phone" value={user.phone || ''} onChange={handleChange} disabled={!isEditing}
                             className="w-full px-4 py-3 bg-white/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 disabled:opacity-50"
+                            placeholder="10 digit phone number"
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                            <Linkedin className="w-4 h-4 text-blue-500" /> LinkedIn Username
+                        </label>
+                        <input
+                            type="text" name="linkedinUsername" value={user.linkedinUsername || ''} onChange={handleChange} disabled={!isEditing}
+                            className="w-full px-4 py-3 bg-white/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 disabled:opacity-50"
+                            placeholder="username"
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                            <Twitter className="w-4 h-4 text-blue-500" /> Twitter Username
+                        </label>
+                        <input
+                            type="text" name="twitterUsername" value={user.twitterUsername || ''} onChange={handleChange} disabled={!isEditing}
+                            className="w-full px-4 py-3 bg-white/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 disabled:opacity-50"
+                            placeholder="username"
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                            <Globe className="w-4 h-4 text-blue-500" /> Portfolio Link
+                        </label>
+                        <input
+                            type="url" name="portfolioWebsiteLink" value={user.portfolioWebsiteLink || ''} onChange={handleChange} disabled={!isEditing}
+                            className="w-full px-4 py-3 bg-white/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 disabled:opacity-50"
+                            placeholder="https://yourportfolio.com"
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                            <FileText className="w-4 h-4 text-blue-500" /> Resume Link
+                        </label>
+                        <input
+                            type="url" name="resumeLink" value={user.resumeLink || ''} onChange={handleChange} disabled={!isEditing}
+                            className="w-full px-4 py-3 bg-white/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 disabled:opacity-50"
+                            placeholder="Link to your resume"
                         />
                     </div>
                 </div>

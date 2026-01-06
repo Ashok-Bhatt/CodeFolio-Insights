@@ -3,9 +3,10 @@ import { Edit3, ExternalLink, MapPin, Mail, Linkedin, Twitter, Globe, Github, Ch
 import { useAuthStore } from '../../store/export.js';
 import { useToggleProfileVisibility } from '../../hooks/useUsers.js';
 import { InfoTooltip } from '../export.js';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const DashboardSidebar = ({ userData }) => {
+    const { userId } = useParams();
     const user = useAuthStore((state) => state.user);
     const [profileVisibility, setProfileVisibility] = useState(userData?.profileVisibility);
     const [isProblemStatsOpen, setIsProblemStatsOpen] = useState(true);
@@ -35,16 +36,16 @@ const DashboardSidebar = ({ userData }) => {
     ];
 
     const problemPlatforms = [
-        { name: 'LeetCode', icon: '/Images/Icons/leetcode.png', url: `https://leetcode.com/u/${userData?.profileLinks?.leetCodeUsername}`, path: `/dashboard/coding-profiles/leetcode` },
-        { name: 'CodeStudio', icon: '/Images/Icons/code360.png', url: `https://www.naukri.com/code360/profile/${userData?.profileLinks?.code360Username}`, path: `/dashboard/coding-profiles/code360` },
-        { name: 'GeeksForGeeks', icon: '/Images/Icons/gfg.png', url: `https://geeksforgeeks.org/profile/${userData?.profileLinks?.gfgUsername}?tab=activity`, path: `/dashboard/coding-profiles/gfg` },
-        { name: 'InterviewBit', icon: '/Images/Icons/interviewbit.png', url: `https://www.interviewbit.com/profile/${userData?.profileLinks?.interviewbitUsername}`, path: `/dashboard/coding-profiles/interviewbit` },
-        { name: 'CodeChef', icon: '/Images/Icons/codechef.png', url: `https://www.codechef.com/users/${userData?.profileLinks?.codechefUsername}`, path: `/dashboard/coding-profiles/codechef` },
-        { name: 'HackerRank', icon: '/Images/Icons/hackerrank.png', url: `https://www.hackerrank.com/profile/${userData?.profileLinks?.hackerrankUsername}`, path: `/dashboard/coding-profiles/hackerrank` },
+        { name: 'LeetCode', icon: '/Images/Icons/leetcode.png', url: `https://leetcode.com/u/${userData?.profileLinks?.leetCodeUsername}`, path: `/dashboard/${userId}/coding-profiles/leetcode` },
+        { name: 'CodeStudio', icon: '/Images/Icons/code360.png', url: `https://www.naukri.com/code360/profile/${userData?.profileLinks?.code360Username}`, path: `/dashboard/${userId}/coding-profiles/code360` },
+        { name: 'GeeksForGeeks', icon: '/Images/Icons/gfg.png', url: `https://geeksforgeeks.org/profile/${userData?.profileLinks?.gfgUsername}?tab=activity`, path: `/dashboard/${userId}/coding-profiles/gfg` },
+        { name: 'InterviewBit', icon: '/Images/Icons/interviewbit.png', url: `https://www.interviewbit.com/profile/${userData?.profileLinks?.interviewbitUsername}`, path: `/dashboard/${userId}/coding-profiles/interviewbit` },
+        { name: 'CodeChef', icon: '/Images/Icons/codechef.png', url: `https://www.codechef.com/users/${userData?.profileLinks?.codechefUsername}`, path: `/dashboard/${userId}/coding-profiles/codechef` },
+        { name: 'HackerRank', icon: '/Images/Icons/hackerrank.png', url: `https://www.hackerrank.com/profile/${userData?.profileLinks?.hackerrankUsername}`, path: `/dashboard/${userId}/coding-profiles/hackerrank` },
     ];
 
     const stats = [
-        { label: 'Profile Views', value: userData?.profileViews || '0', color: 'text-orange-500' },
+        { label: 'Profile Views', value: userData?.profileViews || '0', color: 'text-slate-500' },
         { label: 'Last Refresh', value: userData?.lastRefresh.toLocaleString().split("T")[0] || '', color: 'text-slate-500' },
         { label: 'Visibility', value: userData?.visibility || 'Public', color: 'text-slate-500' },
     ];
@@ -72,7 +73,7 @@ const DashboardSidebar = ({ userData }) => {
                     <div className="relative mb-6">
                         <div className="absolute inset-0 bg-blue-500 rounded-full blur-2xl opacity-10 animate-pulse-glow" />
                         <div className="w-32 h-32 rounded-full border-4 border-white shadow-2xl overflow-hidden relative z-10">
-                            <img src={user?.profilePicture || "/Images/Default/user.png"} alt="Profile" className="w-full h-full object-cover" />
+                            <img src={userData?.profilePicture || user?.profilePicture || "/Images/Default/user.png"} alt="Profile" className="w-full h-full object-cover" />
                         </div>
                     </div>
 
@@ -102,13 +103,23 @@ const DashboardSidebar = ({ userData }) => {
 
                 <div className="mt-4 px-4 pb-8 space-y-4">
                     <div className="space-y-2">
-                        <button
-                            onClick={() => setIsProblemStatsOpen(!isProblemStatsOpen)}
-                            className="w-full flex items-center justify-between p-4 bg-slate-50/80 hover:bg-slate-100 rounded-2xl transition-all group"
-                        >
-                            <span className="text-xs font-black text-slate-600 uppercase tracking-widest">Problem Solving</span>
-                            <ChevronDown className={`w-4 h-4 text-slate-400 transition-all ${isProblemStatsOpen ? 'rotate-180' : ''}`} />
-                        </button>
+                        <div className="w-full flex items-center justify-between p-4 bg-slate-50/80 rounded-2xl group transition-all">
+                            <span
+                                onClick={() => navigate(`/dashboard/${userId}/coding-profiles/`)}
+                                className="text-xs font-black text-slate-600 uppercase tracking-widest cursor-pointer hover:text-blue-600 transition-colors"
+                            >
+                                Problem Solving
+                            </span>
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setIsProblemStatsOpen(!isProblemStatsOpen);
+                                }}
+                                className="p-1 hover:bg-slate-200 rounded-lg transition-all"
+                            >
+                                <ChevronDown className={`w-4 h-4 text-slate-400 transition-all ${isProblemStatsOpen ? 'rotate-180' : ''}`} />
+                            </button>
+                        </div>
 
                         {isProblemStatsOpen && (
                             <div className="space-y-1 py-2">
@@ -129,34 +140,44 @@ const DashboardSidebar = ({ userData }) => {
                     </div>
 
                     <div className="space-y-2">
-                        <button
-                            onClick={() => setIsDevStatsOpen(!isDevStatsOpen)}
-                            className="w-full flex items-center justify-between p-4 bg-slate-50/80 hover:bg-slate-100 rounded-2xl transition-all group"
-                        >
-                            <span className="text-xs font-black text-slate-600 uppercase tracking-widest">Development</span>
-                            <ChevronDown className={`w-4 h-4 text-slate-400 transition-all ${isDevStatsOpen ? 'rotate-180' : ''}`} />
-                        </button>
+                        <div className="w-full flex items-center justify-between p-4 bg-slate-50/80 rounded-2xl group transition-all">
+                            <span
+                                onClick={() => navigate(`/dashboard/${userId}/github`)}
+                                className="text-xs font-black text-slate-600 uppercase tracking-widest cursor-pointer hover:text-blue-600 transition-colors"
+                            >
+                                Development
+                            </span>
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setIsDevStatsOpen(!isDevStatsOpen);
+                                }}
+                                className="p-1 hover:bg-slate-200 rounded-lg transition-all"
+                            >
+                                <ChevronDown className={`w-4 h-4 text-slate-400 transition-all ${isDevStatsOpen ? 'rotate-180' : ''}`} />
+                            </button>
+                        </div>
 
                         {isDevStatsOpen && (
                             <div className="space-y-1 py-2">
-                                <div className="flex items-center justify-between p-3.5 hover:bg-slate-50 rounded-2xl transition-all group cursor-pointer" onClick={() => navigate('/dashboard/github')}>
+                                <div className="flex items-center justify-between p-3.5 hover:bg-slate-50 rounded-2xl transition-all group cursor-pointer" onClick={() => navigate(`/dashboard/${userId}/github`)}>
                                     <div className="flex items-center gap-3">
                                         <div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center border border-slate-100 shadow-sm">
                                             <Github className="w-4 h-4 text-slate-800" />
                                         </div>
                                         <span className="text-sm font-bold text-slate-700">GitHub</span>
                                     </div>
-                                    <ExternalLink className="w-3.5 h-3.5 text-slate-300 group-hover:text-blue-500 transition-colors" onClick={() => window.open(`  https://github.com/${userData?.profileLinks?.githubUsername}`, '_blank')} />
+                                    <ExternalLink className="w-3.5 h-3.5 text-slate-300 group-hover:text-blue-500 transition-colors" onClick={() => window.open(`https://github.com/${userData?.profileLinks?.githubUsername}`, '_blank')} />
                                 </div>
                             </div>
                         )}
                     </div>
 
-                    <div className="px-4 space-y-3 pt-6 border-t border-slate-50">
+                    <div className="px-4 space-y-3 pt-6 border-t border-slate-50 text-slate-500">
                         {stats.map((stat) => (
                             <div key={stat.label} className="flex justify-between items-center group/stat">
-                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{stat.label}</span>
-                                <span className={`text-xs font-black ${stat.color} group-hover/stat:scale-105 transition-transform`}>{stat.value || stat.defaultValue}</span>
+                                <span className="text-[10px] font-black uppercase tracking-widest">{stat.label}</span>
+                                <span className={`text-xs font-black ${stat.color} group-hover/stat:scale-105 transition-transform`}>{stat.value}</span>
                             </div>
                         ))}
                     </div>

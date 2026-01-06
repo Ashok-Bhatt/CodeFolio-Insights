@@ -3,7 +3,7 @@ import { useCheckAuth } from './hooks/useUsers.js';
 import { useEffect } from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
 import { Landing, LoginPage, SignupPage, CodingProfiles, ProfilePage, LinkPage, PageNotFound } from './pages/export.js';
-import { HomeLayout, DashboardLayout } from "./layouts/export.js";
+import { HomeLayout, DashboardLayout, AnalyzerLayout } from "./layouts/export.js";
 import { LeetCode, GFG, Code360, Interviewbit, CodeChef, HackerRank, Github } from './pages/platforms/export.js';
 import { LeetcodeAnalyse, GithubAnalyse, ResumeAnalyse } from './pages/analyse/export.js';
 import { ProtectedRoute } from './components/export.js';
@@ -24,7 +24,7 @@ const App = () => {
             <Route path="/signup" element={<SignupPage />} />
 
             <Route path="/" element={<HomeLayout />}>
-                <Route path="dashboard" element={<DashboardLayout />}>
+                <Route path="dashboard/:userId" element={<DashboardLayout />}>
                     <Route index element={<Navigate to="coding-profiles" replace />} />
                     <Route path="coding-profiles">
                         <Route index element={<CodingProfiles />} />
@@ -37,7 +37,7 @@ const App = () => {
                     </Route>
                     <Route path="github" element={<Github />} />
                 </Route>
-                <Route path="analyzer">
+                <Route path="analyzer" element={<AnalyzerLayout />}>
                     <Route index element={<Navigate to="leetcode" replace />} />
                     <Route path="leetcode" element={<LeetcodeAnalyse />} />
                     <Route path="github" element={<GithubAnalyse />} />
@@ -61,7 +61,7 @@ const App = () => {
                     </ProtectedRoute>
                 }
             />
-            <Route path="/home" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/home" element={<Navigate to="/" replace />} />
             <Route path="*" element={<PageNotFound />} />
         </Routes>
     )

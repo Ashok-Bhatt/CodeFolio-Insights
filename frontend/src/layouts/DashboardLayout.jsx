@@ -1,37 +1,36 @@
 import { useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { useParams, Outlet } from 'react-router-dom';
 import DashboardSidebar from '../components/sidebars/DashboardSidebar.jsx';
-import { useAuthStore } from '../store/export.js';
 import { useProfileCache, useProfileRefresh } from '../hooks/useProfiles.js';
 import { useUser } from '../hooks/export.js';
 import Loader from '../components/loaders/Loader.jsx';
 
 const DashboardLayout = () => {
-    const user = useAuthStore((state) => state.user);
-    const { data: cacheData, isLoading: isLoadingCache } = useProfileCache(user?._id);
-    const { data: refreshData, isLoading: isRefreshing, refetch: triggerRefresh } = useProfileRefresh(user?._id);
-    const { data: userData, isLoading: isUserLoading } = useUser(user?._id);
+    const { userId } = useParams();
+    const { data: cacheData, isLoading: isLoadingCache } = useProfileCache(userId);
+    const { data: refreshData, isLoading: isRefreshing, refetch: triggerRefresh } = useProfileRefresh(userId);
+    const { data: userData, isLoading: isUserLoading } = useUser(userId);
 
     const data = refreshData || cacheData;
 
     // Stale Check Logic
     useEffect(() => {
-        if (!user?._id) return;
+        if (!userId) return;
 
         if (!isLoadingCache) {
             if (!cacheData) {
                 triggerRefresh();
             } else {
                 const lastUpdated = cacheData.lastUpdated;
-                const oneHour = 60 * 60 * 1000;
+                const dataRefreshRateInMs = 15 * 60 * 1000;
                 const now = Date.now();
 
-                if (!lastUpdated || (now - new Date(lastUpdated).getTime() > oneHour)) {
+                if (!lastUpdated || (now - new Date(lastUpdated).getTime() > dataRefreshRateInMs)) {
                     triggerRefresh();
                 }
             }
         }
-    }, [user, cacheData, isLoadingCache]);
+    }, [userId, cacheData, isLoadingCache]);
 
     return (
         <div className="flex flex-1 overflow-hidden h-screen bg-white">

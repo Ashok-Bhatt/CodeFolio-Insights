@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, LayoutDashboard, FileUser, Code, Github, Terminal, User, Link as LinkIcon, LogOut, ChartLine } from 'lucide-react';
-import {useAuthStore, usePreferenceStore} from '../../store/export.js';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { ChevronLeft, ChevronRight, LayoutDashboard, FileUser, CodeXml, Github, Terminal, User, Link as LinkIcon, LogOut, ChartLine, ChartArea } from 'lucide-react';
+import { useAuthStore, usePreferenceStore } from '../../store/export.js';
 
-const Sidebar = ({ activeMenu }) => {
+const Sidebar = () => {
+    const location = useLocation();
     const [hoveredItem, setHoveredItem] = useState(null);
     const [mounted, setMounted] = useState(false);
     const navigate = useNavigate();
@@ -23,19 +24,17 @@ const Sidebar = ({ activeMenu }) => {
     };
 
     const sidebarItems = [
-        { name: 'Dashboard', path: '/dashboard', Icon: LayoutDashboard },
-        { name: 'LeetCode', path: '/analyzer/leetcode', Icon: Code, isCustomIcon: true, iconPath: "/Images/Icons/leetcode.png" },
-        { name: 'GitHub', path: '/analyzer/github', Icon: Github, isCustomIcon: true, iconPath: "/Images/Icons/github.png" },
-        { name: 'Resume Analysis', path: '/analyzer/resume', Icon: FileUser },
+        { name: 'Dashboard', path: `/dashboard/${user?._id}`, Icon: LayoutDashboard },
+        { name: 'Analyzers', path: '/analyzer/leetcode', Icon: ChartArea },
     ];
 
     return (
         <aside
-            className={`hidden md:flex flex-col bg-white border-r border-gray-100 shadow-2xl transition-all duration-700 ease-out backdrop-blur-xl ${isSidebarCollapsed ? 'w-20' : 'w-72'} ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`}
+            className={`hidden md:flex flex-col bg-white border-r border-gray-100 shadow-2xl transition-all duration-700 ease-out backdrop-blur-xl ${isSidebarCollapsed ? 'w-fit' : 'w-72'} ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`}
             style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(248,250,252,0.98) 100%)' }}
         >
-            <div className={`relative flex items-center justify-between h-20 border-b border-gray-50 transition-all duration-500 ${isSidebarCollapsed ? 'px-4' : 'px-6'}`}>
-                <div className="flex items-center gap-3 overflow-hidden">
+            <div className={`relative flex items-center h-20 border-b border-gray-50 transition-all duration-500 ${isSidebarCollapsed ? 'justify-center px-4' : 'justify-between px-6'}`}>
+                <Link to={`/dashboard/${user?._id}`} className="flex items-center gap-3 overflow-hidden">
                     <div className="relative flex-shrink-0">
                         <div className="absolute inset-0 bg-blue-500 rounded-xl blur-md opacity-20 animate-glow-pulse" />
                         <Terminal className="w-8 h-8 text-blue-600 relative z-10" />
@@ -45,20 +44,24 @@ const Sidebar = ({ activeMenu }) => {
                             CodeFolio
                         </span>
                     )}
-                </div>
+                </Link>
 
-                <button
-                    onClick={toggleSidebar}
-                    className="p-2 rounded-xl bg-gray-50 hover:bg-gray-100 transition-all text-gray-400 hover:text-blue-600"
-                >
-                    {isSidebarCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
-                </button>
+                {!isSidebarCollapsed && (
+                    <button
+                        onClick={toggleSidebar}
+                        className="p-2 rounded-xl bg-gray-50 hover:bg-gray-100 transition-all text-gray-400 hover:text-blue-600"
+                    >
+                        <ChevronLeft size={20} />
+                    </button>
+                )}
             </div>
 
-            <nav className="flex-1 overflow-y-auto py-6 px-4 custom-scrollbar">
+            <nav className={`flex-1 ${isSidebarCollapsed ? 'overflow-visible' : 'overflow-y-auto'} py-6 px-4 custom-scrollbar`}>
                 <ul className="space-y-2">
                     {sidebarItems.map((item, index) => {
-                        const isActive = activeMenu === item.name;
+                        const isActive = item.name === 'Dashboard'
+                            ? location.pathname.startsWith('/dashboard')
+                            : location.pathname.startsWith('/analyzer');
                         const Icon = item.Icon;
                         return (
                             <li key={item.name} className="relative">
@@ -66,7 +69,7 @@ const Sidebar = ({ activeMenu }) => {
                                     to={item.path}
                                     onMouseEnter={() => setHoveredItem(item.name)}
                                     onMouseLeave={() => setHoveredItem(null)}
-                                    className={`group flex items-center p-3.5 rounded-2xl transition-all duration-300 relative ${isActive ? 'bg-blue-50/50 text-blue-600 shadow-sm border border-blue-100/50' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'} ${mounted ? 'animate-slide-in-up' : ''}`}
+                                    className={`group flex items-center p-3.5 rounded-2xl transition-all duration-300 relative ${isActive ? 'bg-blue-50/50 text-blue-600 shadow-sm border border-blue-100/50' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'} ${mounted ? 'animate-slide-in-up' : ''} ${isSidebarCollapsed ? 'justify-center' : ''}`}
                                     style={{ animationDelay: `${index * 100}ms` }}
                                 >
                                     {isActive && <div className="absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 bg-blue-600 rounded-r-full" />}
@@ -88,12 +91,12 @@ const Sidebar = ({ activeMenu }) => {
                                     )}
 
                                     {isSidebarCollapsed && hoveredItem === item.name && (
-                                        <div className="absolute left-full ml-4 px-3 py-2 bg-gray-900 text-white text-[10px] font-black uppercase tracking-widest rounded-lg shadow-2xl z-50 animate-slide-in-right">
+                                        <div className="absolute left-full ml-4 px-3 py-2 bg-gray-900 text-white text-[10px] font-black uppercase tracking-widest rounded-lg shadow-2xl z-[100] animate-slide-in-right whitespace-nowrap">
                                             {item.name}
                                         </div>
                                     )}
 
-                                    {!isSidebarCollapsed && isActive && !['Dashboard', 'Resume Analysis'].includes(item.name) && (
+                                    {!isSidebarCollapsed && isActive && item.name === 'Analyzers' && (
                                         <div className="absolute right-4 animate-float opacity-0 group-hover:opacity-100 transition-opacity">
                                             <ChartLine size={14} className="text-blue-500" />
                                         </div>
@@ -103,9 +106,21 @@ const Sidebar = ({ activeMenu }) => {
                         );
                     })}
                 </ul>
+
+                {isSidebarCollapsed && (
+                    <div className="mt-8 flex justify-center">
+                        <button
+                            onClick={toggleSidebar}
+                            className="p-2.5 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 transition-all shadow-sm border border-blue-100 group"
+                            title="Expand Sidebar"
+                        >
+                            <ChevronRight size={20} className="group-hover:translate-x-0.5 transition-transform" />
+                        </button>
+                    </div>
+                )}
             </nav>
 
-            <div className="p-4 border-t border-gray-50">
+            <div className={`p-4 border-t border-gray-50 ${isSidebarCollapsed ? 'flex justify-center' : ''}`}>
                 <details className="group">
                     <summary className={`flex items-center list-none cursor-pointer p-2 rounded-2xl hover:bg-gray-50 transition-all ${isSidebarCollapsed ? 'justify-center' : ''}`}>
                         <div className="relative flex-shrink-0">

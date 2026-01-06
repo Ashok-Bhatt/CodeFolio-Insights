@@ -15,7 +15,17 @@ const usersQueryValidationSchema = z.object({
 const userInfoUpdateValidationSchema = z.object({
     body: z.object({
         name: z.string().min(3, "Name must be at least 3 characters long").optional(),
-    }).passthrough()
+        phone: z.string().optional().nullable(),
+        countryCode: z.string().optional().nullable(),
+    }).passthrough().refine(data => {
+        if ((data.phone && !data.countryCode) || (!data.phone && data.countryCode)) {
+            return false;
+        }
+        return true;
+    }, {
+        message: "Both Country Code and Phone Number are required if one is provided!",
+        path: ["phone"] // Pointing to phone, but it applies to both
+    })
 });
 
 const changePasswordValidationSchema = z.object({
