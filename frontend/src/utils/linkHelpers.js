@@ -21,20 +21,20 @@ export const getDefaultUrl = (platform, username) => {
         interviewbit: `https://www.interviewbit.com/profile/${username}`,
         code360: `https://www.naukri.com/code360/profile/${username}`,
     };
-    
+
     return urlMap[platform] || username;
 };
 
 export const transformBackendToFrontend = (backendData, platforms) => {
 
     const links = [];
-    
+
     Object.keys(PLATFORM_TO_BACKEND_KEY).forEach(key => {
         const username = backendData[PLATFORM_TO_BACKEND_KEY[key]];
         if (username) {
             const config = platforms.find(p => p.value === key);
             links.push({
-                id: `${key}_${Date.now()}_${Math.random()}`,
+                id: key,
                 platform: key,
                 username: username,
                 url: getDefaultUrl(key, username),
