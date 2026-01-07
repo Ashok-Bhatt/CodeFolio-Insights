@@ -3,7 +3,7 @@ import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tool
 function SubmissionChart({title="Submission Activity", submissionData, className}) {
 
   return (
-      <div className={`${className} xl:col-span-2 bg-white/90 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-gray-100 animate-float-in`} style={{ animationDelay: '1000ms' }}>
+      <div className={`${className} bg-white/90 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-gray-100 animate-float-in`} style={{ animationDelay: '1000ms' }}>
         <h3 className="text-xl font-black text-gray-800 mb-8 uppercase tracking-widest">{title}</h3>
         <div className="h-80 w-full">
             <ResponsiveContainer width="100%" height="100%">

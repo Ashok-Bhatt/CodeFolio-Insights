@@ -61,14 +61,20 @@ const getYearlyContributionCount = async (username, year) => {
 
 const getMultiYearContributionCount = async (username, startYear, endYear) => {
     let contributionCount = { pullRequestsCount: 0, issuesCount: 0, commitsCount: 0, pullRequestReviewsCount: 0, repositoriesCount: 0, restrictedCintributionCount: 0 };
-    for (let year = startYear; year <= endYear; year++) {
+
+    const start = parseInt(startYear);
+    const end = parseInt(endYear);
+
+    for (let year = start; year <= end; year++) {
         const yearlyContributions = await getYearlyContributionCount(username, year);
-        contributionCount.pullRequestsCount = contributionCount.pullRequestsCount + yearlyContributions?.pullRequestContributions?.totalCount;
-        contributionCount.issuesCount = contributionCount.issuesCount + yearlyContributions?.issueContributions?.totalCount;
-        contributionCount.commitsCount = contributionCount.commitsCount + yearlyContributions?.totalCommitContributions;
-        contributionCount.pullRequestReviewsCount = contributionCount.pullRequestReviewsCount + yearlyContributions?.pullRequestReviewContributions?.totalCount;
-        contributionCount.repositoriesCount = contributionCount.repositoriesCount + yearlyContributions?.repositoryContributions?.totalCount;
-        contributionCount.restrictedCintributionCount = contributionCount.restrictedCintributionCount + yearlyContributions?.restrictedContributionsCount;
+        if (!yearlyContributions) continue;
+
+        contributionCount.pullRequestsCount += (yearlyContributions.pullRequestContributions?.totalCount || 0);
+        contributionCount.issuesCount += (yearlyContributions.issueContributions?.totalCount || 0);
+        contributionCount.commitsCount += (yearlyContributions.totalCommitContributions || 0);
+        contributionCount.pullRequestReviewsCount += (yearlyContributions.pullRequestReviewContributions?.totalCount || 0);
+        contributionCount.repositoriesCount += (yearlyContributions.repositoryContributions?.totalCount || 0);
+        contributionCount.restrictedCintributionCount += (yearlyContributions.restrictedContributionsCount || 0);
     }
     return contributionCount;
 }
@@ -84,12 +90,15 @@ const getYearlyContributionCalendar = async (username, year) => {
     const query = GITHUB_API_QUERIES.GITHUB_YEARLY_CONTRIBUTION_CALENDAR_QUERY;
     const contributionCalendarData = await githubGraphQlQuery(query, { username, from: `${year}-01-01T00:00:00Z`, to: `${year}-12-31T23:59:59Z` });
     if (contributionCalendarData == null) return {};
-    else return getPolishedGithubHeatmap(contributionCalendarData["data"]["user"]["contributionsCollection"]["contributionCalendar"]["weeks"]);
+    return getPolishedGithubHeatmap(contributionCalendarData["data"]["user"]["contributionsCollection"]["contributionCalendar"]["weeks"]);
 }
 
 const getMultiYearContributionCalendar = async (username, startYear, endYear) => {
     let contributionCalendar = {};
-    for (let year = startYear; year <= endYear; year++) {
+    const start = parseInt(startYear);
+    const end = parseInt(endYear);
+
+    for (let year = start; year <= end; year++) {
         contributionCalendar[year] = await getYearlyContributionCalendar(username, year);
     }
     return contributionCalendar;

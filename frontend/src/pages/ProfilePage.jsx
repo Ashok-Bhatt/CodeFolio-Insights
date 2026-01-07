@@ -10,13 +10,12 @@ const ProfilePage = () => {
     const setAuthUser = useAuthStore((state) => state.setUser);
     const [user, setUser] = useState(authUser);
     const [selectedFile, setSelectedFile] = useState(null);
-    const [profileImageViewUrl, setProfileImageViewUrl] = useState(user?.profile || user?.profilePicture || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face");
+    const [profileImageViewUrl, setProfileImageViewUrl] = useState(user?.profilePicture || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face");
     const [isEditing, setIsEditing] = useState(false);
     const [activeTab, setActiveTab] = useState('profile');
     const fileInputRef = useRef(null);
 
-    const updateUserMutation = useUpdateUser();
-    const isLoading = updateUserMutation.isPending;
+    const { mutateAsync: updateUserMutation, isPending: isLoading, isError: isUpdateError } = useUpdateUser();
 
     const handleChange = (e) => setUser({ ...user, [e.target.name]: e.target.value });
 
@@ -33,7 +32,7 @@ const ProfilePage = () => {
         try {
             const formData = new FormData();
             formData.append('profileImage', selectedFile);
-            const data = await updateUserMutation.mutateAsync(formData);
+            const data = await updateUserMutation(formData);
             if (data) {
                 const updatedUser = { ...user, profile: data.profile ?? data.profilePicture ?? user.profile };
                 setUser(updatedUser);
@@ -41,6 +40,7 @@ const ProfilePage = () => {
                 setSelectedFile(null);
             }
         } catch (error) {
+            console.log(error.stack);
             toast.error("Failed to update profile image!");
         }
     }
@@ -51,12 +51,31 @@ const ProfilePage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Cross-field validation for phone and countryCode
+        if ((user.phone && !user.countryCode) || (!user.phone && user.countryCode)) {
+            toast.error("Both Country Code and Phone Number are required if one is provided!");
+            return;
+        }
+
         try {
             const formData = new FormData();
-            ['name', 'jobTitle', 'bio', 'location', 'website', 'phone'].forEach(field => formData.append(field, user[field] || ''));
+            const fields = [
+                'name', 'jobTitle', 'headline', 'bio', 'location',
+                'countryCode', 'phone', 'linkedinUsername',
+                'twitterUsername', 'portfolioWebsiteLink', 'resumeLink'
+            ];
+
+            fields.forEach(field => {
+                let value = user[field] || '';
+                if (field === 'countryCode' && value.startsWith('+')) {
+                    value = value.substring(1); // Strip '+' for backend enum compliance
+                }
+                formData.append(field, value);
+            });
             if (selectedFile) formData.append('profileImage', selectedFile);
 
-            const data = await updateUserMutation.mutateAsync(formData);
+            const data = await updateUserMutation(formData);
 
             if (data) {
                 setUser(data);
@@ -65,6 +84,7 @@ const ProfilePage = () => {
                 toast.success("Profile updated successfully!");
             }
         } catch (error) {
+            console.log(error.stack);
             toast.error("Failed to update profile!");
         }
     };

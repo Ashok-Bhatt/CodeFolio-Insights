@@ -15,12 +15,12 @@ const LinkPage = () => {
     const userId = useAuthStore((state) => state?.user?._id);
 
     const { data: profile, isLoading, refetch: fetchLinks } = useProfileLinks(userId);
-    const updateProfileMutation = useUpdateProfileLinks();
+    const {mutateAsync: updateProfileMutation} = useUpdateProfileLinks();
 
     const iconMap = {
         leetcode: Code, github: Github, linkedin: Linkedin,
         gfg: Code, hackerrank: Code, codechef: Code,
-        codeforces: Code, twitter: Twitter, code360: Code,
+        twitter: Twitter, code360: Code,
         interviewbit: Code, portfolio: Globe, resume: FileText
     };
 
@@ -30,10 +30,11 @@ const LinkPage = () => {
 
     const updateLinksOnServer = async (newLinks) => {
         try {
-            await updateProfileMutation.mutateAsync(transformFrontendToBackend(newLinks));
+            await updateProfileMutation(transformFrontendToBackend(newLinks));
             fetchLinks();
         } catch (error) {
             console.error("Failed to update links", error);
+            console.log(error.stack);
         }
     };
 
@@ -83,7 +84,10 @@ const LinkPage = () => {
                         <div className="md:block hidden"></div><div className="md:block hidden"></div>
                         <div className="bg-white/90 backdrop-blur-sm p-4 rounded-2xl shadow-lg border border-white/60">
                             <div className="flex items-center gap-3"><Sparkles className="h-5 w-5 text-purple-600" />
-                                <div><div className="text-2xl font-black text-gray-800">{platforms.length}</div><div className="text-sm text-gray-600">Platforms</div></div>
+                                <div>
+                                    <div className="text-2xl font-black text-gray-800">{platforms.length}</div>
+                                    <div className="text-sm text-gray-600">Platforms</div>
+                                </div>
                             </div>
                         </div>
                     </div>

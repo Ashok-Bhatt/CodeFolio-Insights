@@ -7,49 +7,46 @@ import { StatCard, AnalysisCard, VideoSuggestionCard, ProblemStatsCard } from '.
 import { SubmissionChart, BarChartDistribution } from '../../components/charts/export.js';
 import { ErrorContainer, ScoreMeter, MemeContainer } from '../../components/export.js';
 import { LANGUAGE_COLORS } from '../../constants/index.js';
-import { getPolishedGithubHeatmap } from "../../utils/dataHelpers.js";
 
 const GithubAnalyse = () => {
     const user = useAuthStore((state) => state.user);
     const { data: profile } = useProfileLinks(user?._id);
     const [username, setUsername] = useState(profile?.githubUsername || "");
 
-    const { data: analysisData, isLoading, isError, error, refetch, isFetching } = useGithubAnalysis(username.trim());
+    const { data: analysisData, isError, error, refetch, isFetching } = useGithubAnalysis(username.trim());
 
     const handleAnalyze = async () => {
         if (!username.trim()) return;
         await refetch();
     };
 
-    const commitData = Object.entries(Object.entries(getPolishedGithubHeatmap(analysisData?.contributionCalendar)).map(x=>x[1]).reduce((a,b)=>({...a, ...b}),{})).map(date=> {return {name: date[0], submissions: date[1]}}) || [];
+    const commitData = (Object.entries(analysisData?.lastYearContributionStats || {})).map(date => { return { name: date[0], submissions: date[1] } });
 
     const suggestedVideo = analysisData?.profileAnalysis?.video;
 
-    const totalBytes = analysisData?.languageUsageInBytes ? Object.values(analysisData.languageUsageInBytes).reduce((a, b) => a + b, 0) : 0;
+    const totalBytes = analysisData?.languageStats ? Object.values(analysisData.languageStats).reduce((a, b) => a + b, 0) : 0;
 
-    const languageData = analysisData?.languageUsageInBytes
-        ? Object.entries(analysisData.languageUsageInBytes).map(([name, bytes], idx) => ({
-            name,
-            value: Math.round((bytes / totalBytes) * 100),
-            color: LANGUAGE_COLORS[idx % LANGUAGE_COLORS.length]
-        }))
-        : [];
+    const languageData = analysisData?.languageStats ? Object.entries(analysisData.languageStats).map(([name, bytes], idx) => ({
+        name,
+        value: totalBytes > 0 ? Number(((bytes / totalBytes) * 100).toFixed(1)) : 0,
+        color: LANGUAGE_COLORS[idx % LANGUAGE_COLORS.length]
+    })).sort((a, b) => b.value - a.value) : [];
 
     const repoTypeData = [
-        { name: 'Personal', value: analysisData?.public_repos || 0, color: '#10b981' },
+        { name: 'Personal', value: analysisData?.userData?.public_repos || 0, color: '#10b981' },
         { name: 'Forked', value: analysisData?.forksCount || 0, color: '#6366f1' },
         { name: 'Starred', value: analysisData?.starsCount || 0, color: '#f59e0b' }
     ];
 
     const gitHubStats = [
-        { title: "Total Repos", value: analysisData?.public_repos || 0, color: "green", Icon: FolderOpen },
-        { title: "Total Commits", value: analysisData?.lastYearCommitsCount || 0, color: "blue", Icon: GitCommit },
-        { title: "Total Stars", value: analysisData?.starsCount || 0, color: "amber", Icon: Star },
+        { title: "Total Repos", value: analysisData?.userData?.public_repos || 0, color: "green", Icon: FolderOpen },
+        { title: "Total Commits", value: analysisData?.contributionCount?.commitsCount || 0, color: "blue", Icon: GitCommit },
+        { title: "Total Stars", value: analysisData?.userData?.starsCount || 0, color: "amber", Icon: Star },
         { title: "Total Forks", value: analysisData?.forksCount || 0, color: "purple", Icon: GitFork },
-        { title: "Followers", value: analysisData?.followersCount || 0, color: "blue", Icon: Users },
-        { title: "Following", value: analysisData?.followingCount || 0, color: "purple", Icon: UserPlus },
-        { title: "Pull Requests", value: analysisData?.pullRequestsCount || 0, color: "green", Icon: GitPullRequest },
-        { title: "Contributions", value: (analysisData?.pullRequestsCount || 0) + (analysisData?.issueRequestsCount || 0), color: "amber", Icon: Zap },
+        { title: "Followers", value: analysisData?.userData?.followers || 0, color: "blue", Icon: Users },
+        { title: "Following", value: analysisData?.userData?.following || 0, color: "purple", Icon: UserPlus },
+        { title: "Pull Requests", value: analysisData?.contributionCount?.pullRequestsCount || 0, color: "green", Icon: GitPullRequest },
+        { title: "Contributions", value: (analysisData?.totalContributions || 0), color: "amber", Icon: Zap },
     ]
 
     return (
@@ -98,7 +95,7 @@ const GithubAnalyse = () => {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <div className="lg:col-span-1 bg-white/90 backdrop-blur-sm p-6 rounded-3xl shadow-xl border border-gray-100 animate-float-in">
                             <ScoreMeter
-                                score={analysisData.score}
+                                score={analysisData?.scoreData?.overall}
                             />
                         </div>
 
@@ -111,7 +108,7 @@ const GithubAnalyse = () => {
                             </div>
 
                             <MemeContainer
-                                score={analysisData.score}
+                                score={analysisData?.scoreData?.overall ?? 0}
                             />
                         </div>
 
@@ -119,7 +116,7 @@ const GithubAnalyse = () => {
                             <div className="space-y-6">
                                 <AnalysisCard
                                     title="Profile Analysis"
-                                    points={analysisData.profileAnalysis.analysis}
+                                    points={analysisData?.profileAnalysis?.analysis}
                                     Icon={BarChart3}
                                     PointIcon={CheckCircle}
                                     iconBg="bg-purple-100"
@@ -133,7 +130,7 @@ const GithubAnalyse = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <AnalysisCard
                                         title="Strengths"
-                                        points={analysisData.profileAnalysis?.strongPoints}
+                                        points={analysisData?.profileAnalysis?.strongPoints || []}
                                         Icon={TrendingUp}
                                         PointIcon={CheckCircle}
                                         iconBg="bg-blue-100"
@@ -145,7 +142,7 @@ const GithubAnalyse = () => {
 
                                     <AnalysisCard
                                         title="Areas to Improve"
-                                        points={analysisData.profileAnalysis?.improvementAreas}
+                                        points={analysisData?.profileAnalysis?.improvementAreas || []}
                                         Icon={Target}
                                         PointIcon={AlertCircle}
                                         iconBg="bg-amber-100"
@@ -170,15 +167,19 @@ const GithubAnalyse = () => {
                         ))}
                     </div>
 
-                    <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
                         <SubmissionChart
                             title="Commit Activity"
                             submissionData={commitData}
+                            className="col-span-1"
                         />
 
                         <ProblemStatsCard
                             title="Language Distribution"
                             problemsData={languageData}
+                            className="col-span-1"
+                            includeLabels={true}
+                            orientation="vertical"
                         />
                     </div>
 

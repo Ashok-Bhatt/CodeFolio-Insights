@@ -62,14 +62,7 @@ export const useChangePassword = () => {
     })
 }
 
-export const useUpdateLastRefresh = () => {
-    return useMutation({
-        mutationFn: asyncWrapper(async () => {
-            const response = await axiosInstance.patch("/user/last-refresh", {}, { requiresAuth: true });
-            return response.data;
-        }),
-    })
-}
+// Obsolete useUpdateLastRefresh removed as per backend refactor
 
 export const useLogout = () => {
     return useMutation({
@@ -91,10 +84,12 @@ export const useUsers = (params) => {
     })
 }
 
-export const useAddProfileView = () => {
+// Obsolete useAddProfileView removed as per backend refactor
+
+export const useToggleProfileVisibility = () => {
     return useMutation({
-        mutationFn: asyncWrapper(async (userId) => {
-            const response = await axiosInstance.patch(`/user/profile-view/${userId}`, {}, { requiresAuth: true });
+        mutationFn: asyncWrapper(async () => {
+            const response = await axiosInstance.patch("/user/visibility", {}, { requiresAuth: true });
             return response.data;
         }),
     })

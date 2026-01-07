@@ -15,8 +15,8 @@ const profileViewSchema = new mongoose.Schema({
     },
     viewerType: {
         type: String,
-        enum: ["user", "guest"],
-        default: "guest",
+        enum: ["user", "device"],
+        default: "device",
     },
     lastSeenAt: {
         type: Date,

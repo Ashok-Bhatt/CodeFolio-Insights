@@ -7,20 +7,24 @@ import { SubmissionChart } from "../../components/charts/export.js"
 import { useAuthStore } from '../../store/export.js';
 import { useLeetcodeAnalysis } from '../../hooks/useAnalyzer.js';
 import { useProfileLinks } from '../../hooks/useProfiles.js';
+import { getStreaksAndActiveDays } from '../../utils/calendar.js';
 
 const LeetcodeAnalyse = () => {
     const user = useAuthStore((state) => state.user);
     const { data: profile } = useProfileLinks(user?._id);
     const [userId, setUserId] = useState(profile?.leetCodeUsername || "");
 
-    const { data: analysisData, isLoading, isError, error, refetch, isFetching } = useLeetcodeAnalysis(userId.trim());
+    const { data: analysisData, isError, error, refetch, isFetching } = useLeetcodeAnalysis(userId.trim());
 
     const handleAnalyze = () => {
         if (!userId.trim()) return;
         refetch();
     };
 
+    const { currentStreak, maxStreak, activeDays, totalContributions } = getStreaksAndActiveDays(analysisData?.multiYearSubmissionCalendar || {});
+
     const getLeetcodeSubmissionData = (submissionData) => {
+        if (!submissionData) return [];
         return Object.entries(submissionData)
             .sort((x, y) => new Date(x[0]) - new Date(y[0]))
             .map((dailyData) => ({
@@ -30,12 +34,13 @@ const LeetcodeAnalyse = () => {
     };
 
     const getLeetcodeDifficultyData = (difficultyData) => [
-        { name: 'Easy', value: difficultyData[1].count, color: '#34D399' },
-        { name: 'Medium', value: difficultyData[2].count, color: '#F59E0B' },
-        { name: 'Hard', value: difficultyData[3].count, color: '#EF4444' }
+        { name: 'Easy', value: difficultyData?.[1]?.count, color: '#34D399' },
+        { name: 'Medium', value: difficultyData?.[2]?.count, color: '#F59E0B' },
+        { name: 'Hard', value: difficultyData?.[3]?.count, color: '#EF4444' }
     ];
 
     const getLeetcodeTopicData = (topicData) => {
+        if (!topicData) return [];
         const responseTopicData = [];
         const topicDataArray = Object.entries(topicData).map((topicLevelData) => topicLevelData[1]);
         for (let i = 0; i < topicDataArray.length; i++) {
@@ -53,10 +58,10 @@ const LeetcodeAnalyse = () => {
 
     const getLeetCodeStats = (analysisData) => {
         return [
-            { title: "Total Solved", value: analysisData.problemsCount.acSubmissionNum[0].count, color: "green", Icon: CheckCircle },
-            { title: "Acceptance", value: `${(analysisData.acceptanceRate * 100).toFixed(1)}%`, color: "blue", Icon: Target },
-            { title: "Current Streak", value: analysisData.submissionCalendar.streak, color: "amber", Icon: Zap },
-            { title: "Badges Earned", value: analysisData.badges.badges.length ?? 0, color: "purple", Icon: Award },
+            { title: "Total Solved", value: analysisData?.problemsCount?.matchedUser?.submitStats?.acSubmissionNum?.[0]?.count ?? 0, color: "green", Icon: CheckCircle },
+            { title: "Acceptance", value: `${((analysisData?.acceptanceRate || 0) * 100).toFixed(1)}%`, color: "blue", Icon: Target },
+            { title: "Current Streak", value: currentStreak ?? 0, color: "amber", Icon: Zap },
+            { title: "Badges Earned", value: analysisData?.badges?.matchedUser?.badges?.length ?? 0, color: "purple", Icon: Award },
             ...(analysisData?.contestData?.userContestRanking ? [
                 { title: "Contest Rating", value: Math.round(analysisData?.contestData?.userContestRanking?.rating ?? 0), color: "purple", Icon: Award },
                 { title: "Global rank", value: analysisData?.contestData?.userContestRanking?.globalRanking ?? 0, color: "purple", Icon: Award },
@@ -112,7 +117,7 @@ const LeetcodeAnalyse = () => {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <div className="lg:col-span-1 bg-white/90 backdrop-blur-sm p-6 rounded-3xl shadow-xl border border-gray-100 animate-float-in">
                             <ScoreMeter
-                                score={analysisData.score}
+                                score={analysisData?.scoreData?.overall}
                             />
                         </div>
 
@@ -125,7 +130,7 @@ const LeetcodeAnalyse = () => {
                             </div>
 
                             <MemeContainer
-                                score={analysisData.score}
+                                score={analysisData?.scoreData?.overall ?? 0}
                             />
                         </div>
 
@@ -133,7 +138,7 @@ const LeetcodeAnalyse = () => {
                             <div className="space-y-6">
                                 <AnalysisCard
                                     title="Profile Analysis"
-                                    points={analysisData.profileAnalysis.analysis}
+                                    points={analysisData?.profileAnalysis?.analysis || []}
                                     Icon={BarChart3}
                                     PointIcon={CheckCircle}
                                     iconBg="bg-purple-100"
@@ -147,7 +152,7 @@ const LeetcodeAnalyse = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <AnalysisCard
                                         title="Strengths"
-                                        points={analysisData.profileAnalysis?.strongPoints}
+                                        points={analysisData?.profileAnalysis?.strongPoints}
                                         Icon={TrendingUp}
                                         PointIcon={CheckCircle}
                                         iconBg="bg-blue-100"
@@ -159,7 +164,7 @@ const LeetcodeAnalyse = () => {
 
                                     <AnalysisCard
                                         title="Areas to Improve"
-                                        points={analysisData.profileAnalysis?.improvementAreas}
+                                        points={analysisData?.profileAnalysis?.improvementAreas}
                                         Icon={Target}
                                         PointIcon={AlertCircle}
                                         iconBg="bg-amber-100"
@@ -185,30 +190,30 @@ const LeetcodeAnalyse = () => {
                     </div>
 
                     <BadgeCollection
-                        badges={analysisData.badges.badges}
+                        badges={analysisData?.badges?.matchedUser?.badges}
                         defaultBadgesCount={6}
                     />
 
-                    <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
                         <SubmissionChart
                             title="Submission Activity"
-                            submissionData={getLeetcodeSubmissionData(analysisData?.submissionCalendar?.submissionCalendar)}
+                            submissionData={getLeetcodeSubmissionData(analysisData?.submissionCalendar)}
                         />
 
                         <ProblemStatsCard
                             title="Difficulty Breakdown"
-                            problemsData={getLeetcodeDifficultyData(analysisData?.problemsCount.acSubmissionNum)}
+                            problemsData={getLeetcodeDifficultyData(analysisData?.problemsCount?.matchedUser?.submitStats?.acSubmissionNum)}
                         />
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         <TopicStats
-                            topicData={getLeetcodeTopicData(analysisData?.topicWiseProblems)}
+                            topicData={getLeetcodeTopicData(analysisData?.topicWiseProblems?.matchedUser?.tagProblemCounts)}
                         />
-                        
+
                         {analysisData?.profileAnalysis?.video && (
                             <VideoSuggestionCard
-                                suggestedVideo={analysisData.profileAnalysis.video}
+                                suggestedVideo={analysisData?.profileAnalysis?.video}
                             />
                         )}
                     </div>

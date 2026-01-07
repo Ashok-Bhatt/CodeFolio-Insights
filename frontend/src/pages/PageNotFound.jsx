@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
 import { Home, ArrowLeft, Ghost } from 'lucide-react';
+import { useAuthStore } from '../store/export.js';
 
 const PageNotFound = () => {
+    const user = useAuthStore((state) => state.user);
+
     return (
         <div className="min-h-screen bg-[#0f172a] flex items-center justify-center px-6 py-12 overflow-hidden relative">
             {/* Background Decorative Elements */}
@@ -33,7 +36,7 @@ const PageNotFound = () => {
                     {/* Actions */}
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
                         <Link
-                            to="/dashboard"
+                            to={user ? `/dashboard/${user._id}` : "/"}
                             className="group flex items-center gap-3 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-2xl shadow-xl shadow-blue-500/20 transition-all duration-300 transform hover:-translate-y-1 active:scale-95"
                         >
                             <Home size={20} />

@@ -1,4 +1,4 @@
-import ProfileViewModel from "../models/profileView.model";
+import ProfileViewModel from "../models/profileView.model.js";
 import { v4 as uuid } from "uuid";
 
 const PROFILE_VIEW_COOLDOWN_MS = 10 * 60 * 1000;

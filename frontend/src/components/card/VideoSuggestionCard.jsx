@@ -9,7 +9,6 @@ const VideoSuggestionCard = ({ suggestedVideo }) => {
             const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
             const match = cleanUrl.match(regExp);
             if (match && match[2].length === 11) return `https://www.youtube.com/embed/${match[2]}`;
-            console.log(cleanUrl);
             return cleanUrl;
         } catch (error) {
             return url;
@@ -32,7 +31,7 @@ const VideoSuggestionCard = ({ suggestedVideo }) => {
                 <div className="aspect-video bg-gray-900 rounded-2xl overflow-hidden shadow-lg relative group/video">
                     <iframe
                         className="w-full h-full relative z-10"
-                        src={getEmbedUrl(suggestedVideo.link.url)}
+                        src={getEmbedUrl(suggestedVideo.link)}
                         title="Recommended Tutorial"
                         frameBorder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -53,16 +52,16 @@ const VideoSuggestionCard = ({ suggestedVideo }) => {
                         <div className="flex items-center gap-4">
                             <div className="flex items-center gap-1.5 text-xs font-bold text-gray-400">
                                 <Clock className="w-4 h-4" />
-                                <span>{Math.round(suggestedVideo.time / 60)}min</span>
+                                <span>{Math.round(suggestedVideo.time / 60)} min</span>
                             </div>
                             <div className="flex items-center gap-1.5 text-xs font-bold text-gray-400">
                                 <Users className="w-4 h-4" />
-                                <span>{suggestedVideo.views?.toLocaleString()}</span>
+                                <span>{suggestedVideo.views}</span>
                             </div>
                         </div>
 
                         <a
-                            href={suggestedVideo.link.url} target="_blank" rel="noopener noreferrer"
+                            href={suggestedVideo.link} target="_blank" rel="noopener noreferrer"
                             className="flex items-center gap-1.5 text-xs font-black text-purple-600 hover:text-purple-700 uppercase tracking-widest transition-all"
                         >
                             Watch <ExternalLink className="w-3.5 h-3.5" />

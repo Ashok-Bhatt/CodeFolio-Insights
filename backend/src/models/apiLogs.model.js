@@ -4,7 +4,6 @@ const apiLogsSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Types.ObjectId,
         ref: "users",
-        required: true,
     },
     endpoint: {
         type: String,

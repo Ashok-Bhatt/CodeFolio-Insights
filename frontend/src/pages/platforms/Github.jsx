@@ -3,7 +3,6 @@ import { useOutletContext } from 'react-router-dom';
 import { LanguageStats, GithubStats, BadgeCollection } from '../../components/export.js';
 import { SubmissionHeatmap } from '../../components/charts/export.js';
 import { FolderGit, GitCommitHorizontal, GitPullRequest, Ban } from "lucide-react";
-import { getPolishedGithubHeatmap } from '../../utils/dataHelpers.js';
 
 const Github = () => {
     const { data } = useOutletContext();
@@ -12,16 +11,14 @@ const Github = () => {
 
     return (
         <div className="space-y-8 animate-float-in">
-            <h2 className="text-3xl font-bold text-slate-800">GitHub Stats</h2>
-
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
                 <LanguageStats languageStats={data?.github?.languageStats} />
-                
+
                 <GithubStats statsArray={[
                     { icon: <FolderGit className="text-yellow-500" />, name: "Repos", value: data?.github?.profile?.public_repos },
                     { icon: <GitCommitHorizontal className="text-orange-500" />, name: "Commits", value: data?.github?.commits || 0 },
-                    { icon: <GitPullRequest className="text-green-500" />, name: "PRs", value: data?.github?.contributions?.pullRequestContributions?.totalCount || 0 },
-                    { icon: <Ban className="text-red-500" />, name: "issues", value: data?.github?.contributions?.issueContributions?.totalCount || 0 },
+                    { icon: <GitPullRequest className="text-green-500" />, name: "PRs", value: data?.github?.contributions?.pullRequestsCount || 0 },
+                    { icon: <Ban className="text-red-500" />, name: "issues", value: data?.github?.contributions?.issuesCount || 0 },
                 ]} />
 
                 <BadgeCollection
@@ -32,7 +29,7 @@ const Github = () => {
                 />
 
                 <SubmissionHeatmap
-                    calendar={getPolishedGithubHeatmap(data?.github?.calendar)}
+                    calendar={data?.github?.calendar}
                     className="xl:col-span-2"
                 />
             </div>

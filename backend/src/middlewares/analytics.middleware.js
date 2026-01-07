@@ -2,10 +2,10 @@ import apiLogs from "../models/apiLogs.model.js";
 import asyncHandler from '../utils/asyncHandler.js';
 
 const getAnalytics = asyncHandler(async (req, res, next) => {
-    const userId = req.user?._id || null;
-    const startTime = Date.now();
+    const startTime = Date.now(); 
 
     res.on("finish", async () => {
+        const userId = req.user?._id || null;
         const duration = Date.now() - startTime;
 
         await apiLogs.create({
