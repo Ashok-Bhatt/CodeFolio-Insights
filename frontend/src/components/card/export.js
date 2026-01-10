@@ -6,3 +6,4 @@ export { default as StatCard } from './StatCard';
 export { default as VideoSuggestionCard } from './VideoSuggestionCard';
 export { default as LinkCard } from './LinkCard';
 export { default as HackerrankCertificateCard } from './HackerrankCertificateCard';
+export { default as FeatureCard } from './FeatureCard';

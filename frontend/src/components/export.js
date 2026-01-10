@@ -18,3 +18,5 @@ export { default as AddEditLinkForm } from './AddEditLinkForm';
 export { default as Sidebar } from './sidebars/Sidebar';
 export { default as DashboardSidebar } from './sidebars/DashboardSidebar';
 export { default as CertificatesCollection } from './CertificatesCollection';
+export { default as DashboardPreview } from './DashboardPreview';
+export { default as LandingNavbar } from './LandingNavbar';
