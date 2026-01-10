@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { useUpdateUser } from '../hooks/useUsers';
 import { ProfileInfoForm } from '../components/export';
@@ -9,8 +9,51 @@ const SettingsProfile = () => {
     const { user, setUser } = useOutletContext();
     const setAuthUser = useAuthStore((state) => state.setUser);
     const [isEditing, setIsEditing] = useState(false);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [profileImageViewUrl, setProfileImageViewUrl] = useState(user?.profilePicture || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face");
 
     const { mutateAsync: updateUserMutation, isPending: isLoading } = useUpdateUser();
+
+    // Update profile image view when user changes (e.g. after successful update)
+    useEffect(() => {
+        if (user?.profilePicture) {
+            setProfileImageViewUrl(user.profilePicture);
+        }
+    }, [user?.profilePicture]);
+
+    const handleImageUpload = (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        setSelectedFile(file);
+        const previewUrl = URL.createObjectURL(file);
+        setProfileImageViewUrl(previewUrl);
+    };
+
+    const updateImage = async () => {
+        if (!selectedFile) return;
+        try {
+            const formData = new FormData();
+            formData.append('profileImage', selectedFile);
+            const data = await updateUserMutation(formData);
+            if (data) {
+                // Update local and global user state
+                const updatedUser = { ...user, profilePicture: data.profilePicture };
+                setUser(updatedUser);
+                setAuthUser(data);
+                setSelectedFile(null);
+                toast.success("Profile image updated!");
+            }
+        } catch (error) {
+            console.log(error.stack);
+            toast.error("Failed to update profile image!");
+        }
+    };
+
+    useEffect(() => {
+        if (selectedFile) {
+            updateImage();
+        }
+    }, [selectedFile]);
 
     const handleChange = (e) => {
         setUser({ ...user, [e.target.name]: e.target.value });
@@ -63,6 +106,8 @@ const SettingsProfile = () => {
             setIsEditing={setIsEditing}
             handleSubmit={handleSubmit}
             isLoading={isLoading}
+            profileImageViewUrl={profileImageViewUrl}
+            handleImageUpload={handleImageUpload}
         />
     );
 };

@@ -51,15 +51,8 @@ const App = () => {
                     <Route index element={<Navigate to="profile" replace />} />
                     <Route path="profile" element={<SettingsProfile />} />
                     <Route path="appearance" element={<AppearanceSettings />} />
+                    <Route path="links" element={<LinkPage />} />
                 </Route>
-                <Route
-                    path="link"
-                    element={
-                        <ProtectedRoute requiresAuthentication={true}>
-                            <LinkPage />
-                        </ProtectedRoute>
-                    }
-                />
             </Route>
             <Route path="/home" element={<Navigate to="/" replace />} />
             <Route path="*" element={<PageNotFound />} />

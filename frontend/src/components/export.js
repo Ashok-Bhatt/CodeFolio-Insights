@@ -14,7 +14,6 @@ export { default as TopicAnalysis } from './TopicAnalysis';
 export { default as TopicStats } from './TopicStats';
 export { default as ProfileInfoForm } from './ProfileInfoForm';
 export { default as AppearanceSettings } from './AppearanceSettings';
-export { default as AddEditLinkForm } from './AddEditLinkForm';
 export { default as Sidebar } from './sidebars/Sidebar';
 export { default as DashboardSidebar } from './sidebars/DashboardSidebar';
 export { default as CertificatesCollection } from './CertificatesCollection';

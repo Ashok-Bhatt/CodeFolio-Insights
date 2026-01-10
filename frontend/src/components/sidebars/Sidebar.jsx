@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, LayoutDashboard, FileUser, CodeXml, Github, Terminal, User, Link as LinkIcon, LogOut, ChartLine, ChartArea } from 'lucide-react';
+import { ChevronLeft, ChevronRight, LayoutDashboard, FileUser, CodeXml, Github, Terminal, Link as LinkIcon, LogOut, ChartLine, ChartArea, Settings } from 'lucide-react';
 import { useAuthStore, usePreferenceStore } from '../../store/export.js';
 
 const Sidebar = () => {
@@ -26,8 +26,7 @@ const Sidebar = () => {
     const sidebarItems = [
         { name: 'Dashboard', path: `/dashboard/${user?._id}`, Icon: LayoutDashboard },
         { name: 'Analyzers', path: '/analyzer/leetcode', Icon: ChartArea },
-        { name: 'Settings', path: '/settings', Icon: User },
-        { name: 'Manage Links', path: '/link', Icon: LinkIcon },
+        { name: 'Settings', path: '/settings', Icon: Settings },
     ];
 
     return (
