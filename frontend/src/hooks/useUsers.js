@@ -6,7 +6,7 @@ export const useCheckAuth = () => {
         queryKey: ["checkAuth"],
         retry: 3,
         queryFn: asyncWrapper(async () => {
-            const response = await axiosInstance.get("/auth/check", { requiresAuth: true });
+            const response = await axiosInstance.get("/auth/check", { requiresAuth: true, withCredentials: true });
             return response.data;
         })
     })

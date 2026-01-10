@@ -2,11 +2,11 @@ import { useAuthStore } from './store/export.js';
 import { useCheckAuth } from './hooks/useUsers.js';
 import { useEffect } from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
-import { Landing, LoginPage, SignupPage, CodingProfiles, ProfilePage, LinkPage, PageNotFound } from './pages/export.js';
+import { Landing, LoginPage, SignupPage, CodingProfiles, SettingsPage, SettingsProfile, LinkPage, PageNotFound } from './pages/export.js';
 import { HomeLayout, DashboardLayout, AnalyzerLayout } from "./layouts/export.js";
 import { LeetCode, GFG, Code360, Interviewbit, CodeChef, HackerRank, Github } from './pages/platforms/export.js';
 import { LeetcodeAnalyse, GithubAnalyse, ResumeAnalyse } from './pages/analyse/export.js';
-import { ProtectedRoute } from './components/export.js';
+import { ProtectedRoute, AppearanceSettings } from './components/export.js';
 
 const App = () => {
     const { data, isSuccess } = useCheckAuth();
@@ -43,24 +43,24 @@ const App = () => {
                     <Route path="github" element={<GithubAnalyse />} />
                     <Route path="resume" element={<ResumeAnalyse />} />
                 </Route>
+                <Route path="settings" element={
+                    <ProtectedRoute requiresAuthentication={true}>
+                        <SettingsPage />
+                    </ProtectedRoute>
+                }>
+                    <Route index element={<Navigate to="profile" replace />} />
+                    <Route path="profile" element={<SettingsProfile />} />
+                    <Route path="appearance" element={<AppearanceSettings />} />
+                </Route>
+                <Route
+                    path="link"
+                    element={
+                        <ProtectedRoute requiresAuthentication={true}>
+                            <LinkPage />
+                        </ProtectedRoute>
+                    }
+                />
             </Route>
-
-            <Route
-                path="/profile"
-                element={
-                    <ProtectedRoute requiresAuthentication={true}>
-                        <ProfilePage />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/link"
-                element={
-                    <ProtectedRoute requiresAuthentication={true}>
-                        <LinkPage />
-                    </ProtectedRoute>
-                }
-            />
             <Route path="/home" element={<Navigate to="/" replace />} />
             <Route path="*" element={<PageNotFound />} />
         </Routes>

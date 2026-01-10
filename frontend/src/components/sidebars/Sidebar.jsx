@@ -26,6 +26,8 @@ const Sidebar = () => {
     const sidebarItems = [
         { name: 'Dashboard', path: `/dashboard/${user?._id}`, Icon: LayoutDashboard },
         { name: 'Analyzers', path: '/analyzer/leetcode', Icon: ChartArea },
+        { name: 'Settings', path: '/settings', Icon: User },
+        { name: 'Manage Links', path: '/link', Icon: LinkIcon },
     ];
 
     return (
@@ -61,7 +63,9 @@ const Sidebar = () => {
                     {sidebarItems.map((item, index) => {
                         const isActive = item.name === 'Dashboard'
                             ? location.pathname.startsWith('/dashboard')
-                            : location.pathname.startsWith('/analyzer');
+                            : item.name === 'Analyzers'
+                                ? location.pathname.startsWith('/analyzer')
+                                : location.pathname.startsWith(item.path);
                         const Icon = item.Icon;
                         return (
                             <li key={item.name} className="relative">
@@ -140,12 +144,6 @@ const Sidebar = () => {
                     </summary>
                     {!isSidebarCollapsed && (
                         <div className="mt-2 space-y-1 p-2 bg-gray-50 rounded-2xl border border-gray-100 animate-slide-in-up">
-                            <Link to="/profile" className="flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-gray-600 hover:text-blue-600 hover:bg-white rounded-xl transition-all">
-                                <User size={14} /> Profile Settings
-                            </Link>
-                            <Link to="/link" className="flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-gray-600 hover:text-blue-600 hover:bg-white rounded-xl transition-all">
-                                <LinkIcon size={14} /> Manage Links
-                            </Link>
                             <button
                                 onClick={handleLogout}
                                 className="w-full flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-red-600 hover:bg-red-50 rounded-xl transition-all mt-1"
