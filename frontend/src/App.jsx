@@ -2,7 +2,7 @@ import { useAuthStore } from './store/export.js';
 import { useCheckAuth } from './hooks/useUsers.js';
 import { useEffect } from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
-import { Landing, LoginPage, SignupPage, CodingProfiles, SettingsPage, SettingsProfile, LinkPage, PageNotFound } from './pages/export.js';
+import { Landing, LoginPage, SignupPage, CodingProfiles, SettingsPage, SettingsProfile, LinkPage, PageNotFound, Account } from './pages/export.js';
 import { HomeLayout, DashboardLayout, AnalyzerLayout } from "./layouts/export.js";
 import { LeetCode, GFG, Code360, Interviewbit, CodeChef, HackerRank, Github } from './pages/platforms/export.js';
 import { LeetcodeAnalyse, GithubAnalyse, ResumeAnalyse } from './pages/analyse/export.js';
@@ -51,6 +51,7 @@ const App = () => {
                     <Route index element={<Navigate to="profile" replace />} />
                     <Route path="profile" element={<SettingsProfile />} />
                     <Route path="appearance" element={<AppearanceSettings />} />
+                    <Route path="account" element={<Account />} />
                     <Route path="links" element={<LinkPage />} />
                 </Route>
             </Route>

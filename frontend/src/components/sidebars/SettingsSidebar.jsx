@@ -1,7 +1,7 @@
-import { User, Palette, Link as LinkIcon } from 'lucide-react';
+import { User, Palette, Link as LinkIcon, ShieldCheck } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 
-const SettingsSidebar = ({ user }) => {
+const SettingsSidebar = () => {
 
     const animationStyles = `
         @keyframes glowPulse { 0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); } 50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.4); } }
@@ -31,6 +31,13 @@ const SettingsSidebar = ({ user }) => {
                 >
                     <Palette className="w-5 h-5" />
                     <span className="font-medium">Appearance</span>
+                </NavLink>
+                <NavLink
+                    to="account"
+                    className={({ isActive }) => `w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all ${isActive ? 'active-tab' : 'text-gray-600 hover:bg-blue-50/50'}`}
+                >
+                    <ShieldCheck className="w-5 h-5" />
+                    <span className="font-medium">Account</span>
                 </NavLink>
                 <NavLink
                     to="links"

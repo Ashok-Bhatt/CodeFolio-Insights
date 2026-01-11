@@ -31,18 +31,17 @@ const Sidebar = () => {
 
     return (
         <aside
-            className={`hidden md:flex flex-col bg-white border-r border-gray-100 shadow-2xl transition-all duration-700 ease-out backdrop-blur-xl ${isSidebarCollapsed ? 'w-fit' : 'w-72'} ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`}
+            className={`hidden md:flex flex-col bg-white border-r border-gray-100 shadow-2xl transition-all duration-700 ease-out backdrop-blur-xl ${isSidebarCollapsed ? 'w-fit' : 'w-60'} ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`}
             style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(248,250,252,0.98) 100%)' }}
         >
             <div className={`relative flex items-center h-20 border-b border-gray-50 transition-all duration-500 ${isSidebarCollapsed ? 'justify-center px-4' : 'justify-between px-6'}`}>
                 <div className="relative flex-shrink-0">
-                    <div className="absolute inset-0 bg-blue-500 rounded-xl blur-md opacity-20 animate-glow-pulse" />
-                    <Terminal className="w-8 h-8 text-blue-600 relative z-10" />
+                    <Terminal className="w-6 h-6 text-blue-600 relative z-10" />
                 </div>
 
                 {/* Toggler to toggle the sidebar */}
                 {!isSidebarCollapsed && (
-                    <span className="text-2xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent animate-slide-in-right">
+                    <span className="text-xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent animate-slide-in-right">
                         CodeFolio
                     </span>
                 )}
