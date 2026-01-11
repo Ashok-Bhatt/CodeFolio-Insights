@@ -32,7 +32,7 @@ const LeetCode = () => {
         }
     ];
 
-    const topicStats = (Object.values(platformData?.topicStats))?.flat()?.reduce((acc, { tagSlug, problemsSolved }) => {
+    const topicStats = (Object.values(platformData?.topicStats || []))?.flat()?.reduce((acc, { tagSlug, problemsSolved }) => {
         acc[tagSlug] = problemsSolved;
         return acc;
     }, {});
@@ -58,10 +58,10 @@ const LeetCode = () => {
                 <BadgeCollection
                     title="Badges"
                     defaultBadgesCount={2}
-                    badges={platformData?.badges?.badges.map((badge) => {
+                    badges={platformData?.badges?.badges?.map((badge) => {
                         if (badge.category === "COMPETITION" && !badge.icon.includes("https://leetcode.com")) badge.icon = "https://leetcode.com" + badge.icon;
                         return badge;
-                    })}
+                    }) || []}
                 />
 
                 <ProblemsCard

@@ -128,7 +128,7 @@ const Sidebar = () => {
                     <summary className={`flex items-center list-none cursor-pointer p-2 rounded-2xl hover:bg-gray-50 transition-all ${isSidebarCollapsed ? 'justify-center' : ''}`}>
                         <div className="relative flex-shrink-0">
                             <img
-                                src={user?.profilePicture || "/Images/Default/user.png"}
+                                src={user?.profile || "/Images/Default/user.png"}
                                 alt="User"
                                 className="h-10 w-10 rounded-full border-2 border-white shadow-md group-hover:border-blue-200 transition-all object-cover"
                             />
