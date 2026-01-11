@@ -37,7 +37,7 @@ router.get(
       if (err) return next(err);
       if (!user) return res.redirect(`${CORS_ORIGIN}/login`);
       generateToken(user.id, res);
-      return res.redirect(`${CORS_ORIGIN}/dashboard`);
+      return res.redirect(`${CORS_ORIGIN}/dashboard/${user._id}`);
     })(req, res, next);
   }
 );

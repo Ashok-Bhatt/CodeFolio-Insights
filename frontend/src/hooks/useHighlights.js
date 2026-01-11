@@ -1,0 +1,28 @@
+import { useState, useEffect } from "react";
+import { axiosInstance } from "../api/export.js";
+
+const useHighlights = () => {
+    const [highlights, setHighlights] = useState({ totalUsers: 0, sampleUsers: [] });
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchHighlights = async () => {
+            try {
+                const response = await axiosInstance.get("/user/highlights");
+                setHighlights(response.data);
+            } catch (err) {
+                console.error("Failed to fetch highlights:", err);
+                setError(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchHighlights();
+    }, []);
+
+    return { highlights, loading, error };
+};
+
+export default useHighlights;

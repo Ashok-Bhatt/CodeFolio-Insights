@@ -1,7 +1,13 @@
-import { User, Mail, Briefcase, MapPin, Globe, FileText, Sparkles, Save, EyeOff, Edit3, Linkedin, Twitter, Phone, Quote } from 'lucide-react';
+import { useRef } from 'react';
+import { User, Mail, Briefcase, MapPin, Globe, FileText, Sparkles, Save, EyeOff, Edit3, Linkedin, Twitter, Phone, Quote, Camera } from 'lucide-react';
 import { getCountries, getCountryCallingCode } from 'libphonenumber-js';
 
-const ProfileInfoForm = ({ user, handleChange, isEditing, setIsEditing, handleSubmit, isLoading }) => {
+const ProfileInfoForm = ({ user, handleChange, isEditing, setIsEditing, handleSubmit, isLoading, profileImageViewUrl, handleImageUpload }) => {
+    const fileInputRef = useRef(null);
+
+    // Fallback image if url is missing
+    const displayImage = profileImageViewUrl || user?.profile || "/Images/Default/user.png";
+
     return (
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-blue-100/50 p-8">
             <div className="flex items-center justify-between mb-6">
@@ -18,6 +24,41 @@ const ProfileInfoForm = ({ user, handleChange, isEditing, setIsEditing, handleSu
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
+
+                {/* Profile Image Section */}
+                <div className="flex items-center gap-6 mb-8 p-4 bg-blue-50/50 rounded-2xl border border-blue-100">
+                    <div className="relative group">
+                        <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full blur opacity-20 group-hover:opacity-40 transition-opacity"></div>
+                        <img
+                            src={displayImage}
+                            alt="Profile"
+                            className="relative w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg"
+                        />
+                        {isEditing && (
+                            <>
+                                <button
+                                    type="button"
+                                    onClick={() => fileInputRef.current?.click()}
+                                    className="absolute bottom-0 right-0 p-2 bg-blue-600 rounded-full border-2 border-white hover:bg-blue-700 transition-all shadow-md transform hover:scale-110"
+                                >
+                                    <Camera className="w-4 h-4 text-white" />
+                                </button>
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    onChange={handleImageUpload}
+                                    accept="image/*"
+                                    className="hidden"
+                                />
+                            </>
+                        )}
+                    </div>
+                    <div>
+                        <h3 className="font-bold text-gray-800 text-lg">Profile Photo</h3>
+                        <p className="text-sm text-gray-500 max-w-xs">{isEditing ? "Click the camera icon to upload a new photo. standard format (JPG, PNG) recommended." : "Your current profile photo."}</p>
+                    </div>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                         <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
@@ -46,16 +87,6 @@ const ProfileInfoForm = ({ user, handleChange, isEditing, setIsEditing, handleSu
                         </label>
                         <input
                             type="text" name="jobTitle" value={user.jobTitle || ''} onChange={handleChange} disabled={!isEditing}
-                            className="w-full px-4 py-3 bg-white/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 disabled:opacity-50"
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                            <MapPin className="w-4 h-4 text-blue-500" /> Location
-                        </label>
-                        <input
-                            type="text" name="location" value={user.location || ''} onChange={handleChange} disabled={!isEditing}
                             className="w-full px-4 py-3 bg-white/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 disabled:opacity-50"
                         />
                     </div>
@@ -117,6 +148,16 @@ const ProfileInfoForm = ({ user, handleChange, isEditing, setIsEditing, handleSu
                             type="tel" name="phone" value={user.phone || ''} onChange={handleChange} disabled={!isEditing}
                             className="w-full px-4 py-3 bg-white/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 disabled:opacity-50"
                             placeholder="10 digit phone number"
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                            <MapPin className="w-4 h-4 text-blue-500" /> Location
+                        </label>
+                        <input
+                            type="text" name="location" value={user.location || ''} onChange={handleChange} disabled={!isEditing}
+                            className="w-full px-4 py-3 bg-white/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 disabled:opacity-50"
                         />
                     </div>
 

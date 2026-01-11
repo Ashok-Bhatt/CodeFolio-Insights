@@ -9,7 +9,9 @@ const DashboardLayout = () => {
     const { userId } = useParams();
     const { data: cacheData, isLoading: isLoadingCache } = useProfileCache(userId);
     const { data: refreshData, isLoading: isRefreshing, refetch: triggerRefresh } = useProfileRefresh(userId);
-    const { data: userData, isLoading: isUserLoading } = useUser(userId);
+    const { data: userData, error: userError } = useUser(userId);
+
+    console.log(userError);
 
     const data = refreshData || cacheData;
 

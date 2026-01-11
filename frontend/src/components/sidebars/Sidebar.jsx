@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, LayoutDashboard, FileUser, CodeXml, Github, Terminal, User, Link as LinkIcon, LogOut, ChartLine, ChartArea } from 'lucide-react';
+import { ChevronLeft, ChevronRight, LayoutDashboard, Terminal, LogOut, ChartLine, ChartArea, Settings } from 'lucide-react';
 import { useAuthStore, usePreferenceStore } from '../../store/export.js';
 
 const Sidebar = () => {
@@ -25,7 +25,8 @@ const Sidebar = () => {
 
     const sidebarItems = [
         { name: 'Dashboard', path: `/dashboard/${user?._id}`, Icon: LayoutDashboard },
-        { name: 'Analyzers', path: '/analyzer/leetcode', Icon: ChartArea },
+        { name: 'Analyzers', path: '/analyzer', Icon: ChartArea },
+        { name: 'Settings', path: '/settings', Icon: Settings },
     ];
 
     return (
@@ -34,17 +35,17 @@ const Sidebar = () => {
             style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(248,250,252,0.98) 100%)' }}
         >
             <div className={`relative flex items-center h-20 border-b border-gray-50 transition-all duration-500 ${isSidebarCollapsed ? 'justify-center px-4' : 'justify-between px-6'}`}>
-                <Link to={`/dashboard/${user?._id}`} className="flex items-center gap-3 overflow-hidden">
-                    <div className="relative flex-shrink-0">
-                        <div className="absolute inset-0 bg-blue-500 rounded-xl blur-md opacity-20 animate-glow-pulse" />
-                        <Terminal className="w-8 h-8 text-blue-600 relative z-10" />
-                    </div>
-                    {!isSidebarCollapsed && (
-                        <span className="text-2xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent animate-slide-in-right">
-                            CodeFolio
-                        </span>
-                    )}
-                </Link>
+                <div className="relative flex-shrink-0">
+                    <div className="absolute inset-0 bg-blue-500 rounded-xl blur-md opacity-20 animate-glow-pulse" />
+                    <Terminal className="w-8 h-8 text-blue-600 relative z-10" />
+                </div>
+
+                {/* Toggler to toggle the sidebar */}
+                {!isSidebarCollapsed && (
+                    <span className="text-2xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent animate-slide-in-right">
+                        CodeFolio
+                    </span>
+                )}
 
                 {!isSidebarCollapsed && (
                     <button
@@ -61,7 +62,9 @@ const Sidebar = () => {
                     {sidebarItems.map((item, index) => {
                         const isActive = item.name === 'Dashboard'
                             ? location.pathname.startsWith('/dashboard')
-                            : location.pathname.startsWith('/analyzer');
+                            : item.name === 'Analyzers'
+                                ? location.pathname.startsWith('/analyzer')
+                                : location.pathname.startsWith(item.path);
                         const Icon = item.Icon;
                         return (
                             <li key={item.name} className="relative">
@@ -140,12 +143,6 @@ const Sidebar = () => {
                     </summary>
                     {!isSidebarCollapsed && (
                         <div className="mt-2 space-y-1 p-2 bg-gray-50 rounded-2xl border border-gray-100 animate-slide-in-up">
-                            <Link to="/profile" className="flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-gray-600 hover:text-blue-600 hover:bg-white rounded-xl transition-all">
-                                <User size={14} /> Profile Settings
-                            </Link>
-                            <Link to="/link" className="flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-gray-600 hover:text-blue-600 hover:bg-white rounded-xl transition-all">
-                                <LinkIcon size={14} /> Manage Links
-                            </Link>
                             <button
                                 onClick={handleLogout}
                                 className="w-full flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-red-600 hover:bg-red-50 rounded-xl transition-all mt-1"

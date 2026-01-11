@@ -1,3 +1,4 @@
 export { default as HomeLayout } from './HomeLayout';
 export { default as DashboardLayout } from './DashboardLayout';
 export { default as AnalyzerLayout } from './AnalyzerLayout';
+export { default as Animated } from './Animated';

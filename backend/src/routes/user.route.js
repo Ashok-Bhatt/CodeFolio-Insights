@@ -1,5 +1,5 @@
 import express from "express"
-import { getUser, changePassword, updateUserInfo, getUsers, toggleProfileVisibility } from "../controllers/user.controller.js";
+import { getUser, getUserHighlights, changePassword, updateUserInfo, getUsers, toggleProfileVisibility } from "../controllers/user.controller.js";
 import { optionalAuth, protectRoute } from "../middlewares/auth.middleware.js";
 import { getAnalytics } from "../middlewares/analytics.middleware.js";
 import upload from "../middlewares/multer.middleware.js";
@@ -10,6 +10,7 @@ import { usersQueryValidationSchema, userInfoUpdateValidationSchema, changePassw
 const router = express.Router();
 
 router.get("/", protectRoute, checkAdmin, validate(usersQueryValidationSchema), getUsers);
+router.get("/highlights", getUserHighlights);
 router.get("/:userId", optionalAuth, getAnalytics, validate(userIdValidationSchema), getUser);
 router.patch("/", protectRoute, getAnalytics, upload.single("profileImage"), validate(userInfoUpdateValidationSchema), updateUserInfo);
 router.patch("/password", protectRoute, getAnalytics, validate(changePasswordValidationSchema), changePassword);
