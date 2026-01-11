@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, LayoutDashboard, FileUser, CodeXml, Github, Terminal, Link as LinkIcon, LogOut, ChartLine, ChartArea, Settings } from 'lucide-react';
+import { ChevronLeft, ChevronRight, LayoutDashboard, Terminal, LogOut, ChartLine, ChartArea, Settings } from 'lucide-react';
 import { useAuthStore, usePreferenceStore } from '../../store/export.js';
 
 const Sidebar = () => {
@@ -25,7 +25,7 @@ const Sidebar = () => {
 
     const sidebarItems = [
         { name: 'Dashboard', path: `/dashboard/${user?._id}`, Icon: LayoutDashboard },
-        { name: 'Analyzers', path: '/analyzer/leetcode', Icon: ChartArea },
+        { name: 'Analyzers', path: '/analyzer', Icon: ChartArea },
         { name: 'Settings', path: '/settings', Icon: Settings },
     ];
 
@@ -35,17 +35,17 @@ const Sidebar = () => {
             style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(248,250,252,0.98) 100%)' }}
         >
             <div className={`relative flex items-center h-20 border-b border-gray-50 transition-all duration-500 ${isSidebarCollapsed ? 'justify-center px-4' : 'justify-between px-6'}`}>
-                <Link to={`/dashboard/${user?._id}`} className="flex items-center gap-3 overflow-hidden">
-                    <div className="relative flex-shrink-0">
-                        <div className="absolute inset-0 bg-blue-500 rounded-xl blur-md opacity-20 animate-glow-pulse" />
-                        <Terminal className="w-8 h-8 text-blue-600 relative z-10" />
-                    </div>
-                    {!isSidebarCollapsed && (
-                        <span className="text-2xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent animate-slide-in-right">
-                            CodeFolio
-                        </span>
-                    )}
-                </Link>
+                <div className="relative flex-shrink-0">
+                    <div className="absolute inset-0 bg-blue-500 rounded-xl blur-md opacity-20 animate-glow-pulse" />
+                    <Terminal className="w-8 h-8 text-blue-600 relative z-10" />
+                </div>
+
+                {/* Toggler to toggle the sidebar */}
+                {!isSidebarCollapsed && (
+                    <span className="text-2xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent animate-slide-in-right">
+                        CodeFolio
+                    </span>
+                )}
 
                 {!isSidebarCollapsed && (
                     <button

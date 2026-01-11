@@ -3,10 +3,11 @@ import { Edit3, ExternalLink, MapPin, Mail, Linkedin, Twitter, Globe, Github, Ch
 import { useAuthStore } from '../../store/export.js';
 import { useToggleProfileVisibility } from '../../hooks/useUsers.js';
 import { InfoTooltip } from '../export.js';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 
 const DashboardSidebar = ({ userData }) => {
     const { userId } = useParams();
+    const location = useLocation();
     const user = useAuthStore((state) => state.user);
     const [profileVisibility, setProfileVisibility] = useState(userData?.profileVisibility);
     const [isProblemStatsOpen, setIsProblemStatsOpen] = useState(true);
@@ -79,7 +80,6 @@ const DashboardSidebar = ({ userData }) => {
 
                     <h2 className="text-2xl font-black text-slate-800 mb-2">{userData?.name || "User"}</h2>
                     {userData?.headline ? <p className="text-xs text-slate-400 leading-relaxed font-bold mb-8 px-4 italic">{userData?.headline}</p> : null}
-                    {userData?.bio ? <p className="text-xs text-slate-400 leading-relaxed font-bold mb-8 px-4 italic">{userData?.bio}</p> : null}
 
                     <div className="flex items-center justify-between w-full px-4 mb-8 text-slate-400">
                         {userLinks.map((link, index) => (
@@ -89,7 +89,7 @@ const DashboardSidebar = ({ userData }) => {
                         ))}
                     </div>
 
-                    <div className="w-full space-y-3 text-left bg-slate-50/50 p-4 rounded-2xl border border-slate-100">
+                    {userData?.location || userData?.phone ? (<div className="w-full space-y-3 text-left bg-slate-50/50 p-4 rounded-2xl border border-slate-100">
                         {userData?.location ? <div className="flex items-center gap-3 text-slate-600 font-bold text-xs">
                             <MapPin className="w-4 h-4 text-blue-500" />
                             <span>{userData?.location}</span>
@@ -98,7 +98,7 @@ const DashboardSidebar = ({ userData }) => {
                             <Phone className="w-4 h-4 text-blue-500" />
                             <span>{userData?.phone}</span>
                         </div> : null}
-                    </div>
+                    </div>) : null}
                 </div>
 
                 <div className="mt-4 px-4 pb-8 space-y-4">
@@ -123,16 +123,23 @@ const DashboardSidebar = ({ userData }) => {
 
                         {isProblemStatsOpen && (
                             <div className="space-y-1 py-2">
-                                {problemPlatforms.map((platform) => (
-                                    <div key={platform.name} className="flex items-center justify-between p-3.5 hover:bg-slate-50 rounded-2xl transition-all group cursor-pointer" onClick={() => navigate(platform.path)}>
-                                        <div className="flex items-center gap-3">
-                                            <img src={platform.icon} alt={platform.name} className="w-5 h-5 object-contain transition-all" />
-                                            <span className="text-sm font-bold text-slate-700">{platform.name}</span>
+                                {problemPlatforms.map((platform) => {
+                                    const isActive = location.pathname === platform.path;
+                                    return (
+                                        <div
+                                            key={platform.name}
+                                            className={`flex items-center justify-between p-3.5 rounded-2xl transition-all group cursor-pointer ${isActive ? 'bg-blue-50 border border-blue-100' : 'hover:bg-slate-50'}`}
+                                            onClick={() => navigate(platform.path)}
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <img src={platform.icon} alt={platform.name} className="w-8 h-8 object-contain transition-all" />
+                                                <span className={`text-sm font-bold ${isActive ? 'text-blue-700' : 'text-slate-700'}`}>{platform.name}</span>
+                                            </div>
+                                            <ExternalLink className={`w-3.5 h-3.5 transition-colors ${isActive ? 'text-blue-500' : 'text-slate-300 group-hover:text-blue-500'}`} onClick={(e) => { e.stopPropagation(); window.open(platform.url, '_blank'); }} />
                                         </div>
-                                        <ExternalLink className="w-3.5 h-3.5 text-slate-300 group-hover:text-blue-500 transition-colors" onClick={() => window.open(platform.url, '_blank')} />
-                                    </div>
-                                ))}
-                                <button className="w-full flex items-center justify-center gap-2 p-4 mt-2 rounded-2xl border-2 border-dashed border-slate-200 text-slate-400 hover:text-blue-600 hover:border-blue-400 hover:bg-blue-50 transition-all font-black text-xs uppercase tracking-widest" onClick={() => navigate('/link')}>
+                                    );
+                                })}
+                                <button className="w-full flex items-center justify-center gap-2 p-4 mt-2 rounded-2xl border-2 border-dashed border-slate-200 text-slate-400 hover:text-blue-600 hover:border-blue-400 hover:bg-blue-50 transition-all font-black text-xs uppercase tracking-widest" onClick={() => navigate('/settings/links')}>
                                     <Plus className="w-4 h-4" /> Add Platform
                                 </button>
                             </div>
@@ -143,7 +150,7 @@ const DashboardSidebar = ({ userData }) => {
                         <div className="w-full flex items-center justify-between p-4 bg-slate-50/80 rounded-2xl group transition-all">
                             <span
                                 onClick={() => navigate(`/dashboard/${userId}/github`)}
-                                className="text-xs font-black text-slate-600 uppercase tracking-widest cursor-pointer hover:text-blue-600 transition-colors"
+                                className={`text-xs font-black uppercase tracking-widest cursor-pointer hover:text-blue-600 transition-colors ${location.pathname.includes('/github') ? 'text-blue-600' : 'text-slate-600'}`}
                             >
                                 Development
                             </span>
@@ -160,14 +167,15 @@ const DashboardSidebar = ({ userData }) => {
 
                         {isDevStatsOpen && (
                             <div className="space-y-1 py-2">
-                                <div className="flex items-center justify-between p-3.5 hover:bg-slate-50 rounded-2xl transition-all group cursor-pointer" onClick={() => navigate(`/dashboard/${userId}/github`)}>
+                                <div
+                                    className={`flex items-center justify-between p-3.5 rounded-2xl transition-all group cursor-pointer ${location.pathname === `/dashboard/${userId}/github` ? 'bg-blue-50 border border-blue-100' : 'hover:bg-slate-50'}`}
+                                    onClick={() => navigate(`/dashboard/${userId}/github`)}
+                                >
                                     <div className="flex items-center gap-3">
-                                        <div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center border border-slate-100 shadow-sm">
-                                            <Github className="w-4 h-4 text-slate-800" />
-                                        </div>
-                                        <span className="text-sm font-bold text-slate-700">GitHub</span>
+                                        <img src="/Images/Icons/github.png" alt="Github" className="w-8 h-8 object-contain transition-all" />
+                                        <span className={`text-sm font-bold ${location.pathname === `/dashboard/${userId}/github` ? 'text-blue-700' : 'text-slate-700'}`}>GitHub</span>
                                     </div>
-                                    <ExternalLink className="w-3.5 h-3.5 text-slate-300 group-hover:text-blue-500 transition-colors" onClick={() => window.open(`https://github.com/${userData?.profileLinks?.githubUsername}`, '_blank')} />
+                                    <ExternalLink className={`w-3.5 h-3.5 transition-colors ${location.pathname === `/dashboard/${userId}/github` ? 'text-blue-500' : 'text-slate-300 group-hover:text-blue-500'}`} onClick={(e) => { e.stopPropagation(); window.open(`https://github.com/${userData?.profileLinks?.githubUsername}`, '_blank'); }} />
                                 </div>
                             </div>
                         )}
