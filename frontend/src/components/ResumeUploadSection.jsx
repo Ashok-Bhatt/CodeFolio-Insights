@@ -4,7 +4,7 @@ const ResumeUploadSection = ({ jobDescription, setJobDescription, experience, se
     const isReadyToAnalyze = fileName;
 
     return (
-        <div className="max-w-4xl mx-auto p-6 bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/60 space-y-8 animate-float-in">
+        <div className="p-6 bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/60 space-y-8 animate-float-in">
             <div className="text-center space-y-2">
                 <Sparkles className="h-10 w-10 text-pink-600 mx-auto" />
                 <h1 className="text-3xl font-black text-gray-800">AI Resume Analyzer</h1>
