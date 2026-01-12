@@ -263,3 +263,30 @@
         transform: translateY(0);
     }
 }
+.prose-analysis {
+    @apply text-sm leading-relaxed;
+}
+
+.prose-analysis strong {
+    @apply font-black text-blue-800;
+}
+
+.prose-analysis em {
+    @apply italic text-gray-600;
+}
+
+.prose-analysis code {
+    @apply px-1.5 py-0.5 bg-gray-100 text-pink-600 rounded font-mono text-[11px] font-black;
+}
+
+.prose-analysis ul {
+    @apply space-y-2 my-1;
+}
+
+.prose-analysis li {
+    @apply relative;
+}
+
+.prose-analysis p {
+    @apply mb-1;
+}

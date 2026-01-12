@@ -24,7 +24,7 @@ const DashboardLayout = () => {
                 triggerRefresh();
             } else {
                 const lastUpdated = cacheData.lastUpdated;
-                const dataRefreshRateInMs = 60 * 1000;
+                const dataRefreshRateInMs = 15 * 60 * 1000;
                 const now = Date.now();
 
                 if (!lastUpdated || (now - new Date(lastUpdated).getTime() > dataRefreshRateInMs)) {
