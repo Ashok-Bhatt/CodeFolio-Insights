@@ -10,7 +10,7 @@ const SettingsSidebar = () => {
     `;
 
     return (
-        <div className="w-full lg:w-80 flex-shrink-0 h-full bg-white/80 backdrop-blur-sm shadow-xl border-r border-blue-100/50 p-6 flex flex-col fixed lg:relative z-20">
+        <div className="w-60 flex-shrink-0 h-full bg-white/80 backdrop-blur-sm shadow-xl border-r border-blue-100/50 p-6 flex flex-col fixed lg:relative z-20">
             <style>{animationStyles}</style>
 
             <div className="text-center mb-8">

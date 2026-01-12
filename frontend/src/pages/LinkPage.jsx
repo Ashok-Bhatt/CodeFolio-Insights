@@ -1,15 +1,17 @@
 import { useAuthStore } from '../store/export.js';
 import { Link as LinkIcon } from 'lucide-react';
-import { transformBackendToFrontend, transformFrontendToBackend } from '../utils/linkHelpers.js';
+import { transformBackendToFrontend } from '../utils/linkHelpers.js';
 import { LinkCard } from '../components/card/export.js';
-import { useProfileLinks, useUpdateProfileLinks } from '../hooks/useProfiles.js';
+import { useProfileLinks, useUpdateProfileLink } from '../hooks/useProfiles.js';
 import { PLATFORMS_CONFIG } from '../constants/index.js';
+
+import toast from 'react-hot-toast';
 
 const LinkPage = () => {
     const userId = useAuthStore((state) => state?.user?._id);
 
     const { data: profile, refetch: fetchLinks } = useProfileLinks(userId);
-    const { mutateAsync: updateProfileMutation } = useUpdateProfileLinks();
+    const { mutateAsync: updateProfileMutation, isPending, variables } = useUpdateProfileLink();
 
     const iconMap = {
         leetcode: "/Images/Icons/leetcode.png",
@@ -26,27 +28,20 @@ const LinkPage = () => {
     const currentLinks = profile ? transformBackendToFrontend(profile, platforms) : [];
 
     const handleUpdate = async (platformValue, newUsername) => {
-        const linkData = {
-            id: Date.now().toString(),
-            platform: platformValue,
-            username: newUsername
-        };
-
-        const otherLinks = currentLinks.filter(l => l.platform !== platformValue);
-
-        let newLinksList;
         if (!newUsername.trim()) {
-            newLinksList = [...otherLinks];
-        } else {
-            const newLink = { platform: platformValue, username: newUsername };
-            newLinksList = [...otherLinks, newLink];
+            return; // Backend validator requires min length 1
         }
 
         try {
-            await updateProfileMutation(transformFrontendToBackend(newLinksList));
+            await updateProfileMutation({
+                platformName: platformValue,
+                platformUsername: newUsername
+            });
+            toast.success(`${platformValue.charAt(0).toUpperCase() + platformValue.slice(1)} link updated successfully!`);
             fetchLinks();
         } catch (error) {
-            console.error("Failed to update links", error);
+            toast.error("Couldn't update the link");
+            console.error("Failed to update link", error);
         }
     };
 
@@ -68,6 +63,8 @@ const LinkPage = () => {
                                 link={existingLink}
                                 index={index}
                                 onSave={handleUpdate}
+                                isUpdating={isPending && variables?.platformName === platform.value}
+                                isAnyUpdating={isPending}
                             />
                         );
                     })}

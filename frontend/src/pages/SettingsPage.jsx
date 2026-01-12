@@ -24,7 +24,7 @@ const SettingsPage = () => {
             <SettingsSidebar />
 
             <div className="flex-1 overflow-y-auto custom-scrollbar p-8">
-                <div className="max-w-4xl mx-auto animate-float-in">
+                <div className="w-full animate-float-in">
                     <Outlet context={{ user, setUser }} />
                 </div>
             </div>

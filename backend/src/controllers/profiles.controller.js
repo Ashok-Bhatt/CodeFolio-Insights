@@ -24,7 +24,7 @@ const getProfiles = asyncHandler(async (req, res) => {
     return res.status(200).json(profiles);
 });
 
-const updateProfile = asyncHandler(async (req, res) => {
+const updateProfile = async (req, res) => {
     const session = await mongoose.startSession();
     session.startTransaction();
 
@@ -42,7 +42,7 @@ const updateProfile = asyncHandler(async (req, res) => {
 
         if (!profile) {
             await session.abortTransaction();
-            return res.status(500).json({ message: "Failed to update the user data." });
+            return res.status(404).json({ message: "Failed to update the user data." });
         }
 
         const profilesData = await redisClient.get(`profileData:${user._id}`);
@@ -51,7 +51,7 @@ const updateProfile = asyncHandler(async (req, res) => {
         const platformFreshData = await PLATFORMS[platformName].fetchFunction(platformUsername);
         if (!platformFreshData) {
             await session.abortTransaction();
-            return res.status(200).json({ message: "Failed to fetch the user data." });
+            return res.status(500).json({ message: "Failed to fetch the user data." });
         }
 
         let mergedData = { ...existingData };
@@ -63,12 +63,16 @@ const updateProfile = asyncHandler(async (req, res) => {
         return res.status(200).json(profile);
 
     } catch (error) {
-        await session.abortTransaction();
-        throw error;
+        if (session.inTransaction()) {
+            await session.abortTransaction();
+        }
+        console.log("Failed to update the profile username of the platform:", error.message);
+        console.log(error.stack);
+        return res.status(500).json({ message: "Failed to update the user data." });
     } finally {
         session.endSession();
     }
-});
+}
 
 const updateProfiles = asyncHandler(async (req, res) => {
     const user = req.user;

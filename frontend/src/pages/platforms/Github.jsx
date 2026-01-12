@@ -19,7 +19,7 @@ const Github = () => {
 
                 <GithubStats statsArray={[
                     { icon: <FolderGit className="text-yellow-500" />, name: "Repos", value: githubData?.profile?.public_repos },
-                    { icon: <GitCommitHorizontal className="text-orange-500" />, name: "Commits", value: githubData?.commits || 0 },
+                    { icon: <GitCommitHorizontal className="text-orange-500" />, name: "Commits", value: githubData?.contributions?.commitsCount || 0 },
                     { icon: <GitPullRequest className="text-green-500" />, name: "PRs", value: githubData?.contributions?.pullRequestsCount || 0 },
                     { icon: <Ban className="text-red-500" />, name: "issues", value: githubData?.contributions?.issuesCount || 0 },
                 ]} />

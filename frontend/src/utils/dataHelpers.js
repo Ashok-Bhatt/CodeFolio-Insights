@@ -85,7 +85,7 @@ export const getBadges = (data) => {
 };
 
 export const getTotalProblems = (data) => {
-    return (data?.gfg?.profile?.problemsSolved?.totalProblemsSolved || 0)
+    return (data?.gfg?.profile?.totalProblemsSolved || 0)
         + (data?.leetcode?.problems?.acSubmissionNum?.find(item => item.difficulty === 'All')?.count || 0)
         + (data?.codechef?.profile?.problemsSolved || 0)
         + (data?.interviewbit?.profile?.problems?.total_problems_solved || 0)

@@ -136,7 +136,7 @@ const DashboardSidebar = ({ userData }) => {
                                                     <img src={platform.icon} alt={platform.name} className="w-8 h-8 object-contain transition-all" />
                                                     <span className={`text-sm font-bold ${isActive ? 'text-blue-700' : 'text-slate-700'}`}>{platform.name}</span>
                                                 </div>
-                                                <ExternalLink className={`w-3.5 h-3.5 transition-colors ${isActive ? 'text-blue-500' : 'text-slate-300 group-hover:text-blue-500'}`} onClick={(e) => { e.stopPropagation(); window.open(platform.url, '_blank'); }} />
+                                                <ExternalLink className={`w-5 h-5 transition-colors ${isActive ? 'text-blue-500' : 'text-slate-300 group-hover:text-blue-500'}`} onClick={(e) => { e.stopPropagation(); window.open(platform.url, '_blank'); }} />
                                             </div>
                                         );
                                     })}
@@ -175,7 +175,7 @@ const DashboardSidebar = ({ userData }) => {
                                             <img src="/Images/Icons/github.png" alt="Github" className="w-8 h-8 object-contain transition-all" />
                                             <span className={`text-sm font-bold ${location.pathname === `/dashboard/${userId}/github` ? 'text-blue-700' : 'text-slate-700'}`}>GitHub</span>
                                         </div>
-                                        <ExternalLink className={`w-3.5 h-3.5 transition-colors ${location.pathname === `/dashboard/${userId}/github` ? 'text-blue-500' : 'text-slate-300 group-hover:text-blue-500'}`} onClick={(e) => { e.stopPropagation(); window.open(`https://github.com/${userData?.profileLinks?.githubUsername}`, '_blank'); }} />
+                                        <ExternalLink className={`w-5 h-5 transition-colors ${location.pathname === `/dashboard/${userId}/github` ? 'text-blue-500' : 'text-slate-300 group-hover:text-blue-500'}`} onClick={(e) => { e.stopPropagation(); window.open(`https://github.com/${userData?.profileLinks?.githubUsername}`, '_blank'); }} />
                                     </div>
                                 </div>
                             )}
