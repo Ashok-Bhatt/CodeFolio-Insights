@@ -51,7 +51,6 @@ const ResumeAnalyse = () => {
             setError('');
         } catch (err) {
             setError(err.message || 'A network or server error occurred. Please try again.');
-            console.error(err);
         }
     };
 

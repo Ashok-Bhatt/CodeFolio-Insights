@@ -7,10 +7,7 @@ import { FolderGit, GitCommitHorizontal, GitPullRequest, Ban } from "lucide-reac
 const Github = () => {
     const { data } = useOutletContext();
 
-    if (!data) return <div className="text-center text-slate-500">Loading GitHub data...</div>;
-
     const githubData = data?.github;
-    console.log(githubData);
 
     return (
         <div className="space-y-8 animate-float-in">

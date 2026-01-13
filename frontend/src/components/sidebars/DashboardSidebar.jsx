@@ -150,7 +150,7 @@ const DashboardSidebar = ({ userData }) => {
                             <div className="w-full flex items-center justify-between p-4 bg-slate-50/80 rounded-2xl group transition-all">
                                 <span
                                     onClick={() => navigate(`/dashboard/${userId}/github`)}
-                                    className={`text-xs font-black uppercase tracking-widest cursor-pointer hover:text-blue-600 transition-colors ${location.pathname.includes('/github') ? 'text-blue-600' : 'text-slate-600'}`}
+                                    className="text-xs font-black text-slate-600 uppercase tracking-widest cursor-pointer hover:text-blue-600 transition-colors"
                                 >
                                     Development
                                 </span>

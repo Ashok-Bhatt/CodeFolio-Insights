@@ -41,7 +41,6 @@ const LinkPage = () => {
             fetchLinks();
         } catch (error) {
             toast.error("Couldn't update the link");
-            console.error("Failed to update link", error);
         }
     };
 

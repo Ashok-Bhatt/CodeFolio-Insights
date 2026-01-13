@@ -4,7 +4,7 @@ import { useMutation, useQuery } from "@tanstack/react-query"
 export const useSaveScore = () => {
     return useMutation({
         mutationFn: asyncWrapper(async (scoreData) => {
-            const response = await axiosInstance.post("/score", scoreData, { requiresAuth: true });
+            const response = await axiosInstance.post("/score", scoreData);
             return response.data;
         }),
     });
@@ -25,7 +25,7 @@ export const useScoreHistory = (platform, username, last = 10) => {
     return useQuery({
         queryKey: ["scoreHistory", platform, username, last],
         queryFn: asyncWrapper(async () => {
-            const response = await axiosInstance.get(`/score/score-history?platform=${platform}&username=${username}&last=${last}`, { requiresAuth: true });
+            const response = await axiosInstance.get(`/score/score-history?platform=${platform}&username=${username}&last=${last}`);
             return response.data;
         }),
         enabled: !!platform,

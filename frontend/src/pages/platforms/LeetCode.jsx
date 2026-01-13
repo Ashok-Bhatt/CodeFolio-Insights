@@ -1,6 +1,5 @@
 import React from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { DashboardSkeleton } from '../../components/skeletons/export.js';
 import { getTotalActiveDays } from '../../utils/dataHelpers.js';
 import { StatCard, ProblemsCard } from '../../components/card/export.js';
 import { BadgeCollection, TopicAnalysis, ContestAchievements } from '../../components/export.js';
@@ -10,25 +9,23 @@ import { getContestData, getContestAchievements } from '../../utils/dataHelpers.
 const LeetCode = () => {
     const { data } = useOutletContext();
 
-    if (!data) {
-        return <DashboardSkeleton />;
-    }
-
     const platformData = data.leetcode;
-    
+
     const platformProblemsData = [
-        { 
-            name: 'Easy', 
-            value: (platformData?.problems?.acSubmissionNum[1]?.count || 0), 
-            color: '#10B981' },
-        { 
-            name: 'Medium', 
-            value: (platformData?.problems?.acSubmissionNum[2]?.count || 0), 
-            color: '#FBBF24' },
-        { 
-            name: 'Hard', 
-            value: (platformData?.problems?.acSubmissionNum[3]?.count || 0), 
-            color: '#FF4524' 
+        {
+            name: 'Easy',
+            value: (platformData?.problems?.acSubmissionNum[1]?.count || 0),
+            color: '#10B981'
+        },
+        {
+            name: 'Medium',
+            value: (platformData?.problems?.acSubmissionNum[2]?.count || 0),
+            color: '#FBBF24'
+        },
+        {
+            name: 'Hard',
+            value: (platformData?.problems?.acSubmissionNum[3]?.count || 0),
+            color: '#FF4524'
         }
     ];
 

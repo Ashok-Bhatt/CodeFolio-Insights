@@ -12,8 +12,6 @@ export default function App() {
     const { highlights } = useHighlights();
     const authUser = useAuthStore((state) => state.user);
 
-    console.log(authUser);
-
     return (
         <div id="webcrumbs">
             <div className="bg-gradient-to-br from-slate-50 to-indigo-100 text-slate-800 min-h-screen font-sans overflow-x-hidden">

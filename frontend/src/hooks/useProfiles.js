@@ -48,8 +48,7 @@ export const useUpdateProfileLink = () => {
     return useMutation({
         mutationFn: asyncWrapper(async ({ platformName, platformUsername }) => {
             const response = await axiosInstance.patch('/profiles/platform', {}, {
-                params: { platformName, platformUsername },
-                requiresAuth: true
+                params: { platformName, platformUsername }
             });
             return response.data;
         }),

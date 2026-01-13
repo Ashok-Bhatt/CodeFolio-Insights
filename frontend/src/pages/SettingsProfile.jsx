@@ -44,7 +44,6 @@ const SettingsProfile = () => {
                 toast.success("Profile image updated!");
             }
         } catch (error) {
-            console.log(error.stack);
             toast.error("Failed to update profile image!");
         }
     };
@@ -93,7 +92,6 @@ const SettingsProfile = () => {
                 toast.success("Profile updated successfully!");
             }
         } catch (error) {
-            console.log(error.stack);
             toast.error("Failed to update profile!");
         }
     };

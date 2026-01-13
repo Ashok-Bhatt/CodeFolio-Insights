@@ -51,7 +51,6 @@ const Account = () => {
             toast.success("Password updated successfully!");
             setForm({ oldPassword: '', newPassword: '', confirmPassword: '' });
         } catch (error) {
-            console.error(error);
             toast.error(error?.response?.data?.message || "Failed to update password!");
         }
     };

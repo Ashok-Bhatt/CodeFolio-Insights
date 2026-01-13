@@ -1,6 +1,5 @@
 import React from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { DashboardSkeleton } from '../../components/skeletons/export.js';
 import { getTotalActiveDays } from '../../utils/dataHelpers.js';
 import { StatCard } from '../../components/card/export.js';
 import { BadgeCollection } from '../../components/export.js';
@@ -9,9 +8,6 @@ import { SubmissionHeatmap } from '../../components/charts/export.js';
 const CodeChef = () => {
     const { data } = useOutletContext();
 
-    if (!data) {
-        return <DashboardSkeleton />;
-    }
 
     const platformData = data.codechef;
 

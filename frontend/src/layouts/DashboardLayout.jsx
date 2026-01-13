@@ -4,13 +4,15 @@ import DashboardSidebar from '../components/sidebars/DashboardSidebar.jsx';
 import { useProfileCache, useProfileRefresh } from '../hooks/useProfiles.js';
 import { useUser } from '../hooks/export.js';
 import { Loader } from '../components/loaders/export.js';
+import { DashboardSkeleton } from '../components/skeletons/export.js';
 import { CircleAlert, Plus } from 'lucide-react';
+import { PageNotFound } from "../pages/export.js"
 
 const DashboardLayout = () => {
     const { userId } = useParams();
-    const { data: cacheData, isLoading: isLoadingCache } = useProfileCache(userId);
+    const { data: cacheData, isLoading: isLoadingCache, isError: isCachingError } = useProfileCache(userId);
     const { data: refreshData, isLoading: isRefreshing, refetch: triggerRefresh } = useProfileRefresh(userId);
-    const { data: userData, error: userError } = useUser(userId);
+    const { data: userData, isLoading: isLoadingUser, isError: isUserError } = useUser(userId);
     const navigate = useNavigate();
 
     const data = refreshData || cacheData;
@@ -34,7 +36,11 @@ const DashboardLayout = () => {
         }
     }, [userId, cacheData, isLoadingCache]);
 
-    if (data || isLoadingCache) {
+    if (isLoadingUser || isLoadingCache) {
+        return <DashboardSkeleton />;
+    }
+
+    if (data) {
         return (
             <div className="flex flex-1 overflow-hidden h-screen bg-white">
                 <DashboardSidebar userData={userData} />
@@ -42,12 +48,14 @@ const DashboardLayout = () => {
 
                     {isRefreshing && <Loader text="Refreshing stats..." showLoading={true} />}
 
-                <Outlet
-                    context={{ data, userData, isLoading: isLoadingCache }}
-                />
-            </main>
-        </div>
+                    <Outlet
+                        context={{ data, userData, isLoading: isLoadingCache }}
+                    />
+                </main>
+            </div>
         )
+    } else if (isUserError || isCachingError) {
+        return <PageNotFound />
     } else {
         return (
             <div className="flex flex-1 items-center justify-center h-screen bg-slate-50/50 p-6">
@@ -64,7 +72,7 @@ const DashboardLayout = () => {
                             <div className="space-y-4">
                                 <h2 className="text-2xl font-black text-slate-800 uppercase tracking-tight">No Platforms Connected</h2>
                                 <p className="text-slate-500 font-medium leading-relaxed">
-                                    Your dashboard is empty because you haven't linked any problem-solving or development platforms yet. Or maybe the latest data for the coding profiles whose link you attached is not loaded yet. 
+                                    Your dashboard is empty because you haven't linked any problem-solving or development platforms yet. Or maybe the latest data for the coding profiles whose link you attached is not loaded yet.
                                 </p>
                             </div>
 
