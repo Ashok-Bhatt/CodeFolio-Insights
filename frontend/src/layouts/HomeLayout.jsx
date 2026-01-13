@@ -1,31 +1,14 @@
-import React, { useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import Sidebar from '../components/Sidebar.jsx';
-import ProtectedRoute from '../components/ProtectedRoute.jsx';
+import { Sidebar, ProtectedRoute } from '../components/export.js';
 
 const HomeLayout = () => {
-    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-    const location = useLocation();
-
-    // Derive activeMenu from current path
-    const getActiveMenu = () => {
-        const path = location.pathname;
-        if (path === '/dashboard' || path === '/home') return 'Dashboard';
-        if (path === '/analyzer/leetcode') return 'LeetCode';
-        if (path === '/analyzer/github') return 'GitHub';
-        if (path === '/analyzer/resume') return 'Resume Analysis';
-        return 'Dashboard';
-    };
-
     return (
         <ProtectedRoute requiresAuthentication={true}>
             <div className="flex h-screen bg-gradient-to-br from-green-50/30 via-white to-blue-50/30 font-sans">
-                <Sidebar
-                    isSidebarCollapsed={isSidebarCollapsed}
-                    activeMenu={getActiveMenu()}
-                    setActiveMenu={setIsSidebarCollapsed}
-                />
-                <Outlet />
+                <Sidebar />
+                <div className="flex-1 relative overflow-y-auto overflow-x-hidden">
+                    <Outlet />
+                </div>
             </div>
         </ProtectedRoute>
     );

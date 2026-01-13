@@ -1,6 +1,5 @@
-import React from 'react';
 import { Navigate } from 'react-router-dom';
-import useAuthStore from '../../store/useAuthStore.js';
+import { useAuthStore } from '../store/export.js';
 
 const ProtectedRoute = ({ children, requiresAuthentication = true }) => {
     const { user } = useAuthStore();
@@ -8,7 +7,7 @@ const ProtectedRoute = ({ children, requiresAuthentication = true }) => {
     if (requiresAuthentication && !user) {
         return <Navigate to="/login" replace />;
     } else if (!requiresAuthentication && user) {
-        return <Navigate to="/dashboard" replace />;
+        return <Navigate to={`/dashboard/${user._id}`} replace />;
     } else {
         return children;
     }
