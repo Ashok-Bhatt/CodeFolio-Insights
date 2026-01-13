@@ -6,9 +6,11 @@ import { Animated } from "../layouts/export.js";
 import { DashboardPreview, LandingNavbar } from "../components/export.js";
 import { FeatureCard } from "../components/card/export.js";
 import useHighlights from "../hooks/useHighlights.js";
+import { useAuthStore } from "../store/export.js";
 
 export default function App() {
     const { highlights } = useHighlights();
+    const authUser = useAuthStore((state) => state.user);
 
     return (
         <div id="webcrumbs">
@@ -36,7 +38,7 @@ export default function App() {
                             </Animated>
                             <Animated delay={200}>
                                 <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 pt-4">
-                                    <Link to="/signup">
+                                    <Link to={authUser ? `/dashboard/${authUser._id}` : "/signup"}>
                                         <button className="px-8 py-4 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-black text-xs uppercase tracking-widest hover:from-indigo-700 hover:to-purple-700 transition-all flex items-center justify-center space-x-3 shadow-xl shadow-indigo-200 hover:shadow-indigo-300 transform hover:-translate-y-1">
                                             <span>Start Free Analysis</span>
                                             <ArrowRight className="w-4 h-4" />

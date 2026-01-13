@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { BadgeCollection, TopicAnalysis, Contest, ContestAchievements } from '../components/export.js';
-import { DashboardSkeleton } from '../components/skeletons/export.js';
 import { StatCard, ProblemsCard } from '../components/card/export.js';
 import { SubmissionHeatmap } from '../components/charts/export.js';
-import { getTotalProblems, getTotalActiveDays, getBadges, getTopicAnalysis, getContestCount, getContestData, getDsaProblemsData, getContestAchievements, getCombinedHeatmap } from '../utils/dataHelpers.js';
+import { getTotalProblems, getTotalActiveDays, getBadges, getTopicAnalysis, getContestCount, getContestData, getDsaProblemsData, getContestAchievements } from '../utils/dataHelpers.js';
+import { getCombinedHeatmap } from '../utils/export.js';
 
 const CodingProfiles = () => {
     const { data } = useOutletContext();
@@ -16,10 +16,6 @@ const CodingProfiles = () => {
         data?.interviewbit?.submission,
         data?.code360?.submission
     ), [data]);
-
-    if (!data) {
-        return <DashboardSkeleton />;
-    }
 
     return (
         <div className="space-y-8 animate-float-in">

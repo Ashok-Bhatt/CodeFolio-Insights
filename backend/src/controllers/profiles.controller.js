@@ -10,6 +10,15 @@ import * as platformsFetching from '../utils/fetching/platformsFetch.js';
 const getProfiles = asyncHandler(async (req, res) => {
     const userId = req.params.userId;
 
+    const user = await UserModel.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found." });
+
+    const isAdmin = !!req.user && req.user.isAdmin;
+    const isOwner = !!req.user && req.user._id.equals(userId);
+    const isPublic = user.profileVisibility === true;
+    
+    if (!isAdmin && !isOwner && !isPublic) return res.status(403).json({ message: "Profile visibility is set to private." });
+
     const profiles = await ProfileModel.findOneAndUpdate(
         { userId: userId },
         { userId: userId },
@@ -24,7 +33,7 @@ const getProfiles = asyncHandler(async (req, res) => {
     return res.status(200).json(profiles);
 });
 
-const updateProfile = asyncHandler(async (req, res) => {
+const updateProfile = async (req, res) => {
     const session = await mongoose.startSession();
     session.startTransaction();
 
@@ -42,7 +51,7 @@ const updateProfile = asyncHandler(async (req, res) => {
 
         if (!profile) {
             await session.abortTransaction();
-            return res.status(500).json({ message: "Failed to update the user data." });
+            return res.status(404).json({ message: "Failed to update the user data." });
         }
 
         const profilesData = await redisClient.get(`profileData:${user._id}`);
@@ -51,7 +60,7 @@ const updateProfile = asyncHandler(async (req, res) => {
         const platformFreshData = await PLATFORMS[platformName].fetchFunction(platformUsername);
         if (!platformFreshData) {
             await session.abortTransaction();
-            return res.status(200).json({ message: "Failed to fetch the user data." });
+            return res.status(500).json({ message: "Failed to fetch the user data." });
         }
 
         let mergedData = { ...existingData };
@@ -63,12 +72,16 @@ const updateProfile = asyncHandler(async (req, res) => {
         return res.status(200).json(profile);
 
     } catch (error) {
-        await session.abortTransaction();
-        throw error;
+        if (session.inTransaction()) {
+            await session.abortTransaction();
+        }
+        console.log("Failed to update the profile username of the platform:", error.message);
+        console.log(error.stack);
+        return res.status(500).json({ message: "Failed to update the user data." });
     } finally {
         session.endSession();
     }
-});
+}
 
 const updateProfiles = asyncHandler(async (req, res) => {
     const user = req.user;
@@ -92,6 +105,15 @@ const updateProfiles = asyncHandler(async (req, res) => {
 const getProfileCache = asyncHandler(async (req, res) => {
     const userId = req.params.userId;
 
+    const user = await UserModel.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found." });
+
+    const isAdmin = !!req.user && req.user.isAdmin;
+    const isOwner = !!req.user && req.user._id.equals(userId);
+    const isPublic = user.profileVisibility === true;
+
+    if (!isAdmin && !isOwner && !isPublic) return res.status(403).json({ message: "Profile visibility is set to private." });
+
     const cachedDataParams = await redisClient.get(`profileData:${userId}`);
 
     if (cachedDataParams) return res.status(200).json(JSON.parse(cachedDataParams));
@@ -100,6 +122,15 @@ const getProfileCache = asyncHandler(async (req, res) => {
 
 const refreshProfileData = asyncHandler(async (req, res) => {
     const userId = req.params.userId;
+
+    const user = await UserModel.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found." });
+
+    const isAdmin = req.user && req.user.isAdmin;
+    const isOwner = req.user && req.user._id.equals(userId);
+    const isPublic = user.profileVisibility === true;
+
+    if (!isAdmin && !isOwner && !isPublic) return res.status(403).json({ message: "Profile visibility is set to private." });
 
     const profileLinks = await ProfileModel.findOne({ userId });
 
@@ -150,11 +181,8 @@ const refreshProfileData = asyncHandler(async (req, res) => {
     mergedData.lastUpdated = Date.now();
     await redisClient.set(`profileData:${userId}`, JSON.stringify(mergedData));
 
-    const user = await UserModel.findOne({ _id: userId });
-    if (user) {
-        user.lastRefresh = Date.now();
-        await user.save();
-    }
+    user.lastRefresh = Date.now();
+    await user.save();
 
     return res.status(200).json(mergedData);
 });

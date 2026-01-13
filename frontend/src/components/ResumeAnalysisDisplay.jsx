@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { ScoreMeter, MemeContainer } from './export.js';
 import { AnalysisCard } from './card/export.js';
 import { getMemeForScore } from '../utils/meme.js';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const ResumeAnalysisDisplay = ({ resumeAnalysis, onUploadAgain }) => {
     const overallScore = resumeAnalysis.score;
@@ -129,7 +131,9 @@ const ResumeAnalysisDisplay = ({ resumeAnalysis, onUploadAgain }) => {
                                     {section.analysis.map((line, lineIndex) => (
                                         !!line.trim() && <li key={lineIndex} className="flex items-start gap-3 p-3 bg-white/50 rounded-xl backdrop-blur-sm">
                                             <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                                            <span className="leading-relaxed">{line}</span>
+                                            <div className="leading-relaxed prose-analysis">
+                                                <ReactMarkdown remarkPlugins={[remarkGfm]}>{line}</ReactMarkdown>
+                                            </div>
                                         </li>
                                     ))}
                                 </ul>
@@ -164,7 +168,9 @@ const ResumeAnalysisDisplay = ({ resumeAnalysis, onUploadAgain }) => {
                                     {section.analysis.map((line, lineIndex) => (
                                         <li key={lineIndex} className="flex items-start gap-3 p-3 bg-white/50 rounded-xl backdrop-blur-sm">
                                             <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                                            <span className="leading-relaxed">{line}</span>
+                                            <div className="leading-relaxed prose-analysis">
+                                                <ReactMarkdown remarkPlugins={[remarkGfm]}>{line}</ReactMarkdown>
+                                            </div>
                                         </li>
                                     ))}
                                 </ul>
@@ -215,18 +221,18 @@ const ResumeAnalysisDisplay = ({ resumeAnalysis, onUploadAgain }) => {
                                                                     <Target className="h-4 w-4 text-purple-600" />
                                                                     <p className="text-sm font-semibold text-purple-700">Recommended Refactor:</p>
                                                                 </div>
-                                                                <p className="text-gray-800 bg-gradient-to-r from-purple-50 to-white p-3 rounded-lg border-l-4 border-purple-400">
-                                                                    {pointData.point.refactored}
-                                                                </p>
+                                                                <div className="text-gray-800 bg-gradient-to-r from-purple-50 to-white p-3 rounded-lg border-l-4 border-purple-400 prose-analysis">
+                                                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{pointData.point.refactored}</ReactMarkdown>
+                                                                </div>
                                                             </div>
                                                             <div>
                                                                 <div className="flex items-center gap-2 mb-2">
                                                                     <Sparkles className="h-4 w-4 text-amber-600" />
                                                                     <p className="text-sm font-semibold text-amber-700">AI Analysis:</p>
                                                                 </div>
-                                                                <p className="text-gray-700 text-sm bg-gradient-to-r from-amber-50 to-white p-3 rounded-lg border-l-4 border-amber-400">
-                                                                    {pointData.analysis}
-                                                                </p>
+                                                                <div className="text-gray-700 text-sm bg-gradient-to-r from-amber-50 to-white p-3 rounded-lg border-l-4 border-amber-400 prose-analysis">
+                                                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{pointData.analysis}</ReactMarkdown>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>

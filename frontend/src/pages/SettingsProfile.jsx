@@ -10,16 +10,16 @@ const SettingsProfile = () => {
     const setAuthUser = useAuthStore((state) => state.setUser);
     const [isEditing, setIsEditing] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
-    const [profileImageViewUrl, setProfileImageViewUrl] = useState(user?.profilePicture || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face");
+    const [profileImageViewUrl, setProfileImageViewUrl] = useState(user?.profile || "/Images/Default/user.png");
 
     const { mutateAsync: updateUserMutation, isPending: isLoading } = useUpdateUser();
 
     // Update profile image view when user changes (e.g. after successful update)
     useEffect(() => {
-        if (user?.profilePicture) {
-            setProfileImageViewUrl(user.profilePicture);
+        if (user?.profile) {
+            setProfileImageViewUrl(user.profile);
         }
-    }, [user?.profilePicture]);
+    }, [user?.profile]);
 
     const handleImageUpload = (e) => {
         const file = e.target.files?.[0];
@@ -37,14 +37,13 @@ const SettingsProfile = () => {
             const data = await updateUserMutation(formData);
             if (data) {
                 // Update local and global user state
-                const updatedUser = { ...user, profilePicture: data.profilePicture };
+                const updatedUser = { ...user, profile: data.profile };
                 setUser(updatedUser);
                 setAuthUser(data);
                 setSelectedFile(null);
                 toast.success("Profile image updated!");
             }
         } catch (error) {
-            console.log(error.stack);
             toast.error("Failed to update profile image!");
         }
     };
@@ -93,7 +92,6 @@ const SettingsProfile = () => {
                 toast.success("Profile updated successfully!");
             }
         } catch (error) {
-            console.log(error.stack);
             toast.error("Failed to update profile!");
         }
     };

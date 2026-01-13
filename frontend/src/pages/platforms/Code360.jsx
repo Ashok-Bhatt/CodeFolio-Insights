@@ -1,6 +1,5 @@
 import React from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { DashboardSkeleton } from '../../components/skeletons/export.js';
 import { getTotalActiveDays } from '../../utils/dataHelpers.js';
 import { StatCard, ProblemsCard } from '../../components/card/export.js';
 import { BadgeCollection, ContestAchievements } from '../../components/export.js';
@@ -9,10 +8,6 @@ import { getContestData, getContestAchievements } from '../../utils/dataHelpers.
 
 const Code360 = () => {
     const { data } = useOutletContext();
-
-    if (!data) {
-        return <DashboardSkeleton />;
-    }
 
     const platformData = data.code360;
 

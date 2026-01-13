@@ -6,7 +6,7 @@ export const useCheckAuth = () => {
         queryKey: ["checkAuth"],
         retry: 3,
         queryFn: asyncWrapper(async () => {
-            const response = await axiosInstance.get("/auth/check", { requiresAuth: true, withCredentials: true });
+            const response = await axiosInstance.get("/auth/check", { withCredentials: true });
             return response.data;
         })
     })
@@ -47,7 +47,7 @@ export const useUser = (id) => {
 export const useUpdateUser = () => {
     return useMutation({
         mutationFn: asyncWrapper(async (formData) => {
-            const response = await axiosInstance.patch("/user", formData, { requiresAuth: true });
+            const response = await axiosInstance.patch("/user", formData);
             return response.data;
         }),
     })
@@ -56,7 +56,7 @@ export const useUpdateUser = () => {
 export const useChangePassword = () => {
     return useMutation({
         mutationFn: asyncWrapper(async (passwordData) => {
-            const response = await axiosInstance.patch("/user/password", passwordData, { requiresAuth: true });
+            const response = await axiosInstance.patch("/user/password", passwordData);
             return response.data;
         }),
     })
@@ -67,7 +67,7 @@ export const useChangePassword = () => {
 export const useLogout = () => {
     return useMutation({
         mutationFn: asyncWrapper(async () => {
-            const response = await axiosInstance.post("/auth/logout", {}, { requiresAuth: true });
+            const response = await axiosInstance.post("/auth/logout", {});
             return response.data;
         }),
     })
@@ -77,7 +77,7 @@ export const useUsers = (params) => {
     return useQuery({
         queryKey: ["users", params],
         queryFn: asyncWrapper(async () => {
-            const response = await axiosInstance.get("/user", { params, requiresAuth: true });
+            const response = await axiosInstance.get("/user", { params });
             return response.data;
         }),
         retry: false,
@@ -89,7 +89,7 @@ export const useUsers = (params) => {
 export const useToggleProfileVisibility = () => {
     return useMutation({
         mutationFn: asyncWrapper(async () => {
-            const response = await axiosInstance.patch("/user/visibility", {}, { requiresAuth: true });
+            const response = await axiosInstance.patch("/user/visibility", {});
             return response.data;
         }),
     })

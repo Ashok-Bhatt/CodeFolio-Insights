@@ -1,16 +1,12 @@
 import React from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { DashboardSkeleton } from '../../components/skeletons/export.js';
 import { BadgeCollection, CertificatesCollection } from '../../components/export.js';
-import { StatCard, ProblemsCard } from '../../components/card/export.js'; 
+import { StatCard, ProblemsCard } from '../../components/card/export.js';
 import { LANGUAGE_COLORS } from '../../constants/index.js';
 
 const HackerRank = () => {
     const { data } = useOutletContext();
 
-    if (!data) {
-        return <DashboardSkeleton />;
-    }
 
     const platformData = data.hackerrank;
     const certificates = platformData?.profile?.certificates?.filter((cert) => cert.attributes.status === 'test_passed') || [];

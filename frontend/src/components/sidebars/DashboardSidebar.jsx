@@ -37,13 +37,13 @@ const DashboardSidebar = ({ userData }) => {
     ];
 
     const problemPlatforms = [
-        { name: 'LeetCode', icon: '/Images/Icons/leetcode.png', url: `https://leetcode.com/u/${userData?.profileLinks?.leetCodeUsername}`, path: `/dashboard/${userId}/coding-profiles/leetcode` },
-        { name: 'CodeStudio', icon: '/Images/Icons/code360.png', url: `https://www.naukri.com/code360/profile/${userData?.profileLinks?.code360Username}`, path: `/dashboard/${userId}/coding-profiles/code360` },
-        { name: 'GeeksForGeeks', icon: '/Images/Icons/gfg.png', url: `https://geeksforgeeks.org/profile/${userData?.profileLinks?.gfgUsername}?tab=activity`, path: `/dashboard/${userId}/coding-profiles/gfg` },
-        { name: 'InterviewBit', icon: '/Images/Icons/interviewbit.png', url: `https://www.interviewbit.com/profile/${userData?.profileLinks?.interviewbitUsername}`, path: `/dashboard/${userId}/coding-profiles/interviewbit` },
-        { name: 'CodeChef', icon: '/Images/Icons/codechef.png', url: `https://www.codechef.com/users/${userData?.profileLinks?.codechefUsername}`, path: `/dashboard/${userId}/coding-profiles/codechef` },
-        { name: 'HackerRank', icon: '/Images/Icons/hackerrank.png', url: `https://www.hackerrank.com/profile/${userData?.profileLinks?.hackerrankUsername}`, path: `/dashboard/${userId}/coding-profiles/hackerrank` },
-    ];
+        { name: 'LeetCode', icon: '/Images/Icons/leetcode.png', url: `https://leetcode.com/u/${userData?.profileLinks?.leetCodeUsername}`, path: `/dashboard/${userId}/coding-profiles/leetcode`, isConnected: !!userData?.profileLinks?.leetCodeUsername },
+        { name: 'CodeStudio', icon: '/Images/Icons/code360.png', url: `https://www.naukri.com/code360/profile/${userData?.profileLinks?.code360Username}`, path: `/dashboard/${userId}/coding-profiles/code360`, isConnected: !!userData?.profileLinks?.code360Username },
+        { name: 'GeeksForGeeks', icon: '/Images/Icons/gfg.png', url: `https://geeksforgeeks.org/profile/${userData?.profileLinks?.gfgUsername}?tab=activity`, path: `/dashboard/${userId}/coding-profiles/gfg`, isConnected: !!userData?.profileLinks?.gfgUsername },
+        { name: 'InterviewBit', icon: '/Images/Icons/interviewbit.png', url: `https://www.interviewbit.com/profile/${userData?.profileLinks?.interviewbitUsername}`, path: `/dashboard/${userId}/coding-profiles/interviewbit`, isConnected: !!userData?.profileLinks?.interviewbitUsername },
+        { name: 'CodeChef', icon: '/Images/Icons/codechef.png', url: `https://www.codechef.com/users/${userData?.profileLinks?.codechefUsername}`, path: `/dashboard/${userId}/coding-profiles/codechef`, isConnected: !!userData?.profileLinks?.codechefUsername },
+        { name: 'HackerRank', icon: '/Images/Icons/hackerrank.png', url: `https://www.hackerrank.com/profile/${userData?.profileLinks?.hackerrankUsername}`, path: `/dashboard/${userId}/coding-profiles/hackerrank`, isConnected: !!userData?.profileLinks?.hackerrankUsername },
+    ].filter(platform => platform.isConnected);
 
     const stats = [
         { label: 'Profile Views', value: userData?.profileViews || '0', color: 'text-slate-500' },
@@ -74,14 +74,14 @@ const DashboardSidebar = ({ userData }) => {
                     <div className="relative mb-6">
                         <div className="absolute inset-0 bg-blue-500 rounded-full blur-2xl opacity-10 animate-pulse-glow" />
                         <div className="w-32 h-32 rounded-full border-4 border-white shadow-2xl overflow-hidden relative z-10">
-                            <img src={userData?.profilePicture || user?.profilePicture || "/Images/Default/user.png"} alt="Profile" className="w-full h-full object-cover" />
+                            <img src={userData?.profile || "/Images/Default/user.png"} alt="Profile" className="w-full h-full object-cover" />
                         </div>
                     </div>
 
                     <h2 className="text-2xl font-black text-slate-800 mb-2">{userData?.name || "User"}</h2>
                     {userData?.headline ? <p className="text-xs text-slate-400 leading-relaxed font-bold mb-8 px-4 italic">{userData?.headline}</p> : null}
 
-                    <div className="flex items-center justify-between w-full px-4 mb-8 text-slate-400">
+                    <div className="flex items-center justify-between w-full px-4 mt-4 mb-8 text-slate-400">
                         {userLinks.map((link, index) => (
                             <button key={link.name} className="flex items-center gap-2" onClick={() => window.open(link.url, '_blank')} disabled={!link.url}>
                                 {link.icon}
@@ -96,90 +96,95 @@ const DashboardSidebar = ({ userData }) => {
                         </div> : null}
                         {userData?.phone ? <div className="flex items-center gap-3 text-slate-600 font-bold text-xs">
                             <Phone className="w-4 h-4 text-blue-500" />
-                            <span>{userData?.phone}</span>
+                            <span>+{userData?.countryCode} {userData?.phone}</span>
                         </div> : null}
                     </div>) : null}
                 </div>
 
                 <div className="mt-4 px-4 pb-8 space-y-4">
-                    <div className="space-y-2">
-                        <div className="w-full flex items-center justify-between p-4 bg-slate-50/80 rounded-2xl group transition-all">
-                            <span
-                                onClick={() => navigate(`/dashboard/${userId}/coding-profiles/`)}
-                                className="text-xs font-black text-slate-600 uppercase tracking-widest cursor-pointer hover:text-blue-600 transition-colors"
-                            >
-                                Problem Solving
-                            </span>
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setIsProblemStatsOpen(!isProblemStatsOpen);
-                                }}
-                                className="p-1 hover:bg-slate-200 rounded-lg transition-all"
-                            >
-                                <ChevronDown className={`w-4 h-4 text-slate-400 transition-all ${isProblemStatsOpen ? 'rotate-180' : ''}`} />
-                            </button>
-                        </div>
-
-                        {isProblemStatsOpen && (
-                            <div className="space-y-1 py-2">
-                                {problemPlatforms.map((platform) => {
-                                    const isActive = location.pathname === platform.path;
-                                    return (
-                                        <div
-                                            key={platform.name}
-                                            className={`flex items-center justify-between p-3.5 rounded-2xl transition-all group cursor-pointer ${isActive ? 'bg-blue-50 border border-blue-100' : 'hover:bg-slate-50'}`}
-                                            onClick={() => navigate(platform.path)}
-                                        >
-                                            <div className="flex items-center gap-3">
-                                                <img src={platform.icon} alt={platform.name} className="w-8 h-8 object-contain transition-all" />
-                                                <span className={`text-sm font-bold ${isActive ? 'text-blue-700' : 'text-slate-700'}`}>{platform.name}</span>
-                                            </div>
-                                            <ExternalLink className={`w-3.5 h-3.5 transition-colors ${isActive ? 'text-blue-500' : 'text-slate-300 group-hover:text-blue-500'}`} onClick={(e) => { e.stopPropagation(); window.open(platform.url, '_blank'); }} />
-                                        </div>
-                                    );
-                                })}
-                                <button className="w-full flex items-center justify-center gap-2 p-4 mt-2 rounded-2xl border-2 border-dashed border-slate-200 text-slate-400 hover:text-blue-600 hover:border-blue-400 hover:bg-blue-50 transition-all font-black text-xs uppercase tracking-widest" onClick={() => navigate('/settings/links')}>
-                                    <Plus className="w-4 h-4" /> Add Platform
+                    {problemPlatforms.length > 0 && (
+                        <div className="space-y-2">
+                            <div className="w-full flex items-center justify-between p-4 bg-slate-50/80 rounded-2xl group transition-all">
+                                <span
+                                    onClick={() => navigate(`/dashboard/${userId}/coding-profiles/`)}
+                                    className="text-xs font-black text-slate-600 uppercase tracking-widest cursor-pointer hover:text-blue-600 transition-colors"
+                                >
+                                    Problem Solving
+                                </span>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setIsProblemStatsOpen(!isProblemStatsOpen);
+                                    }}
+                                    className="p-1 hover:bg-slate-200 rounded-lg transition-all"
+                                >
+                                    <ChevronDown className={`w-4 h-4 text-slate-400 transition-all ${isProblemStatsOpen ? 'rotate-180' : ''}`} />
                                 </button>
                             </div>
-                        )}
-                    </div>
 
-                    <div className="space-y-2">
-                        <div className="w-full flex items-center justify-between p-4 bg-slate-50/80 rounded-2xl group transition-all">
-                            <span
-                                onClick={() => navigate(`/dashboard/${userId}/github`)}
-                                className={`text-xs font-black uppercase tracking-widest cursor-pointer hover:text-blue-600 transition-colors ${location.pathname.includes('/github') ? 'text-blue-600' : 'text-slate-600'}`}
-                            >
-                                Development
-                            </span>
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setIsDevStatsOpen(!isDevStatsOpen);
-                                }}
-                                className="p-1 hover:bg-slate-200 rounded-lg transition-all"
-                            >
-                                <ChevronDown className={`w-4 h-4 text-slate-400 transition-all ${isDevStatsOpen ? 'rotate-180' : ''}`} />
-                            </button>
-                        </div>
-
-                        {isDevStatsOpen && (
-                            <div className="space-y-1 py-2">
-                                <div
-                                    className={`flex items-center justify-between p-3.5 rounded-2xl transition-all group cursor-pointer ${location.pathname === `/dashboard/${userId}/github` ? 'bg-blue-50 border border-blue-100' : 'hover:bg-slate-50'}`}
-                                    onClick={() => navigate(`/dashboard/${userId}/github`)}
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <img src="/Images/Icons/github.png" alt="Github" className="w-8 h-8 object-contain transition-all" />
-                                        <span className={`text-sm font-bold ${location.pathname === `/dashboard/${userId}/github` ? 'text-blue-700' : 'text-slate-700'}`}>GitHub</span>
-                                    </div>
-                                    <ExternalLink className={`w-3.5 h-3.5 transition-colors ${location.pathname === `/dashboard/${userId}/github` ? 'text-blue-500' : 'text-slate-300 group-hover:text-blue-500'}`} onClick={(e) => { e.stopPropagation(); window.open(`https://github.com/${userData?.profileLinks?.githubUsername}`, '_blank'); }} />
+                            {isProblemStatsOpen && (
+                                <div className="space-y-1 py-2">
+                                    {problemPlatforms.map((platform) => {
+                                        const isActive = location.pathname === platform.path;
+                                        return (
+                                            <div
+                                                key={platform.name}
+                                                className={`flex items-center justify-between p-3.5 rounded-2xl transition-all group cursor-pointer ${isActive ? 'bg-blue-50 border border-blue-100' : 'hover:bg-slate-50'}`}
+                                                onClick={() => navigate(platform.path)}
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <img src={platform.icon} alt={platform.name} className="w-8 h-8 object-contain transition-all" />
+                                                    <span className={`text-sm font-bold ${isActive ? 'text-blue-700' : 'text-slate-700'}`}>{platform.name}</span>
+                                                </div>
+                                                <ExternalLink className={`w-5 h-5 transition-colors ${isActive ? 'text-blue-500' : 'text-slate-300 group-hover:text-blue-500'}`} onClick={(e) => { e.stopPropagation(); window.open(platform.url, '_blank'); }} />
+                                            </div>
+                                        );
+                                    })}
                                 </div>
+                            )}
+                        </div>
+                    )}
+
+                    {userData?.profileLinks?.githubUsername && (
+                        <div className="space-y-2">
+                            <div className="w-full flex items-center justify-between p-4 bg-slate-50/80 rounded-2xl group transition-all">
+                                <span
+                                    onClick={() => navigate(`/dashboard/${userId}/github`)}
+                                    className="text-xs font-black text-slate-600 uppercase tracking-widest cursor-pointer hover:text-blue-600 transition-colors"
+                                >
+                                    Development
+                                </span>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setIsDevStatsOpen(!isDevStatsOpen);
+                                    }}
+                                    className="p-1 hover:bg-slate-200 rounded-lg transition-all"
+                                >
+                                    <ChevronDown className={`w-4 h-4 text-slate-400 transition-all ${isDevStatsOpen ? 'rotate-180' : ''}`} />
+                                </button>
                             </div>
-                        )}
-                    </div>
+
+                            {isDevStatsOpen && (
+                                <div className="space-y-1 py-2">
+                                    <div
+                                        className={`flex items-center justify-between p-3.5 rounded-2xl transition-all group cursor-pointer ${location.pathname === `/dashboard/${userId}/github` ? 'bg-blue-50 border border-blue-100' : 'hover:bg-slate-50'}`}
+                                        onClick={() => navigate(`/dashboard/${userId}/github`)}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <img src="/Images/Icons/github.png" alt="Github" className="w-8 h-8 object-contain transition-all" />
+                                            <span className={`text-sm font-bold ${location.pathname === `/dashboard/${userId}/github` ? 'text-blue-700' : 'text-slate-700'}`}>GitHub</span>
+                                        </div>
+                                        <ExternalLink className={`w-5 h-5 transition-colors ${location.pathname === `/dashboard/${userId}/github` ? 'text-blue-500' : 'text-slate-300 group-hover:text-blue-500'}`} onClick={(e) => { e.stopPropagation(); window.open(`https://github.com/${userData?.profileLinks?.githubUsername}`, '_blank'); }} />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    <button className="w-full flex items-center justify-center gap-2 p-4 rounded-2xl border-2 border-dashed border-slate-200 text-slate-400 hover:text-blue-600 hover:border-blue-400 hover:bg-blue-50 transition-all font-black text-xs uppercase tracking-widest" onClick={() => navigate('/settings/links')}>
+                        <Plus className="w-4 h-4" /> Add Platform
+                    </button>
 
                     <div className="px-4 space-y-3 pt-6 border-t border-slate-50 text-slate-500">
                         {stats.map((stat) => (

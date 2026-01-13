@@ -21,10 +21,10 @@ const SettingsPage = () => {
         <div className="h-full w-full bg-gradient-to-br from-blue-50/30 via-white to-purple-50/30 font-sans overflow-hidden flex">
             <style>{animationStyles}</style>
 
-            <SettingsSidebar user={user} />
+            <SettingsSidebar />
 
             <div className="flex-1 overflow-y-auto custom-scrollbar p-8">
-                <div className="max-w-4xl mx-auto animate-float-in">
+                <div className="w-full animate-float-in">
                     <Outlet context={{ user, setUser }} />
                 </div>
             </div>

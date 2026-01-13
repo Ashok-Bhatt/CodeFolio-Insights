@@ -16,6 +16,15 @@ const getUser = asyncHandler(async (req, res) => {
     const viewerSignedDeviceToken = req.signedCookies.deviceToken;
     let newDeviceToken = null;
 
+    const user = await UserModel.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found." });
+
+    const isAdmin = !!req.user && req.user.isAdmin;
+    const isOwner = !!req.user && req.user._id.equals(userId);
+    const isPublic = user.profileVisibility === true;
+    
+    if (!isAdmin && !isOwner && !isPublic) return res.status(403).json({ message: "Profile visibility is set to private." });
+
     if (viewerDeviceToken && !viewerSignedDeviceToken) {
         console.log("Invalid device token!");
         return;

@@ -1,6 +1,5 @@
 import React from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { DashboardSkeleton } from '../../components/skeletons/export.js';
 import { getTotalActiveDays } from '../../utils/dataHelpers.js';
 import { StatCard, ProblemsCard } from '../../components/card/export.js';
 import { BadgeCollection, TopicAnalysis, ContestAchievements } from '../../components/export.js';
@@ -10,29 +9,27 @@ import { getContestData, getContestAchievements } from '../../utils/dataHelpers.
 const LeetCode = () => {
     const { data } = useOutletContext();
 
-    if (!data) {
-        return <DashboardSkeleton />;
-    }
-
     const platformData = data.leetcode;
-    
+
     const platformProblemsData = [
-        { 
-            name: 'Easy', 
-            value: (platformData?.problems?.acSubmissionNum[1]?.count || 0), 
-            color: '#10B981' },
-        { 
-            name: 'Medium', 
-            value: (platformData?.problems?.acSubmissionNum[2]?.count || 0), 
-            color: '#FBBF24' },
-        { 
-            name: 'Hard', 
-            value: (platformData?.problems?.acSubmissionNum[3]?.count || 0), 
-            color: '#FF4524' 
+        {
+            name: 'Easy',
+            value: (platformData?.problems?.acSubmissionNum[1]?.count || 0),
+            color: '#10B981'
+        },
+        {
+            name: 'Medium',
+            value: (platformData?.problems?.acSubmissionNum[2]?.count || 0),
+            color: '#FBBF24'
+        },
+        {
+            name: 'Hard',
+            value: (platformData?.problems?.acSubmissionNum[3]?.count || 0),
+            color: '#FF4524'
         }
     ];
 
-    const topicStats = (Object.values(platformData?.topicStats))?.flat()?.reduce((acc, { tagSlug, problemsSolved }) => {
+    const topicStats = (Object.values(platformData?.topicStats || []))?.flat()?.reduce((acc, { tagSlug, problemsSolved }) => {
         acc[tagSlug] = problemsSolved;
         return acc;
     }, {});
@@ -58,10 +55,10 @@ const LeetCode = () => {
                 <BadgeCollection
                     title="Badges"
                     defaultBadgesCount={2}
-                    badges={platformData?.badges?.badges.map((badge) => {
+                    badges={platformData?.badges?.badges?.map((badge) => {
                         if (badge.category === "COMPETITION" && !badge.icon.includes("https://leetcode.com")) badge.icon = "https://leetcode.com" + badge.icon;
                         return badge;
-                    })}
+                    }) || []}
                 />
 
                 <ProblemsCard

@@ -1,72 +1,3 @@
-export const getPolishedGithubHeatmap = (githubData) => {
-    const zeroPad = (numStr) => {
-        const num = parseInt(numStr, 10);
-        return num.toString().padStart(2, '0');
-    };
-
-    const polishedHeatmap = {};
-
-    if (!githubData) return {};
-
-    for (const week of githubData) {
-        const days = week.contributionDays;
-
-        if (!days || !Array.isArray(days)) continue;
-
-        for (const day of days) {
-            const { contributionCount, date } = day;
-
-            if (contributionCount === undefined || !date) continue;
-
-            const parts = date.split('-');
-
-            if (parts.length === 3) {
-                const year = parts[0];
-                const month = parts[1];
-                const dayOfMonth = parts[2];
-
-                const polishedMonth = zeroPad(month);
-                const polishedDay = zeroPad(dayOfMonth);
-                const polishedDate = `${year}-${polishedMonth}-${polishedDay}`;
-
-                if (!polishedHeatmap[year]) {
-                    polishedHeatmap[year] = {};
-                }
-                polishedHeatmap[year][polishedDate] = contributionCount;
-            }
-        }
-    }
-    return polishedHeatmap;
-};
-
-export const getCombinedHeatmap = (...heatmaps) => {
-    const combinedHeatmap = {};
-
-    for (const heatmap of heatmaps) {
-        if (!heatmap) continue;
-
-        for (const year in heatmap) {
-            if (Object.hasOwnProperty.call(heatmap, year)) {
-                if (!combinedHeatmap[year]) {
-                    combinedHeatmap[year] = {};
-                }
-                const yearData = heatmap[year];
-                for (const date in yearData) {
-                    if (Object.hasOwnProperty.call(yearData, date)) {
-                        const count = yearData[date];
-                        if (combinedHeatmap[year][date]) {
-                            combinedHeatmap[year][date] += count;
-                        } else {
-                            combinedHeatmap[year][date] = count;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return combinedHeatmap;
-};
-
 export const getBadges = (data) => {
     return [
         ...(data?.leetcode?.badges?.badges?.map((badge) => ({ icon: badge.icon, name: badge.displayName, subTitle: null, subTitleIcon: null })) || []),
@@ -85,7 +16,7 @@ export const getBadges = (data) => {
 };
 
 export const getTotalProblems = (data) => {
-    return (data?.gfg?.profile?.problemsSolved?.totalProblemsSolved || 0)
+    return (data?.gfg?.profile?.totalProblemsSolved || 0)
         + (data?.leetcode?.problems?.acSubmissionNum?.find(item => item.difficulty === 'All')?.count || 0)
         + (data?.codechef?.profile?.problemsSolved || 0)
         + (data?.interviewbit?.profile?.problems?.total_problems_solved || 0)
@@ -155,27 +86,29 @@ export const getContestData = (data) => {
 
 export const getDsaProblemsData = (data) => {
     return [
-        { 
-            name: 'Easy', 
-            value: (data.leetcode?.problems?.acSubmissionNum[1]?.count || 0) + 
-                (data.interviewbit?.profile?.problems?.difficulty_problems_solved?.filter(difficulty => difficulty.difficulty_level === 'easy')?.[0]?.solved_problems_count || 0) + 
-                (data.gfg?.profile?.problemsSolved?.Easy || 0) + 
-                (data.code360?.profile?.dsa_domain_data?.problem_count_data?.difficulty_data?.[0]?.count || 0), 
-            color: '#10B981' },
-        { 
-            name: 'Medium', 
-            value: (data.leetcode?.problems?.acSubmissionNum[2]?.count || 0) + 
-                (data.interviewbit?.profile?.problems?.difficulty_problems_solved?.filter(difficulty => difficulty.difficulty_level === 'medium')?.[0]?.solved_problems_count || 0) + 
-                (data.gfg?.profile?.problemsSolved?.Medium || 0) + 
-                (data.code360?.profile?.dsa_domain_data?.problem_count_data?.difficulty_data?.[1]?.count || 0), 
-            color: '#FBBF24' },
-        { 
-            name: 'Hard', 
-            value: (data.leetcode?.problems?.acSubmissionNum[3]?.count || 0) + 
-                (data.interviewbit?.profile?.problems?.difficulty_problems_solved?.filter(difficulty => difficulty.difficulty_level === 'hard')?.[0]?.solved_problems_count || 0) + 
-                (data.gfg?.profile?.problemsSolved?.Hard || 0) + 
-                (data.code360?.profile?.dsa_domain_data?.problem_count_data?.difficulty_data?.[2]?.count || 0), 
-            color: '#FF4524' 
+        {
+            name: 'Easy',
+            value: (data.leetcode?.problems?.acSubmissionNum[1]?.count || 0) +
+                (data.interviewbit?.profile?.problems?.difficulty_problems_solved?.filter(difficulty => difficulty.difficulty_level === 'easy')?.[0]?.solved_problems_count || 0) +
+                (data.gfg?.profile?.problemsSolved?.Easy || 0) +
+                (data.code360?.profile?.dsa_domain_data?.problem_count_data?.difficulty_data?.[0]?.count || 0),
+            color: '#10B981'
+        },
+        {
+            name: 'Medium',
+            value: (data.leetcode?.problems?.acSubmissionNum[2]?.count || 0) +
+                (data.interviewbit?.profile?.problems?.difficulty_problems_solved?.filter(difficulty => difficulty.difficulty_level === 'medium')?.[0]?.solved_problems_count || 0) +
+                (data.gfg?.profile?.problemsSolved?.Medium || 0) +
+                (data.code360?.profile?.dsa_domain_data?.problem_count_data?.difficulty_data?.[1]?.count || 0),
+            color: '#FBBF24'
+        },
+        {
+            name: 'Hard',
+            value: (data.leetcode?.problems?.acSubmissionNum[3]?.count || 0) +
+                (data.interviewbit?.profile?.problems?.difficulty_problems_solved?.filter(difficulty => difficulty.difficulty_level === 'hard')?.[0]?.solved_problems_count || 0) +
+                (data.gfg?.profile?.problemsSolved?.Hard || 0) +
+                (data.code360?.profile?.dsa_domain_data?.problem_count_data?.difficulty_data?.[2]?.count || 0),
+            color: '#FF4524'
         }
     ];
 };

@@ -35,6 +35,35 @@ const getStreaksAndActiveDays = (calendar) => {
   };
 };
 
+const getCombinedHeatmap = (...heatmaps) => {
+  const combinedHeatmap = {};
+
+  for (const heatmap of heatmaps) {
+    if (!heatmap) continue;
+
+    for (const year in heatmap) {
+      if (Object.hasOwnProperty.call(heatmap, year)) {
+        if (!combinedHeatmap[year]) {
+          combinedHeatmap[year] = {};
+        }
+        const yearData = heatmap[year];
+        for (const date in yearData) {
+          if (Object.hasOwnProperty.call(yearData, date)) {
+            const count = yearData[date];
+            if (combinedHeatmap[year][date]) {
+              combinedHeatmap[year][date] += count;
+            } else {
+              combinedHeatmap[year][date] = count;
+            }
+          }
+        }
+      }
+    }
+  }
+  return combinedHeatmap;
+};
+
 export {
-    getStreaksAndActiveDays
+  getStreaksAndActiveDays,
+  getCombinedHeatmap
 }

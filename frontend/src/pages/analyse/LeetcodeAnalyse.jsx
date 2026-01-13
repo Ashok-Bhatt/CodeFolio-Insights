@@ -134,7 +134,7 @@ const LeetcodeAnalyse = () => {
                             />
                         </div>
 
-                        <div className="lg:col-span-3 animate-float-in" style={{ animationDelay: '300ms' }}>
+                        {analysisData?.profileAnalysis && <div className="lg:col-span-3 animate-float-in" style={{ animationDelay: '300ms' }}>
                             <div className="space-y-6">
                                 <AnalysisCard
                                     title="Profile Analysis"
@@ -176,7 +176,7 @@ const LeetcodeAnalyse = () => {
                                     />
                                 </div>
                             </div>
-                        </div>
+                        </div>}
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

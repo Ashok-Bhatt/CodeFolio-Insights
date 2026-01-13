@@ -1,5 +1,5 @@
 import { axiosInstance, asyncWrapper } from "../api/export.js";
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 // Hook for Cache
 export const useProfileCache = (userId) => {
@@ -41,11 +41,19 @@ export const useProfileLinks = (userId) => {
     });
 };
 
-export const useUpdateProfileLinks = () => {
+
+export const useUpdateProfileLink = () => {
+    const queryClient = useQueryClient();
+
     return useMutation({
-        mutationFn: asyncWrapper(async (updatedData) => {
-            const response = await axiosInstance.patch('/profiles/', updatedData, { requiresAuth: true });
+        mutationFn: asyncWrapper(async ({ platformName, platformUsername }) => {
+            const response = await axiosInstance.patch('/profiles/platform', {}, {
+                params: { platformName, platformUsername }
+            });
             return response.data;
-        })
+        }),
+        onSuccess: (data, variables) => {
+            queryClient.invalidateQueries(['profileLinks']);
+        }
     });
 };
