@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from "lucide-react";
 import { BadgeCard } from "./card/export.js";
 
@@ -53,7 +54,7 @@ const BadgeCollection = ({ badges, title = "Awards", defaultBadgesCount = 4, cla
                 )}
             </div>
 
-            {isModalOpen && (
+            {isModalOpen && createPortal(
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-300 overflow-hidden">
                     <div className="bg-white rounded-3xl w-full max-w-5xl max-h-[85vh] overflow-hidden shadow-2xl flex flex-col animate-in zoom-in-95 duration-300 border border-white/20">
                         <div className="flex items-center justify-between p-8 border-b border-gray-100 bg-slate-50/50">
@@ -74,7 +75,8 @@ const BadgeCollection = ({ badges, title = "Awards", defaultBadgesCount = 4, cla
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </>
     );
