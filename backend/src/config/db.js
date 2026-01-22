@@ -17,10 +17,13 @@ mongoose.set('toObject', {
 
 const connectToDB = async () => {
     try {
-        const connectionInstance = await mongoose.connect(`${MONGO_CONN}/${DB_NAME}`);
-        console.log(`MongoDB Database Connected! Database Host ${connectionInstance.connection.host}`);
+        const connectionInstance = await mongoose.connect(MONGO_CONN, {
+            dbName: DB_NAME
+        });
+        console.log(`✅ MongoDB Connected! Host: ${connectionInstance.connection.host}`);
+        console.log(`📂 Database in use: ${connectionInstance.connection.name}`);
     } catch (error) {
-        console.log("MongoDB Database Connection Error: ", error);
+        console.log("❌ MongoDB Database Connection Error: ", error);
         process.exit(1);
     }
 }
