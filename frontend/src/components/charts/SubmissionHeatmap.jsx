@@ -62,12 +62,13 @@ const groupDataByMonth = (days) => {
   return months;
 };
 
-const getColorClass = (count) => {
-  if (count === 0) return 'bg-gray-100';
-  if (count <= 2) return 'bg-green-100';
-  if (count <= 4) return 'bg-green-300';
-  if (count <= 8) return 'bg-green-500';
-  return 'bg-green-700';
+const getGreenHeatColor = (count) => {
+  if (count <= 0) return 'white';
+  if (count === 1) return 'rgb(1, 102, 32)';
+  if (count === 2) return 'rgb(16, 153, 50)';
+  if (count >= 3 && count <= 5) return 'rgb(40, 194, 68)';
+  if (count >= 6) return 'rgb(127, 255, 139)';
+  return 'white';
 };
 
 const calculateOverallStats = (calendar) => {
@@ -217,7 +218,7 @@ const SubmissionHeatmap = ({ calendar, className, title }) => {
 
       <div className="w-full overflow-x-auto pb-4 custom-scrollbar">
         <div className="flex gap-4 min-w-max">
-          <div className="flex flex-col justify-between py-1 mr-2 text-[10px] text-gray-400 font-black h-[112px] uppercase">
+          <div className="flex flex-col justify-between py-1 mr-2 text-[10px] text-gray-500 font-black h-[112px] uppercase">
             <span>Mon</span><span className="invisible">Tue</span><span>Wed</span><span className="invisible">Thu</span><span>Fri</span><span className="invisible">Sat</span><span>Sun</span>
           </div>
 
@@ -229,14 +230,15 @@ const SubmissionHeatmap = ({ calendar, className, title }) => {
                     {week.map((day, dIndex) => (
                       <div
                         key={dIndex}
-                        className={`w-3 h-3 rounded-[2px] border transition-all duration-300 ${day ? `${getColorClass(day.count)} ${day.count > 0 ? 'border-green-200' : 'border-gray-200'}` : 'bg-transparent border-transparent'}`}
+                        style={{ backgroundColor: day ? getGreenHeatColor(day.count) : 'transparent' }}
+                        className={`w-3 h-3 rounded-[2px] transition-all duration-300 ${day ? (day.count > 0 ? 'border border-green-400/10' : 'border border-gray-200') : ''}`}
                         title={day ? `${day.count} submissions on ${day.dateString}` : ''}
                       />
                     ))}
                   </div>
                 ))}
               </div>
-              <span className="text-[10px] font-black text-gray-400 text-center uppercase tracking-widest">{month.name}</span>
+              <span className="text-[10px] font-black text-gray-500 text-center uppercase tracking-widest">{month.name}</span>
             </div>
           ))}
         </div>

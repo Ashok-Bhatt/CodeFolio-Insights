@@ -39,8 +39,9 @@ const ContestGraph = ({ contestData }) => {
     }, [latestContest]);
 
     const handleMouseMove = useCallback((state) => {
-        if (state && state.activePayload && state.activePayload.length) {
-            const contest = state.activePayload[0].payload;
+        const contestIndex = parseInt(state.activeTooltipIndex);
+        if (state && state.isTooltipActive) {
+            const contest = {date: sortedData[contestIndex].date, ranking: sortedData[contestIndex].ranking, rating: sortedData[contestIndex].rating, title: sortedData[contestIndex].title };
             setHoveredContest(contest);
         }
     }, []);
@@ -50,8 +51,8 @@ const ContestGraph = ({ contestData }) => {
     }, [latestContest]);
 
     const currentContest = hoveredContest || latestContest;
-    const canRenderGraph = sortedData.length >= 2;
-    const graphLineColor = '#D97706';
+    const canRenderGraph = sortedData.length >= 1;
+    const graphLineColor = '#155DFC';
 
     const ratingValues = sortedData.map(c => c.rating).filter(r => r > 0);
     const minRating = ratingValues.length > 0 ? Math.min(...ratingValues) : 0;
@@ -65,7 +66,7 @@ const ContestGraph = ({ contestData }) => {
             <div className="flex justify-between items-start mb-8 border-b pb-6 border-gray-50">
                 <div>
                     <h3 className="text-xs uppercase font-black text-gray-400 tracking-widest mb-1">Rating</h3>
-                    <p className="text-5xl font-black text-amber-600">{currentContest?.rating?.toFixed(0) || 'N/A'}</p>
+                    <p className="text-5xl font-black text-[#155DFC]">{currentContest?.rating?.toFixed(0) || 'N/A'}</p>
                 </div>
                 <div className="text-right">
                     <h3 className="text-xs uppercase font-black text-gray-400 tracking-widest mb-1">{currentContest?.date || 'N/A'}</h3>
@@ -85,7 +86,7 @@ const ContestGraph = ({ contestData }) => {
                         >
                             <defs>
                                 <linearGradient id="colorRating" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.4} /><stop offset="95%" stopColor="#F59E0B" stopOpacity={0.05} />
+                                    <stop offset="5%" stopColor="#155DFC" stopOpacity={0.4} /><stop offset="95%" stopColor="#155DFC" stopOpacity={0.05} />
                                 </linearGradient>
                             </defs>
                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
