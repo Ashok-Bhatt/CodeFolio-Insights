@@ -60,7 +60,6 @@ const Interviewbit = () => {
 
                 <BadgeCollection
                     title="Badges"
-                    defaultBadgesCount={2}
                     badges={badges}
                 />
 

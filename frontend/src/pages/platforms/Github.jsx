@@ -24,7 +24,6 @@ const Github = () => {
                 <BadgeCollection
                     title="Badges"
                     badges={githubData?.badges?.map((badge) => ({ icon: badge.icon, name: badge.name })) || []}
-                    defaultBadgesCount={6}
                     className="xl:col-span-2"
                 />
 

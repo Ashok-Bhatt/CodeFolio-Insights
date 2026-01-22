@@ -1,4 +1,6 @@
 import { Medal } from "lucide-react";
+import HackerrankBadge from "../badges/HackerrankBadge";
+import { HACKERRANK_ICONS } from "../../constants/index.js";
 
 const BadgeCard = ({ badge }) => {
     return (
@@ -13,6 +15,8 @@ const BadgeCard = ({ badge }) => {
                             onError={(e) => { e.target.style.display = 'none'; }}
                         />
                     </div>
+                ) : badge.isHackerrankBadge ? (
+                    <HackerrankBadge stars={badge.stars} skillIcon={HACKERRANK_ICONS[badge.name] || HACKERRANK_ICONS['default']} skillName={badge.name}/>
                 ) : (
                     <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center shadow-sm">
                         <Medal className="w-10 h-10 text-gray-300" />

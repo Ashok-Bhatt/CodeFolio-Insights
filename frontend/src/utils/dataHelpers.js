@@ -1,8 +1,18 @@
 export const getBadges = (data) => {
     return [
+        // Leetcode
         ...(data?.leetcode?.badges?.badges?.map((badge) => ({ icon: badge.icon, name: badge.displayName, subTitle: null, subTitleIcon: null })) || []),
+
+        // Codechef
         ...(data?.codechef?.profile?.badges?.map((badge) => ({ icon: badge.badgeImage, name: badge.badgeTitle, subTitle: null, subTitleIcon: null })) || []),
+
+        // Interviewbit
         ...(data?.interviewbit?.profile?.badges?.map((badge) => ({ icon: badge.image, name: badge.title, subTitle: null, subTitleIcon: null })) || []),
+
+        // hackerrank
+        ...(data?.hackerrank?.profile?.badges?.filter((badge)=> badge?.stars > 0)?.map((badge)=> ({stars: badge?.stars || 0, name: badge?.badge_name || "NA", subTitle: null, subTitleIcon: null, isHackerrankBadge: true})) || []),
+
+        // Code360
         ...(data?.code360?.profile?.dsa_domain_data?.badges_hash?.achiever?.gp?.map((badge) => ({ icon: "/Images/Code360 Badges/Guided Path/achiever.svg", name: badge, subTitle: "Achiever", subTitleIcon: null })) || []),
         ...(data?.code360?.profile?.dsa_domain_data?.badges_hash?.achiever?.ptm?.map((badge) => ({ icon: "/Images/Code360 Badges/Practice/achiever.svg", name: badge, subTitle: "Achiever", subTitleIcon: null })) || []),
         ...(data?.code360?.profile?.dsa_domain_data?.badges_hash?.achiever?.sgp?.map((badge) => ({ icon: "/Images/Code360 Badges/Special Guided Path/achiever.svg", name: badge, subTitle: "Achiever", subTitleIcon: null })) || []),

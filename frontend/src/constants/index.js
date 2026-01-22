@@ -94,3 +94,17 @@ export const LANDING_FEATURES = [
         ],
     },
 ];
+
+export const HACKERRANK_ICONS = {
+    "Problem Solving" : "https://hrcdn.net/fcore/assets/badges/problem-solving-ecaf59a612.svg",
+    "C++" : "https://hrcdn.net/fcore/assets/badges/cpp-739b350881.svg",
+    "Java" : "https://hrcdn.net/fcore/assets/badges/java-9d05b1f559.svg",
+    "Python" : "https://hrcdn.net/fcore/assets/badges/python-f70befd824.svg",
+    "30 Days of Code" : "https://hrcdn.net/fcore/assets/badges/30-days-of-code-a772ae4c2f.svg",
+    "10 Days of JS" : "https://hrcdn.net/fcore/assets/badges/10-days-of-javascript-94ff22d1c9.svg",
+    "10 Days of Statistics" : "https://hrcdn.net/fcore/assets/badges/10-days-of-statistics-94ff22d1c9.svg",
+    "Sql" : "https://hrcdn.net/fcore/assets/badges/sql-89e76e7082.svg",
+    "C" : "https://hrcdn.net/fcore/assets/badges/c-d1985901e6.svg",
+    "Ruby" : "https://hrcdn.net/fcore/assets/badges/ruby-b2c8eababe.svg",
+    "default" : "/Images/Default/badge.png",
+}

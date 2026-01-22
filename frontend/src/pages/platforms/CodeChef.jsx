@@ -39,7 +39,6 @@ const CodeChef = () => {
                 <div className="xl:col-span-2">
                     <BadgeCollection
                         title="Badges"
-                        defaultBadgesCount={4}
                         badges={badges}
                     />
                 </div>
