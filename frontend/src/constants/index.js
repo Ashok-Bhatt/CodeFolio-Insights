@@ -1,16 +1,16 @@
 import { Github, Linkedin, Code2, FileText, LayoutDashboard, Sparkles } from "lucide-react";
 
-export const LANGUAGE_COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#6366f1', '#ef4444', '#a21caf', '#14b8a6', '#eab308', '#64748b', '#db2777', '#0ea5e9', '#22d3ee'];
+const LANGUAGE_COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#6366f1', '#ef4444', '#a21caf', '#14b8a6', '#eab308', '#64748b', '#db2777', '#0ea5e9', '#22d3ee'];
 
-export const ALLOWED_FILE_TYPES = [
+const ALLOWED_FILE_TYPES = [
     'application/pdf',
     'application/msword',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 ];
 
-export const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-export const PLATFORMS_CONFIG = [
+const PLATFORMS_CONFIG = [
     { value: 'leetcode', label: 'LeetCode', color: 'from-orange-500 to-orange-600', placeholder: 'leetcode_username' },
     { value: 'github', label: 'GitHub', color: 'from-gray-700 to-gray-900', placeholder: 'github_username' },
     { value: 'gfg', label: 'GeeksForGeeks', color: 'from-green-500 to-green-600', placeholder: 'geeksforgeeks_username' },
@@ -20,13 +20,13 @@ export const PLATFORMS_CONFIG = [
     { value: 'interviewbit', label: 'InterviewBit', color: 'from-blue-700 to-blue-900', placeholder: 'interviewbit_username' },
 ];
 
-export const DEFAULT_USERS = [
+const DEFAULT_USERS = [
     { name: "Alex", profile: "https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=100" },
     { name: "Sarah", profile: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100" },
     { name: "James", profile: "https://images.unsplash.com/photo-1529665253569-6d01c0eaf7b6?w=100" }
 ];
 
-export const LANDING_FEATURES = [
+const LANDING_FEATURES = [
     {
         icon: Github,
         title: "GitHub Analysis",
@@ -95,16 +95,26 @@ export const LANDING_FEATURES = [
     },
 ];
 
-export const HACKERRANK_ICONS = {
-    "Problem Solving" : "https://hrcdn.net/fcore/assets/badges/problem-solving-ecaf59a612.svg",
-    "C++" : "https://hrcdn.net/fcore/assets/badges/cpp-739b350881.svg",
-    "Java" : "https://hrcdn.net/fcore/assets/badges/java-9d05b1f559.svg",
-    "Python" : "https://hrcdn.net/fcore/assets/badges/python-f70befd824.svg",
-    "30 Days of Code" : "https://hrcdn.net/fcore/assets/badges/30-days-of-code-a772ae4c2f.svg",
-    "10 Days of JS" : "https://hrcdn.net/fcore/assets/badges/10-days-of-javascript-94ff22d1c9.svg",
-    "10 Days of Statistics" : "https://hrcdn.net/fcore/assets/badges/10-days-of-statistics-94ff22d1c9.svg",
-    "Sql" : "https://hrcdn.net/fcore/assets/badges/sql-89e76e7082.svg",
-    "C" : "https://hrcdn.net/fcore/assets/badges/c-d1985901e6.svg",
-    "Ruby" : "https://hrcdn.net/fcore/assets/badges/ruby-b2c8eababe.svg",
-    "default" : "/Images/Default/badge.png",
+const HACKERRANK_ICONS = {
+    "Problem Solving": "https://hrcdn.net/fcore/assets/badges/problem-solving-ecaf59a612.svg",
+    "C++": "https://hrcdn.net/fcore/assets/badges/cpp-739b350881.svg",
+    "Java": "https://hrcdn.net/fcore/assets/badges/java-9d05b1f559.svg",
+    "Python": "https://hrcdn.net/fcore/assets/badges/python-f70befd824.svg",
+    "30 Days of Code": "https://hrcdn.net/fcore/assets/badges/30-days-of-code-a772ae4c2f.svg",
+    "10 Days of JS": "https://hrcdn.net/fcore/assets/badges/10-days-of-javascript-94ff22d1c9.svg",
+    "10 Days of Statistics": "https://hrcdn.net/fcore/assets/badges/10-days-of-statistics-94ff22d1c9.svg",
+    "Sql": "https://hrcdn.net/fcore/assets/badges/sql-89e76e7082.svg",
+    "C": "https://hrcdn.net/fcore/assets/badges/c-d1985901e6.svg",
+    "Ruby": "https://hrcdn.net/fcore/assets/badges/ruby-b2c8eababe.svg",
+    "default": "/Images/Default/badge.png",
 }
+
+export {
+    LANGUAGE_COLORS,
+    ALLOWED_FILE_TYPES,
+    MONTH_NAMES,
+    PLATFORMS_CONFIG,
+    DEFAULT_USERS,
+    LANDING_FEATURES,
+    HACKERRANK_ICONS,
+};

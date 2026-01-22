@@ -2,7 +2,7 @@ import { axiosInstance, asyncWrapper } from "../api/export.js";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 // Hook for Cache
-export const useProfileCache = (userId) => {
+const useProfileCache = (userId) => {
     return useQuery({
         queryKey: ["profileCache", userId],
         queryFn: asyncWrapper(async () => {
@@ -16,7 +16,7 @@ export const useProfileCache = (userId) => {
 }
 
 // Hook for Refresh
-export const useProfileRefresh = (userId) => {
+const useProfileRefresh = (userId) => {
     return useQuery({
         queryKey: ["profileRefresh", userId],
         queryFn: asyncWrapper(async () => {
@@ -29,7 +29,7 @@ export const useProfileRefresh = (userId) => {
 }
 
 // Hook for general profile data
-export const useProfileLinks = (userId) => {
+const useProfileLinks = (userId) => {
     return useQuery({
         queryKey: ["profileLinks", userId],
         queryFn: asyncWrapper(async () => {
@@ -42,7 +42,7 @@ export const useProfileLinks = (userId) => {
 };
 
 
-export const useUpdateProfileLink = () => {
+const useUpdateProfileLink = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
@@ -56,4 +56,11 @@ export const useUpdateProfileLink = () => {
             queryClient.invalidateQueries(['profileLinks']);
         }
     });
+};
+
+export {
+    useProfileCache,
+    useProfileRefresh,
+    useProfileLinks,
+    useUpdateProfileLink,
 };

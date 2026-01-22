@@ -1,4 +1,4 @@
-export const getBadges = (data) => {
+const getBadges = (data) => {
     return [
         // Leetcode
         ...(data?.leetcode?.badges?.badges?.map((badge) => ({ icon: badge.icon, name: badge.displayName, subTitle: null, subTitleIcon: null })) || []),
@@ -10,7 +10,7 @@ export const getBadges = (data) => {
         ...(data?.interviewbit?.profile?.badges?.map((badge) => ({ icon: badge.image, name: badge.title, subTitle: null, subTitleIcon: null })) || []),
 
         // hackerrank
-        ...(data?.hackerrank?.profile?.badges?.filter((badge)=> badge?.stars > 0)?.map((badge)=> ({stars: badge?.stars || 0, name: badge?.badge_name || "NA", subTitle: null, subTitleIcon: null, isHackerrankBadge: true})) || []),
+        ...(data?.hackerrank?.profile?.badges?.filter((badge) => badge?.stars > 0)?.map((badge) => ({ stars: badge?.stars || 0, name: badge?.badge_name || "NA", subTitle: null, subTitleIcon: null, isHackerrankBadge: true })) || []),
 
         // Code360
         ...(data?.code360?.profile?.dsa_domain_data?.badges_hash?.achiever?.gp?.map((badge) => ({ icon: "/Images/Code360 Badges/Guided Path/achiever.svg", name: badge, subTitle: "Achiever", subTitleIcon: null })) || []),
@@ -25,7 +25,7 @@ export const getBadges = (data) => {
     ];
 };
 
-export const getTotalProblems = (data) => {
+const getTotalProblems = (data) => {
     return (data?.gfg?.profile?.totalProblemsSolved || 0)
         + (data?.leetcode?.problems?.acSubmissionNum?.find(item => item.difficulty === 'All')?.count || 0)
         + (data?.codechef?.profile?.problemsSolved || 0)
@@ -34,7 +34,7 @@ export const getTotalProblems = (data) => {
         + (data?.hackerrank?.profile?.badges?.reduce((total, badge) => total + badge.solved, 0) || 0);
 };
 
-export const getTotalActiveDays = (heatmap) => {
+const getTotalActiveDays = (heatmap) => {
     let activeDays = 0;
     if (!heatmap) return 0;
     for (const year in heatmap) {
@@ -50,7 +50,7 @@ export const getTotalActiveDays = (heatmap) => {
     return activeDays.toLocaleString();
 };
 
-export const getTopicAnalysis = (data) => {
+const getTopicAnalysis = (data) => {
     let topicStats = {};
     const advanced = data?.leetcode?.topicStats?.advanced || [];
     const intermediate = data?.leetcode?.topicStats?.intermediate || [];
@@ -70,12 +70,12 @@ export const getTopicAnalysis = (data) => {
     return topicStats;
 };
 
-export const getContestCount = (data) => {
+const getContestCount = (data) => {
     return (data?.leetcode?.contest?.userContestRankingHistory?.filter((contest) => contest.attended === true)?.length || 0)
         + (data?.code360?.profile?.contests?.user_rating_data?.length || 0);
 };
 
-export const getContestData = (data) => {
+const getContestData = (data) => {
     return {
         "LeetCode": data?.leetcode?.contest?.userContestRankingHistory
             ?.filter((contest) => contest.attended === true)
@@ -94,7 +94,7 @@ export const getContestData = (data) => {
     };
 };
 
-export const getDsaProblemsData = (data) => {
+const getDsaProblemsData = (data) => {
     return [
         {
             name: 'Easy',
@@ -123,7 +123,7 @@ export const getDsaProblemsData = (data) => {
     ];
 };
 
-export const getContestAchievements = (data) => {
+const getContestAchievements = (data) => {
     return [
         {
             platform: 'LeetCode',
@@ -146,4 +146,15 @@ export const getContestAchievements = (data) => {
             position: data?.code360?.profile?.contests?.rating_group?.group,
         }
     ];
+};
+
+export {
+    getBadges,
+    getTotalProblems,
+    getTotalActiveDays,
+    getTopicAnalysis,
+    getContestCount,
+    getContestData,
+    getDsaProblemsData,
+    getContestAchievements,
 };

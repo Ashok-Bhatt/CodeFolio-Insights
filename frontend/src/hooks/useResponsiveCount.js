@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export const useResponsiveCount = (containerRef, itemWidth, gap = 16) => {
+const useResponsiveCount = (containerRef, itemWidth, gap = 16) => {
     const [count, setCount] = useState(0);
 
     useEffect(() => {
@@ -27,4 +27,5 @@ export const useResponsiveCount = (containerRef, itemWidth, gap = 16) => {
     return count;
 };
 
+export { useResponsiveCount };
 export default useResponsiveCount;

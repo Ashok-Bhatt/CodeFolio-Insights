@@ -85,6 +85,7 @@ const CertificatesCollection = ({ certificates = [], title = "Certificates", cla
                                     <HackerrankCertificateCard
                                         key={`modal-${cert.id || index}`}
                                         data={cert}
+                                        isExpanded={true}
                                     />
                                 ))}
                             </div>

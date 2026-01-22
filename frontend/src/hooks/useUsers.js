@@ -1,7 +1,7 @@
 import { axiosInstance, asyncWrapper } from "../api/export.js";
 import { useMutation, useQuery } from "@tanstack/react-query"
 
-export const useCheckAuth = () => {
+const useCheckAuth = () => {
     return useQuery({
         queryKey: ["checkAuth"],
         retry: 3,
@@ -12,7 +12,7 @@ export const useCheckAuth = () => {
     })
 }
 
-export const useLogin = () => {
+const useLogin = () => {
     return useMutation({
         mutationFn: asyncWrapper(async (formData) => {
             const response = await axiosInstance.post("/auth/login", formData);
@@ -22,7 +22,7 @@ export const useLogin = () => {
     })
 }
 
-export const useSignUp = () => {
+const useSignUp = () => {
     return useMutation({
         mutationFn: asyncWrapper(async (formData) => {
             const response = await axiosInstance.post("/auth/signup", formData);
@@ -32,7 +32,7 @@ export const useSignUp = () => {
     })
 }
 
-export const useUser = (id) => {
+const useUser = (id) => {
     return useQuery({
         queryKey: ["user", id],
         retry: 3,
@@ -44,7 +44,7 @@ export const useUser = (id) => {
     })
 }
 
-export const useUpdateUser = () => {
+const useUpdateUser = () => {
     return useMutation({
         mutationFn: asyncWrapper(async (formData) => {
             const response = await axiosInstance.patch("/user", formData);
@@ -53,7 +53,7 @@ export const useUpdateUser = () => {
     })
 }
 
-export const useChangePassword = () => {
+const useChangePassword = () => {
     return useMutation({
         mutationFn: asyncWrapper(async (passwordData) => {
             const response = await axiosInstance.patch("/user/password", passwordData);
@@ -64,7 +64,7 @@ export const useChangePassword = () => {
 
 // Obsolete useUpdateLastRefresh removed as per backend refactor
 
-export const useLogout = () => {
+const useLogout = () => {
     return useMutation({
         mutationFn: asyncWrapper(async () => {
             const response = await axiosInstance.post("/auth/logout", {});
@@ -73,7 +73,7 @@ export const useLogout = () => {
     })
 }
 
-export const useUsers = (params) => {
+const useUsers = (params) => {
     return useQuery({
         queryKey: ["users", params],
         queryFn: asyncWrapper(async () => {
@@ -86,7 +86,7 @@ export const useUsers = (params) => {
 
 // Obsolete useAddProfileView removed as per backend refactor
 
-export const useToggleProfileVisibility = () => {
+const useToggleProfileVisibility = () => {
     return useMutation({
         mutationFn: asyncWrapper(async () => {
             const response = await axiosInstance.patch("/user/visibility", {});
@@ -94,3 +94,15 @@ export const useToggleProfileVisibility = () => {
         }),
     })
 }
+
+export {
+    useCheckAuth,
+    useLogin,
+    useSignUp,
+    useUser,
+    useUpdateUser,
+    useChangePassword,
+    useLogout,
+    useUsers,
+    useToggleProfileVisibility,
+};
