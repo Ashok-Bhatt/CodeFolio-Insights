@@ -56,7 +56,7 @@ const ResumeAnalysisDisplay = ({ resumeAnalysis, onUploadAgain }) => {
                             <p className="text-gray-600">Based on comprehensive AI analysis</p>
                         </div>
 
-                        <ScoreMeter score={overallScore} />
+                        <ScoreMeter score={overallScore} scoreComparison={resumeAnalysis.scoreComparison} />
                     </div>
 
                     {/* Meme Container Card */}
