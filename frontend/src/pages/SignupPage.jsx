@@ -1,27 +1,19 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuthStore } from '../store/export.js';
-import { useSignUp } from '../hooks/useUsers.js';
 import conf from '../config/config.js';
 
 const SignupPage = () => {
     const [formData, setFormData] = useState({ name: '', email: '', password: '' });
-    const navigate = useNavigate();
-    const signupMutation = useSignUp();
 
     const { name, email, password } = formData;
 
     const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
+    const signup = useAuthStore((state) => state.signup);
     const handleSubmit = async (e) => {
         e.preventDefault();
-        try {
-            const data = await signupMutation.mutateAsync(formData);
-            useAuthStore.setState({ user: data.user, token: data.token });
-            navigate(`/dashboard/${data.user._id}`);
-        } catch (err) {
-            // Error handled
-        }
+        await signup(formData);
     };
 
     return (

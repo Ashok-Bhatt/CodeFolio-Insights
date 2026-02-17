@@ -12,7 +12,8 @@ const useResponsiveCount = (containerRef, itemWidth, gap = 16) => {
                 if (width === 0) return;
 
                 const calculated = Math.floor((width + gap) / (itemWidth + gap));
-                setCount(Math.max(1, calculated));
+                // Ensure at least 2 items are shown if there's space for them
+                setCount(Math.max(2, calculated));
             }
         };
 
