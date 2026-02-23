@@ -1,7 +1,7 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { GEMINI_API_KEY } from "../config/config.js";
 import { complexAnalysisSchema, simpleAnalysisSchema, simpleListSchema, jobDescriptionSchema, videoSchema } from "./schema/geminiResponse.js";
-import { VIDEOS } from "../constant/index.js";
+import { VIDEOS } from "../constants/index.js";
 
 const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
@@ -9,7 +9,7 @@ const getCommitAnalysis = async (commitMessages) => {
     try {
         const response = await ai.models.generateContent({
             model: "gemini-2.5-flash",
-            contents: `You will be given a array of commits and you need to rate them some score out of 10 on the basis of their quality. Return the array of size similar to input one representing the quality of each commit \n\n ${commitMessages}`,
+            contents: `You will be given an array of commits and you need to rate them some score out of 10 on the basis of their quality. Return the array of size similar to input one representing the quality of each commit \n\n ${commitMessages}`,
             config: {
                 responseMimeType: "application/json",
                 responseSchema: {
@@ -35,7 +35,7 @@ const getCommitAnalysis = async (commitMessages) => {
 
         return JSON.parse(response['candidates'][0]["content"]["parts"][0]["text"]);
     } catch (error) {
-        console.log("Error Occurred while getting commit analysis in geminiResponse.js", error.message);
+        console.log("Error Occurred while getting commit analysis in geminiUtils.js", error.message);
         console.log(error.stack);
         return {};
     }
@@ -341,7 +341,7 @@ const getLeetCodeProfileAnalysis = async (leetCodeData) => {
 
         return JSON.parse(response['candidates'][0]["content"]["parts"][0]["text"]);
     } catch (error) {
-        console.log("Error Occurred while getting github profile analysis in geminiResponse.js", error.message);
+        console.log("Error Occurred while getting github profile analysis in geminiUtils.js", error.message);
         console.log(error.stack);
         return {};
     }
@@ -542,7 +542,7 @@ const getResumeAnalysis = async (resumeData) => {
 
         return JSON.parse(response['candidates'][0]["content"]["parts"][0]["text"]);
     } catch (error) {
-        console.log("Error Occurred while getting github profile analysis in geminiResponse.js", error.message);
+        console.log("Error Occurred while getting github profile analysis in geminiUtils.js", error.message);
         console.log(error.stack);
         return {};
     }

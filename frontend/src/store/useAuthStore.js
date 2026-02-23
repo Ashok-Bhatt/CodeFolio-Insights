@@ -9,8 +9,6 @@ const useAuthStore = create(
         (set, get) => ({
             user: null,
             token: null,
-            user: null,
-            token: null,
 
             login: async (formData) => {
                 try {

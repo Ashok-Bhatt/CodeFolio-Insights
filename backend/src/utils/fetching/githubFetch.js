@@ -1,7 +1,7 @@
 import { githubGraphQlQuery, githubRestApiQuery, scrapeSpideyAPI } from "../../api/axiosInstance.js";
 import { getCommitAnalysis } from "../geminiUtils.js";
 import { SCRAPE_SPIDEY_API_KEY } from "../../config/config.js";
-import { GITHUB_API_QUERIES } from "../../constant/index.js";
+import { GITHUB_API_QUERIES } from "../../constants/index.js";
 import { getPolishedGithubHeatmap } from "../../utils/calendar.js";
 
 const PAGE_SIZE = 100;
@@ -60,7 +60,7 @@ const getYearlyContributionCount = async (username, year) => {
 }
 
 const getMultiYearContributionCount = async (username, startYear, endYear) => {
-    let contributionCount = { pullRequestsCount: 0, issuesCount: 0, commitsCount: 0, pullRequestReviewsCount: 0, repositoriesCount: 0, restrictedCintributionCount: 0 };
+    let contributionCount = { pullRequestsCount: 0, issuesCount: 0, commitsCount: 0, pullRequestReviewsCount: 0, repositoriesCount: 0, restrictedContributionCount: 0 };
 
     const start = parseInt(startYear);
     const end = parseInt(endYear);
@@ -74,7 +74,7 @@ const getMultiYearContributionCount = async (username, startYear, endYear) => {
         contributionCount.commitsCount += (yearlyContributions.totalCommitContributions || 0);
         contributionCount.pullRequestReviewsCount += (yearlyContributions.pullRequestReviewContributions?.totalCount || 0);
         contributionCount.repositoriesCount += (yearlyContributions.repositoryContributions?.totalCount || 0);
-        contributionCount.restrictedCintributionCount += (yearlyContributions.restrictedContributionsCount || 0);
+        contributionCount.restrictedContributionCount += (yearlyContributions.restrictedContributionsCount || 0);
     }
     return contributionCount;
 }

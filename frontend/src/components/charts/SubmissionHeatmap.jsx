@@ -26,19 +26,44 @@ const generateFullYearData = (year, calendarData) => {
   return days;
 };
 
+const generateLast365DaysData = (calendarData) => {
+  const days = [];
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const start = new Date(today);
+  start.setDate(start.getDate() - 364);
+
+  for (let d = new Date(start); d <= today; d.setDate(d.getDate() + 1)) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const dayOfMonth = String(d.getDate()).padStart(2, '0');
+    const key = `${y}-${m}-${dayOfMonth}`;
+
+    days.push({
+      date: new Date(d),
+      count: calendarData[key] || 0,
+      dateString: key
+    });
+  }
+  return days;
+};
+
 const groupDataByMonth = (days) => {
   const months = [];
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const daysByMonth = {};
 
   days.forEach(day => {
+    const year = day.date.getFullYear();
     const mIndex = day.date.getMonth();
-    if (!daysByMonth[mIndex]) daysByMonth[mIndex] = [];
-    daysByMonth[mIndex].push(day);
+    const key = `${year}-${String(mIndex).padStart(2, '0')}`;
+    if (!daysByMonth[key]) daysByMonth[key] = { mIndex, days: [] };
+    daysByMonth[key].days.push(day);
   });
 
-  Object.keys(daysByMonth).sort((a, b) => a - b).forEach(mIndex => {
-    const monthDays = daysByMonth[mIndex];
+  Object.keys(daysByMonth).sort().forEach(key => {
+    const { mIndex, days: monthDays } = daysByMonth[key];
     if (monthDays.length === 0) return;
 
     const weeks = [];
@@ -146,10 +171,40 @@ const calculateOverallStats = (calendar) => {
 const SubmissionHeatmap = ({ calendar, className, title }) => {
   const [selectedYear, setSelectedYear] = useState(null);
 
-  const years = useMemo(() => {
-    if (!calendar) return [];
-    return Object.keys(calendar).sort((a, b) => b - a);
+  const enrichedCalendar = useMemo(() => {
+    if (!calendar) return calendar;
+    const currentYear = String(new Date().getFullYear());
+    const previousYear = String(Number(currentYear) - 1);
+
+    if (calendar[currentYear] && calendar[previousYear]) {
+      const merged = { ...calendar[previousYear], ...calendar[currentYear] };
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const cutoff = new Date(today);
+      cutoff.setDate(cutoff.getDate() - 364);
+
+      const currentData = {};
+      Object.entries(merged).forEach(([dateStr, count]) => {
+        const d = new Date(dateStr);
+        if (d >= cutoff && d <= today) {
+          currentData[dateStr] = count;
+        }
+      });
+
+      return { current: currentData, ...calendar };
+    }
+    return calendar;
   }, [calendar]);
+
+  const years = useMemo(() => {
+    if (!enrichedCalendar) return [];
+    return Object.keys(enrichedCalendar).sort((a, b) => {
+      if (a === 'current') return -1;
+      if (b === 'current') return 1;
+      return b - a;
+    });
+  }, [enrichedCalendar]);
 
   useEffect(() => {
     if (years.length > 0 && !selectedYear) {
@@ -160,11 +215,15 @@ const SubmissionHeatmap = ({ calendar, className, title }) => {
   const globalStats = useMemo(() => calculateOverallStats(calendar), [calendar]);
 
   const currentYearData = useMemo(() => {
-    if (!calendar || !selectedYear) return {};
-    return calendar[selectedYear] || {};
-  }, [calendar, selectedYear]);
+    if (!enrichedCalendar || !selectedYear) return {};
+    return enrichedCalendar[selectedYear] || {};
+  }, [enrichedCalendar, selectedYear]);
 
   const monthlyGroups = useMemo(() => {
+    if (selectedYear === 'current') {
+      const fullData = generateLast365DaysData(currentYearData);
+      return groupDataByMonth(fullData);
+    }
     const fullYearData = generateFullYearData(selectedYear, currentYearData);
     return groupDataByMonth(fullYearData);
   }, [selectedYear, currentYearData]);

@@ -7,7 +7,7 @@ import { getSearchQuery, getSortQuery } from "../utils/query/userQuery.js"
 import asyncHandler from '../utils/asyncHandler.js';
 import ProfileViewModel from "../models/profileView.model.js";
 import { ENV } from "../config/config.js";
-import { addProfileView } from "../services/profileView.services.js";
+import { addProfileView } from "../services/profileView.service.js";
 
 const getUser = asyncHandler(async (req, res) => {
     const userId = req.params.userId;

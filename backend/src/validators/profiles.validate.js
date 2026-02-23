@@ -1,5 +1,5 @@
 import z from "zod";
-import { PLATFORMS } from "../constant/index.js";
+import { PLATFORMS } from "../constants/index.js";
 
 const profileUpdateValidationSchema = z.object({
     query: z.object({

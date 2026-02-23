@@ -1,7 +1,7 @@
 import { getPdfContent } from "../utils/pdfUtils.js";
 import redisClient from "../config/redis.js";
 import asyncHandler from '../utils/asyncHandler.js';
-import { getScoreComparison, savePlatformScore } from "../services/score.servive.js";
+import { getScoreComparison, savePlatformScore } from "../services/score.service.js";
 import { getAnalysisGithubData, getAnalysisLeetCodeData, getGithubScore, getLeetCodeScore } from "../services/analyze.service.js";
 import { getGithubProfileAnalysis, getLeetCodeProfileAnalysis, getResumeAnalysis } from "../utils/geminiUtils.js";
 import scoreModel from "../models/score.model.js";
