@@ -47,7 +47,7 @@ const ResumeAnalyse = () => {
             formData.append('resume', resumeFile);
 
             const data = await resumeAnalysisMutation.mutateAsync(formData);
-            setAnalysis(data?.resumeAnalysis);
+            setAnalysis({ ...data?.resumeAnalysis, scoreComparison: data?.scoreComparison });
             setError('');
         } catch (err) {
             setError(err.message || 'A network or server error occurred. Please try again.');

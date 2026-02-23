@@ -118,6 +118,7 @@ const LeetcodeAnalyse = () => {
                         <div className="lg:col-span-1 bg-white/90 backdrop-blur-sm p-6 rounded-3xl shadow-xl border border-gray-100 animate-float-in">
                             <ScoreMeter
                                 score={analysisData?.scoreData?.overall}
+                                scoreComparison={analysisData?.scoreComparison}
                             />
                         </div>
 
@@ -134,49 +135,61 @@ const LeetcodeAnalyse = () => {
                             />
                         </div>
 
-                        {analysisData?.profileAnalysis && <div className="lg:col-span-3 animate-float-in" style={{ animationDelay: '300ms' }}>
-                            <div className="space-y-6">
-                                <AnalysisCard
-                                    title="Profile Analysis"
-                                    points={analysisData?.profileAnalysis?.analysis || []}
-                                    Icon={BarChart3}
-                                    PointIcon={CheckCircle}
-                                    iconBg="bg-purple-100"
-                                    iconColor="text-purple-600"
-                                    pointIconColor="text-green-500"
-                                    pointColor="text-purple-700"
-                                    titleColor="text-purple-800"
-                                    className="bg-gradient-to-br from-purple-50 via-white to-indigo-50 border-purple-200"
-                                />
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {Object.keys(analysisData?.profileAnalysis || {}).length > 0 ? (
+                            <div className="lg:col-span-3 animate-float-in" style={{ animationDelay: '300ms' }}>
+                                <div className="space-y-6">
                                     <AnalysisCard
-                                        title="Strengths"
-                                        points={analysisData?.profileAnalysis?.strongPoints}
-                                        Icon={TrendingUp}
+                                        title="Profile Analysis"
+                                        points={analysisData?.profileAnalysis?.analysis || []}
+                                        Icon={BarChart3}
                                         PointIcon={CheckCircle}
-                                        iconBg="bg-blue-100"
-                                        iconColor="text-blue-600"
+                                        iconBg="bg-purple-100"
+                                        iconColor="text-purple-600"
                                         pointIconColor="text-green-500"
-                                        pointColor="text-blue-700"
-                                        className="bg-gradient-to-br from-blue-50 via-white to-cyan-50 border-blue-200"
+                                        pointColor="text-purple-700"
+                                        titleColor="text-purple-800"
+                                        className="bg-gradient-to-br from-purple-50 via-white to-indigo-50 border-purple-200"
                                     />
 
-                                    <AnalysisCard
-                                        title="Areas to Improve"
-                                        points={analysisData?.profileAnalysis?.improvementAreas}
-                                        Icon={Target}
-                                        PointIcon={AlertCircle}
-                                        iconBg="bg-amber-100"
-                                        iconColor="text-amber-600"
-                                        pointIconColor="text-amber-500"
-                                        pointColor="text-amber-700"
-                                        titleColor="text-amber-800"
-                                        className="bg-gradient-to-br from-amber-50 via-white to-orange-50 border-amber-200"
-                                    />
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <AnalysisCard
+                                            title="Strengths"
+                                            points={analysisData?.profileAnalysis?.strongPoints}
+                                            Icon={TrendingUp}
+                                            PointIcon={CheckCircle}
+                                            iconBg="bg-blue-100"
+                                            iconColor="text-blue-600"
+                                            pointIconColor="text-green-500"
+                                            pointColor="text-blue-700"
+                                            className="bg-gradient-to-br from-blue-50 via-white to-cyan-50 border-blue-200"
+                                        />
+
+                                        <AnalysisCard
+                                            title="Areas to Improve"
+                                            points={analysisData?.profileAnalysis?.improvementAreas}
+                                            Icon={Target}
+                                            PointIcon={AlertCircle}
+                                            iconBg="bg-amber-100"
+                                            iconColor="text-amber-600"
+                                            pointIconColor="text-amber-500"
+                                            pointColor="text-amber-700"
+                                            titleColor="text-amber-800"
+                                            className="bg-gradient-to-br from-amber-50 via-white to-orange-50 border-amber-200"
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                        </div>}
+                        ) : (
+                            <div className="lg:col-span-3 bg-white/90 backdrop-blur-sm p-12 rounded-3xl shadow-xl border border-dashed border-gray-200 text-center animate-float-in" style={{ animationDelay: '300ms' }}>
+                                <div className="mx-auto w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mb-4">
+                                    <AlertCircle className="w-8 h-8 text-gray-400" />
+                                </div>
+                                <h3 className="text-xl font-bold text-gray-800 mb-2">Analysis Not Available</h3>
+                                <p className="text-gray-500 max-w-md mx-auto">
+                                    We couldn't generate a detailed profile analysis at this time. This might be due to insufficient public activity or API limitations.
+                                </p>
+                            </div>
+                        )}
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -1,15 +1,11 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import conf from '../config/config.js';
-import { useAuthStore } from '../store/export.js';
 import { useLogin } from '../hooks/useUsers.js';
 
 const LoginPage = () => {
-    const setAuth = useAuthStore((state) => state.set);
     const [formData, setFormData] = useState({ email: '', password: '' });
-    const navigate = useNavigate();
-
-    const loginMutation = useLogin();
+    const { mutateAsync: login } = useLogin();
 
     const { email, password } = formData;
 
@@ -17,14 +13,7 @@ const LoginPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        try {
-            const data = await loginMutation.mutateAsync(formData);
-            useAuthStore.setState({ user: data.user, token: data.token });
-            navigate(`/dashboard/${data.user._id}`);
-        } catch (err) {
-            // Error handling is managed by the hook or manually if needed
-            // The throwAxiosError in useUsers.js throws the message
-        }
+        await login(formData);
     };
 
     return (

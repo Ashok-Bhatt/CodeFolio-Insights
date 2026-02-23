@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import UserModel from "../models/user.model.js";
-import { JWT_SECRET, ENV } from '../config/config.js';
+import { JWT_SECRET } from '../config/config.js';
 import { generateToken, deleteToken } from '../utils/tokenGenerator.js';
 import asyncHandler from '../utils/asyncHandler.js';
 
@@ -10,25 +10,27 @@ const signup = asyncHandler(async (req, res) => {
 
     let user = await UserModel.findOne({ email });
     if (user) return res.status(400).json({ message: 'User with this email already exists' });
+    
+    const salt = await bcrypt.genSalt(10);
+    const passwordHash = await bcrypt.hash(password, salt);
 
     user = new UserModel({
         name,
         email,
-        password,
-        lastRefresh: Date.now(),
+        password: passwordHash,
+        lastRefresh: Date.now()
     });
-
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(password, salt);
-
     await user.save();
 
     const userObject = user.toObject();
-    if (userObject.password) delete userObject.password;
-    if (userObject.googleId) delete userObject.googleId;
+    if (userObject.hasOwnProperty("password")) delete userObject.password;
 
     const token = generateToken(user._id, res);
-    return res.status(201).json({ user: userObject, token });
+    return res.status(201).json({
+        message: 'User registered successfully',
+        token,
+        user: userObject
+    });
 });
 
 const login = asyncHandler(async (req, res) => {
@@ -83,5 +85,5 @@ export {
     signup,
     login,
     logout,
-    checkAuth,
+    checkAuth
 };

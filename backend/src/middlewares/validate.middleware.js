@@ -1,6 +1,6 @@
 import { ZodError } from 'zod';
 
-export const validate = (schema) => {
+const validate = (schema) => {
     return async (req, res, next) => {
         try {
             const parsedData = await schema.parseAsync({
@@ -26,4 +26,5 @@ export const validate = (schema) => {
     }
 }
 
+export { validate };
 export default validate;

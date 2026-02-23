@@ -1,7 +1,7 @@
 import axios from "axios";
 import { GITHUB_TOKEN} from "../config/config.js";
 
-// Github Instance
+// GitHub Instance
 const githubAPI = axios.create({
     baseURL: "https://api.github.com",
     headers: {
@@ -36,7 +36,7 @@ const githubGraphQlQuery = async (query, variables={}) => {
     }
 }
 
-// Github Helper function for RestAPI queries
+// GitHub Helper function for RestAPI queries
 const githubRestApiQuery = async (endpoint) => {
     try {
         const response = await githubAPI.get(endpoint);

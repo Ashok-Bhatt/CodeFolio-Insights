@@ -1,11 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { X } from "lucide-react";
 import { BadgeCard } from "./card/export.js";
+import { useResponsiveCount } from '../hooks/export.js';
 
-const BadgeCollection = ({ badges, title = "Awards", defaultBadgesCount = 4, className = "" }) => {
+const BadgeCollection = ({ badges, title = "Awards", className = "" }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const displayedBadges = badges.slice(0, defaultBadgesCount);
+    const containerRef = useRef(null);
+
+    // BadgeCard is w-40 (160px) + gap-4 (16px)
+    const fitCount = useResponsiveCount(containerRef, 160, 16);
+    const displayedBadges = badges.slice(0, fitCount || 0);
 
     const toggleModal = () => {
         setIsModalOpen(!isModalOpen);
@@ -31,17 +36,20 @@ const BadgeCollection = ({ badges, title = "Awards", defaultBadgesCount = 4, cla
                 </div>
 
                 {badges.length > 0 ? (
-                    <div className="flex flex-col items-center">
-                        <div className="flex flex-wrap justify-center gap-4 mb-4">
+                    <div className="flex flex-col items-center w-full">
+                        <div
+                            ref={containerRef}
+                            className="flex justify-center gap-4 mb-4 w-full overflow-hidden flex-nowrap"
+                        >
                             {displayedBadges.map((badge, index) => (
                                 <BadgeCard key={`${badge.id}-${index}`} badge={badge} />
                             ))}
                         </div>
 
-                        {badges.length > defaultBadgesCount && (
+                        {badges.length > displayedBadges.length && (
                             <button
                                 onClick={toggleModal}
-                                className="text-blue-500 hover:text-blue-700 font-medium text-sm underline mt-2 focus:outline-none"
+                                className="text-blue-500 hover:text-blue-700 font-medium text-sm underline mt-2 focus:outline-none transition-colors"
                             >
                                 show more
                             </button>

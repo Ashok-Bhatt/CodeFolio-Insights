@@ -4,9 +4,7 @@ import conf from "../config/config.js"
 
 const axiosInstance = axios.create({
     baseURL: conf.SERVER_BASE_URL,
-    headers: {
-        "Content-Type": "application/json",
-    }
+    withCredentials: true,
 })
 
 axiosInstance.interceptors.request.use(

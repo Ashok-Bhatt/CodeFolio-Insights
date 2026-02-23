@@ -7,20 +7,20 @@ import { LANGUAGE_COLORS } from '../../constants/index.js';
 const HackerRank = () => {
     const { data } = useOutletContext();
 
-
     const platformData = data.hackerrank;
     const certificates = platformData?.profile?.certificates?.filter((cert) => cert.attributes.status === 'test_passed') || [];
 
     const totalProblems = platformData?.profile?.badges?.reduce((total, badge) => total + (badge.solved || 0), 0) || 0;
 
-    const badges = platformData?.profile?.badges?.map((badge) => ({
-        icon: badge.icon_url,
-        name: badge.badge_name,
-        subTitle: `Level ${badge.level || 1}`,
+    const badges = platformData?.profile?.badges?.filter((badge) => badge?.stars > 0)?.map((badge) => ({
+        isHackerrankBadge: true,
+        stars: badge.stars || 0,
+        name: badge.badge_name || "NA",
+        subTitle: null,
         subTitleIcon: null
     })) || [];
 
-    const platformProblemsData = platformData?.profile?.badges?.sort((a, b) => b.solved - a.solved)?.map((badge, index) => ({
+    const platformProblemsData = platformData?.profile?.badges?.filter((badge) => badge?.solved > 0)?.sort((a, b) => b.solved - a.solved)?.map((badge, index) => ({
         name: badge.badge_name,
         value: badge.solved || 0,
         color: LANGUAGE_COLORS[index % LANGUAGE_COLORS.length]
@@ -52,12 +52,10 @@ const HackerRank = () => {
                 <CertificatesCollection
                     title="Earned Certificates"
                     certificates={certificates}
-                    defaultCertificatesCount={2}
                 />
 
                 <BadgeCollection
                     title="Skill Badges"
-                    defaultBadgesCount={6}
                     badges={badges}
                     className="xl:col-span-2"
                 />

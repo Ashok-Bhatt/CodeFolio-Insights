@@ -1,13 +1,13 @@
 import UserModel from "../models/user.model.js";
 import redisClient from "../config/redis.js";
-import ProfileModel from "../models/profiles.model.js";
+import ProfileModel from "../models/profile.model.js";
 import { destroyFile, uploadFile } from "../utils/cloudinary.js";
 import bcrypt from "bcrypt";
 import { getSearchQuery, getSortQuery } from "../utils/query/userQuery.js"
 import asyncHandler from '../utils/asyncHandler.js';
 import ProfileViewModel from "../models/profileView.model.js";
 import { ENV } from "../config/config.js";
-import { addProfileView } from "../services/profileView.services.js";
+import { addProfileView } from "../services/profileView.service.js";
 
 const getUser = asyncHandler(async (req, res) => {
     const userId = req.params.userId;
@@ -22,7 +22,7 @@ const getUser = asyncHandler(async (req, res) => {
     const isAdmin = !!req.user && req.user.isAdmin;
     const isOwner = !!req.user && req.user._id.equals(userId);
     const isPublic = user.profileVisibility === true;
-    
+
     if (!isAdmin && !isOwner && !isPublic) return res.status(403).json({ message: "Profile visibility is set to private." });
 
     if (viewerDeviceToken && !viewerSignedDeviceToken) {
@@ -185,7 +185,7 @@ const toggleProfileVisibility = asyncHandler(async (req, res) => {
 
 const getUserHighlights = asyncHandler(async (req, res) => {
     const cachedData = await redisClient.get("userHighlights");
-    if (cachedData) return res.status(200).json(JSON.parse(cachedData));
+    if (cachedData) return res.status(200).json(cachedData);
 
     const totalUsers = await UserModel.countDocuments();
     const sampleUsers = await UserModel.find({ profile: { $exists: true, $ne: "" } })
@@ -199,7 +199,7 @@ const getUserHighlights = asyncHandler(async (req, res) => {
     };
 
     // Cache for 1 hour (3600 seconds)
-    await redisClient.set("userHighlights", JSON.stringify(response), "EX", 3600);
+    await redisClient.set("userHighlights", response, { ex: 3600 });
 
     return res.status(200).json(response);
 });

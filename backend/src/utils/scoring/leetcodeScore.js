@@ -58,13 +58,13 @@ const getSubmissionConsistencyScore = (submissionCalendarData) => {
     const { currentStreak, maxStreak, activeDays } = getStreaksAndActiveDays(submissionCalendarData);
 
     // Logarithmic Scaling for Streak (ln)
-    // Formula: 40 * ln(C+1) -> Makes long streaks difficult to improve score
+    // Formula: 20 * log(C+1) -> Makes long streaks difficult to improve score
     const currentStreakScore = Math.min(100, 20 * Math.log(currentStreak + 1));
     const maxStreakScore = Math.min(100, 20 * Math.log(maxStreak + 1));
     const streakScore = currentStreakScore*0.2 + maxStreakScore*0.8;
     
     // Logarithmic Scaling for Active Days (ln)
-    // Formula: 25 * ln(C+1) -> Heavily rewards first year, slows down significantly after
+    // Formula: 15 * log(C+1) -> Heavily rewards first year, slows down significantly after
     const submissionScore = Math.min(100, 15 * Math.log(activeDays + 1));
     
     const score = streakScore * 0.3 + submissionScore * 0.7;
@@ -77,8 +77,8 @@ const getBadgesScore = (badgesData) => {
     let score = Math.min(badgesData["badges"].length * 10, 100);
 
     const contestBadge = badgesData["badges"].filter(badge => badge["category"] === "COMPETITION");
-    if (contestBadge) {
-        if (contestBadge.name === "Guardian") score = score + 100;
+    if (contestBadge.length > 0) {
+        if (contestBadge[0].name === "Guardian") score = score + 100;
         else score = score + 50;
     }
 
