@@ -13,7 +13,7 @@ const analyzeGithub = asyncHandler(async (req, res) => {
 
     // Checking if data is cached
     const cachedData = await redisClient.get(`profileAnalysis:github:${username}`);
-    if (cachedData) return res.status(200).json(JSON.parse(cachedData));
+    if (cachedData) return res.status(200).json(cachedData);
 
 
     // Data Fetching
@@ -38,7 +38,7 @@ const analyzeGithub = asyncHandler(async (req, res) => {
 
     // Returning the response and saving it in cache
     const response = { ...githubAnalysisContext, profileAnalysis, scoreData, scoreComparison }
-    await redisClient.set(`profileAnalysis:github:${username}`, JSON.stringify(response), "EX", 10 * 60);
+    await redisClient.set(`profileAnalysis:github:${username}`, response, "EX", 10 * 60);
 
     return res.status(200).json(response);
 
@@ -51,7 +51,7 @@ const analyzeLeetCode = asyncHandler(async (req, res) => {
 
     // Checking if data is cached
     const cachedData = await redisClient.get(`profileAnalysis:leetcode:${username}`);
-    if (cachedData) return res.status(200).json(JSON.parse(cachedData));
+    if (cachedData) return res.status(200).json(cachedData);
 
 
     // LeetCode Data Fetching
@@ -77,7 +77,7 @@ const analyzeLeetCode = asyncHandler(async (req, res) => {
 
     // Returning the response and saving it in cache
     const response = { ...leetCodeData, profileAnalysis, scoreData, scoreComparison }
-    await redisClient.set(`profileAnalysis:leetcode:${username}`, JSON.stringify(response), "EX", 10 * 60);
+    await redisClient.set(`profileAnalysis:leetcode:${username}`, response, "EX", 10 * 60);
 
     return res.status(200).json(response);
 });
