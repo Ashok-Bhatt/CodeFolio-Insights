@@ -6,7 +6,7 @@ const useProfileCache = (userId) => {
     return useQuery({
         queryKey: ["profileCache", userId],
         queryFn: asyncWrapper(async () => {
-            const response = await axiosInstance.get(`/profiles/cache/${userId}`);
+            const response = await axiosInstance.get(`/profile/cache/${userId}`);
             return response.data;
         }),
         enabled: !!userId,
@@ -20,7 +20,7 @@ const useProfileRefresh = (userId) => {
     return useQuery({
         queryKey: ["profileRefresh", userId],
         queryFn: asyncWrapper(async () => {
-            const response = await axiosInstance.get(`/profiles/fetch/${userId}`);
+            const response = await axiosInstance.get(`/profile/fetch/${userId}`);
             return response.data;
         }),
         enabled: false,
@@ -33,7 +33,7 @@ const useProfileLinks = (userId) => {
     return useQuery({
         queryKey: ["profileLinks", userId],
         queryFn: asyncWrapper(async () => {
-            const response = await axiosInstance.get(`/profiles/${userId}`);
+            const response = await axiosInstance.get(`/profile/${userId}`);
             return response.data;
         }),
         enabled: !!userId,
@@ -47,7 +47,7 @@ const useUpdateProfileLink = () => {
 
     return useMutation({
         mutationFn: asyncWrapper(async ({ platformName, platformUsername }) => {
-            const response = await axiosInstance.patch('/profiles/platform', {}, {
+            const response = await axiosInstance.patch('/profile/platform', {}, {
                 params: { platformName, platformUsername }
             });
             return response.data;

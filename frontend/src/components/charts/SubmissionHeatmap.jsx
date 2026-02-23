@@ -96,6 +96,23 @@ const getGreenHeatColor = (count) => {
   return 'white';
 };
 
+const getYearWithZeros = (year) => {
+  const data = {};
+  const yearNum = parseInt(year);
+  if (isNaN(yearNum)) return {};
+
+  const start = new Date(yearNum, 0, 1);
+  const end = new Date(yearNum, 11, 31);
+
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const dayOfMonth = String(d.getDate()).padStart(2, '0');
+    data[`${y}-${m}-${dayOfMonth}`] = 0;
+  }
+  return data;
+};
+
 const calculateOverallStats = (calendar) => {
   if (!calendar) return { totalSubmissions: 0, maxStreak: 0, currentStreak: 0 };
 
@@ -103,8 +120,9 @@ const calculateOverallStats = (calendar) => {
   const allDates = [];
   const allDataMap = {};
 
-  Object.values(calendar).forEach(yearData => {
-    Object.entries(yearData).forEach(([dateStr, count]) => {
+  Object.entries(calendar).forEach(([year, yearData]) => {
+    const data = yearData === null ? getYearWithZeros(year) : yearData;
+    Object.entries(data).forEach(([dateStr, count]) => {
       if (count > 0) {
         totalSubmissions += count;
         allDataMap[dateStr] = count;
@@ -216,7 +234,7 @@ const SubmissionHeatmap = ({ calendar, className, title }) => {
 
   const currentYearData = useMemo(() => {
     if (!enrichedCalendar || !selectedYear) return {};
-    return enrichedCalendar[selectedYear] || {};
+    return enrichedCalendar[selectedYear] ?? {};
   }, [enrichedCalendar, selectedYear]);
 
   const monthlyGroups = useMemo(() => {
@@ -281,8 +299,8 @@ const SubmissionHeatmap = ({ calendar, className, title }) => {
             <span>Mon</span><span className="invisible">Tue</span><span>Wed</span><span className="invisible">Thu</span><span>Fri</span><span className="invisible">Sat</span><span>Sun</span>
           </div>
 
-          {monthlyGroups.map((month) => (
-            <div key={month.name} className="flex flex-col gap-2">
+          {monthlyGroups.map((month, index) => (
+            <div key={`${month.name}-${index}`} className="flex flex-col gap-2">
               <div className="flex gap-1">
                 {month.weeks.map((week, wIndex) => (
                   <div key={wIndex} className="flex flex-col gap-1">
