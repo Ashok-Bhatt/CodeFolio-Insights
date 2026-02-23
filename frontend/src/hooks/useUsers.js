@@ -8,7 +8,7 @@ const useCheckAuth = () => {
         queryKey: ["checkAuth"],
         retry: 3,
         queryFn: asyncWrapper(async () => {
-            const response = await axiosInstance.get("/auth/check", { withCredentials: true });
+            const response = await axiosInstance.get("/auth/check");
             if (response.data) {
                 useAuthStore.setState({ user: response.data.user, token: response.data.token });
             }
@@ -64,20 +64,13 @@ const useUser = (id) => {
 }
 
 const useUpdateUser = () => {
-    const queryClient = useQueryClient();
     return useMutation({
         mutationFn: asyncWrapper(async (formData) => {
-            const response = await axiosInstance.patch("/user", formData);
+            const response = await axiosInstance.patch("/user", formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
             return response.data;
-        }),
-        onSuccess: (data) => {
-            useAuthStore.setState({ user: data.user });
-            queryClient.invalidateQueries(["user", data.user._id]);
-            toast.success("Profile updated");
-        },
-        onError: (err) => {
-            toast.error(err.response?.data?.message || "Update failed");
-        }
+        })
     })
 }
 
@@ -86,13 +79,7 @@ const useChangePassword = () => {
         mutationFn: asyncWrapper(async (passwordData) => {
             const response = await axiosInstance.patch("/user/password", passwordData);
             return response.data;
-        }),
-        onSuccess: () => {
-            toast.success("Password changed");
-        },
-        onError: (err) => {
-            toast.error(err.response?.data?.message || "Password change failed");
-        }
+        })
     })
 }
 
@@ -121,17 +108,11 @@ const useUsers = (params) => {
 }
 
 const useToggleProfileVisibility = () => {
-    const queryClient = useQueryClient();
     return useMutation({
         mutationFn: asyncWrapper(async () => {
             const response = await axiosInstance.patch("/user/visibility", {});
             return response.data;
-        }),
-        onSuccess: (data) => {
-            useAuthStore.setState({ user: data.user });
-            queryClient.invalidateQueries(["user", data.user._id]);
-            toast.success(`Profile visibility: ${data.user.profileVisibility}`);
-        }
+        })
     })
 }
 

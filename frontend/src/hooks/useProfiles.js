@@ -51,10 +51,7 @@ const useUpdateProfileLink = () => {
                 params: { platformName, platformUsername }
             });
             return response.data;
-        }),
-        onSuccess: (data, variables) => {
-            queryClient.invalidateQueries(['profileLinks']);
-        }
+        })
     });
 };
 
