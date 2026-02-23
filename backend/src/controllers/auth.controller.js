@@ -10,7 +10,7 @@ const signup = asyncHandler(async (req, res) => {
 
     let user = await UserModel.findOne({ email });
     if (user) return res.status(400).json({ message: 'User with this email already exists' });
-    
+
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
 
@@ -52,22 +52,8 @@ const login = asyncHandler(async (req, res) => {
 });
 
 const logout = asyncHandler(async (req, res, next) => {
-    const user = req.user;
-
     deleteToken(res);
-
-    if (user.hasOwnProperty("googleId")) {
-        req.logout(function (err) {
-            if (err) return next(err);
-            req.session.destroy((err) => {
-                if (err) return res.status(500).json({ message: 'Error destroying session' });
-                res.clearCookie('connect.sid');
-                return res.status(200).json({ message: 'Logged out successfully' });
-            });
-        });
-    } else {
-        return res.status(200).json({ message: 'Logged out successfully' });
-    }
+    return res.status(200).json({ message: 'Logged out successfully' });
 });
 
 const checkAuth = asyncHandler(async (req, res) => {

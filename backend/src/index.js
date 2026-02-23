@@ -1,7 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import session from 'express-session';
 import passport from './config/passport.js';
 import AuthRouter from './routes/auth.route.js';
 import AnalyzeRouter from './routes/analyze.route.js';
@@ -35,18 +34,8 @@ app.use(
     })
 );
 
-// Express session middleware
-app.use(
-    session({
-        secret: SESSION_SECRET,
-        resave: false,
-        saveUninitialized: false,
-    })
-);
-
 // Passport middleware
 app.use(passport.initialize());
-app.use(passport.session());
 
 // Routes
 app.use('/auth', AuthRouter);
