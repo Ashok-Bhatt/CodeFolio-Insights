@@ -38,7 +38,7 @@ const analyzeGithub = asyncHandler(async (req, res) => {
 
     // Returning the response and saving it in cache
     const response = { ...githubAnalysisContext, profileAnalysis, scoreData, scoreComparison }
-    await redisClient.set(`profileAnalysis:github:${username}`, response, "EX", 10 * 60);
+    await redisClient.set(`profileAnalysis:github:${username}`, response, { ex: 10 * 60 });
 
     return res.status(200).json(response);
 
@@ -77,7 +77,7 @@ const analyzeLeetCode = asyncHandler(async (req, res) => {
 
     // Returning the response and saving it in cache
     const response = { ...leetCodeData, profileAnalysis, scoreData, scoreComparison }
-    await redisClient.set(`profileAnalysis:leetcode:${username}`, response, "EX", 10 * 60);
+    await redisClient.set(`profileAnalysis:leetcode:${username}`, response, { ex: 10 * 60 });
 
     return res.status(200).json(response);
 });

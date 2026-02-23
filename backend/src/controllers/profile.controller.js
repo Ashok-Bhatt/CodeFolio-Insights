@@ -1,4 +1,4 @@
-import ProfileModel from '../models/profiles.model.js';
+import ProfileModel from '../models/profile.model.js';
 import UserModel from '../models/user.model.js';
 import mongoose from 'mongoose';
 import redisClient from '../config/redis.js';

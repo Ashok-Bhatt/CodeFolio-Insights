@@ -1,16 +1,16 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuthStore } from '../store/export.js';
+import { useSignUp } from '../hooks/useUsers.js';
 import conf from '../config/config.js';
 
 const SignupPage = () => {
     const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+    const { mutateAsync: signup } = useSignUp();
 
     const { name, email, password } = formData;
 
     const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-    const signup = useAuthStore((state) => state.signup);
     const handleSubmit = async (e) => {
         e.preventDefault();
         await signup(formData);

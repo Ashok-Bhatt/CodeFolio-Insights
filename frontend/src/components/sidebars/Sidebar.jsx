@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, LayoutDashboard, Terminal, LogOut, ChartLine, ChartArea, Settings } from 'lucide-react';
 import { useAuthStore, usePreferenceStore } from '../../store/export.js';
+import { useLogout } from '../../hooks/useUsers.js';
 
 const Sidebar = () => {
     const location = useLocation();
@@ -9,7 +10,7 @@ const Sidebar = () => {
     const [mounted, setMounted] = useState(false);
     const navigate = useNavigate();
     const user = useAuthStore((state) => state.user);
-    const logout = useAuthStore((state) => state.logout);
+    const { mutateAsync: logout } = useLogout();
     const { isSidebarOpen, toggleSidebar } = usePreferenceStore();
 
     const isSidebarCollapsed = !isSidebarOpen;

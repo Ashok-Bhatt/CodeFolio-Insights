@@ -1,17 +1,16 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import conf from '../config/config.js';
-import { useAuthStore } from '../store/export.js';
+import { useLogin } from '../hooks/useUsers.js';
 
 const LoginPage = () => {
     const [formData, setFormData] = useState({ email: '', password: '' });
-    const navigate = useNavigate();
+    const { mutateAsync: login } = useLogin();
 
     const { email, password } = formData;
 
     const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-    const login = useAuthStore((state) => state.login);
     const handleSubmit = async (e) => {
         e.preventDefault();
         await login(formData);
