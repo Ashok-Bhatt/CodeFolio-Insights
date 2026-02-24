@@ -1,5 +1,5 @@
 import express from "express"
-import { getUser, getUserHighlights, changePassword, updateUserInfo, getUsers, toggleProfileVisibility } from "../controllers/user.controller.js";
+import { getUser, getUserHighlights, changePassword, updateUserInfo, getUsers, toggleProfileVisibility, toggle2FA } from "../controllers/user.controller.js";
 import { optionalAuth, protectRoute } from "../middlewares/auth.middleware.js";
 import { getAnalytics } from "../middlewares/analytics.middleware.js";
 import upload from "../middlewares/multer.middleware.js";
@@ -15,5 +15,6 @@ router.get("/:userId", optionalAuth, getAnalytics, validate(userIdValidationSche
 router.patch("/", protectRoute, getAnalytics, upload.single("profileImage"), validate(userInfoUpdateValidationSchema), updateUserInfo);
 router.patch("/password", protectRoute, getAnalytics, validate(changePasswordValidationSchema), changePassword);
 router.patch("/visibility", protectRoute, getAnalytics, toggleProfileVisibility);
+router.patch("/2fa", protectRoute, getAnalytics, toggle2FA);
 
 export default router;
