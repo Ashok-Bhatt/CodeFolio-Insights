@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { ShieldCheck, Eye, EyeOff, Save, Mail, Info } from 'lucide-react';
 import { useAuthStore } from '../store/export.js';
-import { useChangePassword } from '../hooks/useUsers';
+import { useChangePassword, useToggle2FA } from '../hooks/useUsers';
 import toast from 'react-hot-toast';
 
 const Account = () => {
     const user = useAuthStore((state) => state.user);
     console.log(user);
     const { mutateAsync: changePassword, isPending: isLoading } = useChangePassword();
+    const { mutate: toggle2FA, isPending: isToggling2FA } = useToggle2FA();
 
     const [form, setForm] = useState({
         oldPassword: '',
@@ -181,6 +182,34 @@ const Account = () => {
                         <p className="text-xs text-slate-500 font-medium leading-relaxed">
                             Your account is managed via Google Authentication.
                         </p>
+                    </div>
+                </div>
+            )}
+
+            {/* Two-Factor Authentication Section */}
+            {(user?.provider === 'credential' || user?.provider === 'both') && (
+                <div className="pt-6 border-t border-slate-100">
+                    <div className="flex items-center justify-between p-6 bg-slate-50 rounded-2xl border border-slate-100">
+                        <div className="flex items-start gap-4">
+                            <div className={`p-3 rounded-xl ${user?.enable2FA ? 'bg-green-100 text-green-600' : 'bg-slate-200 text-slate-500'}`}>
+                                <ShieldCheck className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <h4 className="text-sm font-black text-slate-800 uppercase tracking-wider mb-1">Two-Factor Authentication</h4>
+                                <p className="text-xs text-slate-500 font-medium leading-relaxed max-w-xs">
+                                    Secure your account with an additional verification step. You'll receive a code via email when logging in.
+                                </p>
+                            </div>
+                        </div>
+                        <button
+                            onClick={() => toggle2FA()}
+                            disabled={isToggling2FA}
+                            className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none ${user?.enable2FA ? 'bg-indigo-600' : 'bg-slate-300'}`}
+                        >
+                            <span
+                                className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${user?.enable2FA ? 'translate-x-6' : 'translate-x-1'}`}
+                            />
+                        </button>
                     </div>
                 </div>
             )}

@@ -33,6 +33,10 @@ const UserSchema = new mongoose.Schema({
     profile: {
         type: String,
     },
+    enable2FA: {
+        type: Boolean,
+        default: false,
+    },
     headline: {
         type: String,
         trim: true,
