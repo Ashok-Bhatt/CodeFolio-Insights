@@ -18,6 +18,7 @@ const signup = asyncHandler(async (req, res) => {
         name,
         email,
         password: passwordHash,
+        provider: 'credential',
         lastRefresh: Date.now()
     });
     await user.save();
