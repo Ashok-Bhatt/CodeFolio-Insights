@@ -1,5 +1,5 @@
 import z from "zod";
-import { VALID_EXPERIENCE_YEARS_RANGE, MAX_PDF_SIZE } from "../constant/index.js";
+import { VALID_EXPERIENCE_YEARS_RANGE, MAX_PDF_SIZE } from "../constants/index.js";
 
 const resumeAnalyzerValidationSchema = z.object({
     body: z.object({

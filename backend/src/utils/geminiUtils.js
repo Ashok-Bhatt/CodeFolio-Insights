@@ -1,7 +1,7 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { GEMINI_API_KEY } from "../config/config.js";
 import { complexAnalysisSchema, simpleAnalysisSchema, simpleListSchema, jobDescriptionSchema, videoSchema } from "./schema/geminiResponse.js";
-import { VIDEOS } from "../constant/index.js";
+import { VIDEOS } from "../constants/index.js";
 
 const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
@@ -9,7 +9,7 @@ const getCommitAnalysis = async (commitMessages) => {
     try {
         const response = await ai.models.generateContent({
             model: "gemini-2.5-flash",
-            contents: `You will be given a array of commits and you need to rate them some score out of 10 on the basis of their quality. Return the array of size similar to input one representing the quality of each commit \n\n ${commitMessages}`,
+            contents: `You will be given an array of commits and you need to rate them some score out of 10 on the basis of their quality. Return the array of size similar to input one representing the quality of each commit \n\n ${commitMessages}`,
             config: {
                 responseMimeType: "application/json",
                 responseSchema: {
@@ -35,7 +35,7 @@ const getCommitAnalysis = async (commitMessages) => {
 
         return JSON.parse(response['candidates'][0]["content"]["parts"][0]["text"]);
     } catch (error) {
-        console.log("Error Occurred while getting commit analysis in geminiResponse.js", error.message);
+        console.log("Error Occurred while getting commit analysis in geminiUtils.js", error.message);
         console.log(error.stack);
         return {};
     }
@@ -45,18 +45,113 @@ const getGithubProfileAnalysis = async (githubData) => {
     try {
         const response = await ai.models.generateContent({
             model: "gemini-2.5-flash",
-            contents: `You will be given an object which will contain a lot of user github data and you need to return an object :
+            contents: `
+            You are a senior software engineer and technical recruiter specializing in GitHub profile evaluations.
+
+            You will be given:
+            1. Structured GitHub profile data of a user
+            2. A curated list of GitHub-related educational videos
+
+            Your task is to produce a **strictly context-driven analysis**.  
+            ⚠️ You MUST base every statement on the provided GitHub data only.
+
+            ### CRITICAL RULES (DO NOT VIOLATE)
+            - ❌ Do NOT give generic career advice
+            - ❌ Do NOT assume skills, experience, or intentions not explicitly visible in the data
+            - ❌ Do NOT praise the user unless the data clearly supports it
+            - ❌ Do NOT suggest improvements unrelated to the observed GitHub activity
+            - ❌ Do NOT hallucinate repositories, skills, contributions, or achievements
+
+            If the data is weak, sparse, or inconsistent:
+            - State that clearly and analytically
+            - Avoid sugar-coating
+            - Provide grounded, realistic observations
+
+            ---
+
+            ### OUTPUT FORMAT (JSON ONLY)
+
+            Return an object with the following structure:
+
             {
-                analysis: This will contain an array of 4-5 points of deep analysis on user github data like what he has done and all other stuff. 
-                strongPoints: This will be an array of 3-5 length and in each element you should try to compliment the user on the basis of data you received but remember if there's nothing to talk about then no need to sugar-clot the stuff and just provide general analysis.
-                improvementAreas: This will be an array of 3-5 length with each element being a short point that gives suggestion for improvement based on the data provided
-                suggestedVideo: This will contain a video suggestion that user will need to see to enhance his github profile. Choose the most suitable video from the list of videos provided to you. Structure of video object: {link: A link to the video, title: title of the video, description: description of the video, time: length of the video in seconds, views: Total views of the video}. Remember both embed link and actual url should be real one rather than just dummy one.
+                "analysis": string[],
+                "strongPoints": string[],
+                "improvementAreas": string[],
+                "video": {
+                    "link": string,
+                    "title": string,
+                    "description": string,
+                    "time": number,
+                    "views": number
+                }
             }
 
-            Take care that you should not miss to return any field empty and try to align the content with respect to user data
-            
-            Videos : ${JSON.stringify(VIDEOS.GITHUB)}
-            Github Data: ${JSON.stringify(githubData)}`,
+            ---
+
+            ### FIELD-SPECIFIC GUIDELINES
+
+            #### 1️⃣ analysis (4–5 points)
+            Provide **deep analytical insights**, such as:
+            - Contribution consistency and activity trends
+            - Nature of repositories (toy projects vs real-world systems)
+            - Tech stack focus or lack thereof
+            - Signals of learning progression or stagnation
+            - Evidence of collaboration, documentation, or maintainability
+
+            Each point must clearly reference patterns visible in the GitHub data.
+
+            ---
+
+            #### 2️⃣ strongPoints (3–5 points)
+            Only include points that are **clearly supported by data**, such as:
+            - Meaningful repository depth
+            - Consistent commits over time
+            - Use of modern tooling
+            - Clear README or documentation practices
+            - Multi-language or domain-specific focus
+
+            If strong signals are weak or absent:
+            - Provide neutral, factual observations instead
+            - Do NOT force praise
+
+            ---
+
+            #### 3️⃣ improvementAreas (3–5 points)
+            Provide **actionable but data-backed improvements**, for example:
+            - Lack of README files
+            - Few or no long-term projects
+            - Inconsistent commit history
+            - Over-reliance on tutorials or forks
+            - Missing testing, CI, or project structure
+
+            Each suggestion must directly correlate to an observed gap.
+
+            ---
+
+            #### 4️⃣ video
+            From the provided video list:
+            - Select the **single most relevant** video that addresses the user's *largest observable weakness*
+            - The video MUST exist and be real
+            - Do NOT invent links or metadata
+            - Explain relevance implicitly through correct selection (no extra explanation text)
+
+            ---
+
+            ### INPUT DATA
+
+            Videos:
+            ${JSON.stringify(VIDEOS.GITHUB)}
+
+            GitHub Profile Data:
+            ${JSON.stringify(githubData)}
+
+            ---
+
+            ### FINAL CHECK BEFORE RESPONDING
+            - Every sentence is traceable to the input data
+            - No field is empty
+            - Output is valid JSON only
+            `,
             config: {
                 responseMimeType: "application/json",
                 responseSchema: {
@@ -99,18 +194,121 @@ const getLeetCodeProfileAnalysis = async (leetCodeData) => {
     try {
         const response = await ai.models.generateContent({
             model: "gemini-2.5-flash",
-            contents: `You will be given an object which will contain a lot of user leetCode data and you need to return an object :
+            contents: `
+            You are a senior competitive programmer and technical interviewer who evaluates LeetCode profiles for hiring and skill assessment.
+
+            You will be given:
+            1. Structured LeetCode profile data of a user
+            2. A curated list of LeetCode / DSA learning videos
+
+            Your task is to produce a **strictly data-driven evaluation** of the user's problem-solving ability.
+
+            ⚠️ Every statement you make MUST be directly supported by the provided LeetCode data.
+
+            ---
+
+            ### 🚨 CRITICAL RULES (NON-NEGOTIABLE)
+
+            - ❌ Do NOT give generic advice like “practice more” or “solve more problems”
+            - ❌ Do NOT assume interview readiness, company fit, or experience level
+            - ❌ Do NOT infer skills not visible in solved problems, difficulty distribution, tags, or contests
+            - ❌ Do NOT praise unless the metrics clearly justify it
+            - ❌ Do NOT hallucinate contest participation, ranks, or topics
+            - ❌ Do NOT reference external standards (FAANG, top coders, etc.)
+
+            If the data is sparse or weak:
+            - State this explicitly
+            - Keep the tone analytical and neutral
+            - Avoid sugar-coating
+
+            ---
+
+            ### 📦 OUTPUT FORMAT (JSON ONLY)
+
+            Return **only** a valid JSON object with this structure:
+
             {
-                analysis: This will be an array of 4-5 points of deep analysis on user leetCode data like what he has done and all other stuff. 
-                strongPoints: This will be an array of 3-5 length and in each element you should try to compliment the user on the basis of data you received but remember if there's nothing to talk about then no need to sugar-clot the stuff and just provide general analysis.
-                improvementAreas: This will be an array of 3-5 length with each element being a short point that gives suggestion for improvement based on the data provided
-                suggestedVideo: This will contain a video suggestion that user will need to see to enhance his leetcode profile by up skilling his problem solving skills. Choose the most suitable video from the list of videos provided to you. Structure of video object: {link: A link to the video, title: title of the video, description: description of the video, time: length of the video in seconds, views: Total views of the video}. Remember both embed link and actual url should be real one rather than just dummy one.
+                "analysis": string[],
+                "strongPoints": string[],
+                "improvementAreas": string[],
+                "video": {
+                    "link": string,
+                    "title": string,
+                    "description": string,
+                    "time": number,
+                    "views": number
+                }
             }
 
-            Take care that you should not miss to return any field empty and try to align the content with respect to user data
-            
-            Videos : ${JSON.stringify(VIDEOS.LEETCODE)}
-            Leetcode Data: ${JSON.stringify(leetCodeData)}`,
+            All fields must be present and non-empty.
+
+            ---
+
+            ### 🧠 FIELD-LEVEL GUIDELINES
+
+            #### 1️⃣ analysis (4–5 deep insights)
+            Focus on **patterns**, not surface-level stats. Examples:
+            - Problem difficulty distribution (easy / medium / hard balance)
+            - Topic coverage breadth vs concentration (arrays, DP, graphs, etc.)
+            - Progression over time (plateaus, spikes, consistency)
+            - Contest involvement and performance trends (if present)
+            - Evidence of depth (hard problems, repeated tags, optimization patterns)
+
+            Each point must reference observable data trends.
+
+            ---
+
+            #### 2️⃣ strongPoints (3–5 points)
+            Include only **verifiable strengths**, such as:
+            - Consistent medium/hard problem solving
+            - Strong focus on specific problem categories
+            - High acceptance rate with meaningful volume
+            - Regular activity over time
+            - Contest participation with measurable improvement
+
+            If strong signals are weak:
+            - Use neutral factual statements instead
+            - Do NOT force compliments
+
+            ---
+
+            #### 3️⃣ improvementAreas (3–5 points)
+            Provide **specific, targeted improvements** based on gaps, such as:
+            - Over-reliance on easy problems
+            - Narrow topic exposure
+            - Low hard-problem conversion
+            - Lack of timed practice (contests)
+            - Long inactivity periods
+
+            Each point must directly map to a data-visible shortcoming.
+
+            ---
+
+            #### 4️⃣ video (single best match)
+            From the provided video list:
+            - Identify the **single biggest observable weakness**
+            - Select the video that best addresses that weakness
+            - Video metadata must be real and unmodified
+            - Do NOT add explanations outside the object
+
+            ---
+
+            ### 📥 INPUT DATA
+
+            Videos:
+            ${JSON.stringify(VIDEOS.LEETCODE)}
+
+            LeetCode Profile Data:
+            ${JSON.stringify(leetCodeData)}
+
+            ---
+
+            ### ✅ FINAL VALIDATION BEFORE RESPONSE
+            - Every claim is grounded in the provided data
+            - No field is empty
+            - No generic or motivational advice
+            - Output is valid JSON only
+            `,
             config: {
                 responseMimeType: "application/json",
                 responseSchema: {
@@ -143,7 +341,7 @@ const getLeetCodeProfileAnalysis = async (leetCodeData) => {
 
         return JSON.parse(response['candidates'][0]["content"]["parts"][0]["text"]);
     } catch (error) {
-        console.log("Error Occurred while getting github profile analysis in geminiResponse.js", error.message);
+        console.log("Error Occurred while getting github profile analysis in geminiUtils.js", error.message);
         console.log(error.stack);
         return {};
     }
@@ -153,134 +351,156 @@ const getResumeAnalysis = async (resumeData) => {
     try {
         const response = await ai.models.generateContent({
             model: "gemini-2.5-flash",
-            contents: `You are an expert resume analyzer, acting as a strict, senior hiring manager at a top-tier tech company (like Google, Meta, or Amazon). Your standards are exceptionally high. Your goal is to provide a critical, in-depth, and brutally honest evaluation to help the user build a resume that stands out to elite recruiters.
+            contents: `
+            You are an expert resume analyzer acting as a strict, senior hiring manager at a top-tier tech company
+            (Google, Meta, Amazon-level standards).
 
-            Your primary directive is to be **critically evaluative and discerning**. Do not award high scores for simply meeting the bare minimum requirements. High scores (90+) are reserved for truly exceptional, polished, and impactful resumes.
-            You will judge the resume on the following criteria:
-            1. **Resume Length**: Appropriateness of length based on experience level.
-            2. **Clarity & Professionalism**: Grammar, spelling, formatting consistency, readability, and professional tone.
-            You will also judge the user on the basis of how much his/her resume matches the job description. In case, job description is not provided. You will give generic review.
+            Your evaluation must be **critical, deeply analytical, and brutally honest**.
+            High scores (90+) are extremely rare and reserved only for truly exceptional resumes.
+            Do NOT reward resumes for meeting minimum requirements.
 
-            **Scoring Philosophy:**
-            - **< 50 (Major Flaws):** Significant issues with content, structure, or professionalism. Unlikely to pass an initial screen.
-            - **50-70 (Meets Basics):** The resume has the necessary sections but lacks impact, quantification, and polish. It is generic.
-            - **70-85 (Good):** A solid resume. It uses some action verbs and metrics, is well-structured, and shows clear competency.
-            - **85-95 (Excellent):** A compelling resume. It is driven by quantified impact, uses strong action verbs, is tailored, and is highly professional.
-            - **95-100 (Exceptional):** A top 1% resume. Flawless execution, outstanding impact demonstrated in every relevant bullet point, and perfectly aligned with the target role.
+            ────────────────────────────────
+            EVALUATION SCOPE
+            ────────────────────────────────
 
-            Given the resume data, you must return a JSON object with the following structure:
-            {
-                "score": {
-                    // This object contains key-value pairs for different judging criteria.
-                    // The value for each key will be {score, analysis}.
-                    // The 'analysis' should provide a critical review of the good and bad aspects without mentioning the score itself. The analysis can be of single line or maybe of 5-6 lines. There's not restriction on points limit, it all depends on the situation.
-                    // Cap all scores at 100, even with bonuses.
+            You must evaluate the resume on:
+            1. Resume Length appropriateness
+            2. Clarity & Professionalism
+            3. Impact & Action Orientation (CRITICAL)
+            4. Logical Flow
+            5. Section-wise Quality
+            6. Job Description Match (if provided; otherwise give a generic review)
 
-                    "(a) Resume Length Score": {
-                        // - 0-5 years of experience: 1 page is 100. Penalize for every line over one page. A 2-page resume gets 0.
-                        // - 5-10+ years of experience: 1-2 pages is acceptable. 1 page is 100. A full 2 pages is 90. Penalize for going over 2 pages.
-                        // - If the candidate is a student with more than one page, the score is 0.
-                    },
-                    "(b) Clarity & Professionalism Score": {
-                        // Evaluates overall polish.
-                        // - Grammar & Spelling: Deduct points for every single typo or grammatical error.
-                        // - Consistency: Check for consistent formatting (date formats like 'May 2023' vs '05/2023'), terminology (e.g., 'React' vs 'React.js'), and font usage. Inconsistency should be heavily penalized.
-                        // - Readability: Is the resume easy to scan? Is there good use of white space, or is it a wall of text? Dense text reduces the score.
-                        // - Professional Tone: Language should be professional and concise.
-                    },
-                    "(c) Impact & Action-Orientation Score": {
-                        // **THIS IS A CRITICAL SCORE.** It judges the quality of the content itself.
-                        // - Quantified Results: How often are bullet points supported by numbers, percentages, or concrete metrics? (e.g., "Increased performance by 30%" vs. "Improved performance"). A lack of metrics MUST result in a low score (< 60).
-                        // - Action Verbs: Does each bullet point start with a strong action verb (e.g., 'Architected', 'Engineered', 'Optimized', 'Led')? Or does it use weak/passive language (e.g., 'Responsible for', 'Worked on')?
-                        // - STAR Method: Evaluate if the bullet points implicitly follow the STAR (Situation, Task, Action, Result) method. The analysis should critique points that only describe actions without results.
-                        // - If a same action verb is present more than two times, it is not good. More a same action verb is used, lower is the score.
-                    },
-                    "(d) Logical Flow Score": {
-                        // Judges the structural layout. Be strict.
-                        // - The candidate's name must be at the very top. Followed immediately by contact info/links.
-                        // - There's no restriction in ordering of section, but it would be great if the more impressive section is placed at top of other sections, but again that's the choice not compulsion.
-                        // - In case user has kept summary section, it should come after name and profile links
-                        // - All sections must use reverse chronological order (most recent first). Any deviation is a major penalty.
-                    },
-                    "(e) Section Scores": {
-                        // An object containing scores for individual sections.
-                        // Below all are mandatory sections and if any of the section is missing, score it 0.
-                        // Achievements, Experience and Projects section will also contain the pointAnalysis field. Structure of pointAnalysis field : {point, score, analysis} for each and every bullet point of that section, where point will be the {original: original point provided in the section, refactored: This will be the refactored version of the original point}, pointScore will be an integer from 0 to 10 and pointAnalysis will be an analysis for that point.
-                        // For analysis of each point, the quantified point will score higher rather than the unquantified one and remember your standards are very high. And remember, there wont't be any impact in the general analysis filed due to this point analysis.
+            ────────────────────────────────
+            SCORING PHILOSOPHY
+            ────────────────────────────────
+            < 50  → Major flaws, likely rejection  
+            50–70 → Meets basics, generic, low impact  
+            70–85 → Solid and competent  
+            85–95 → Excellent, impact-driven  
+            95–100 → Top 1% resume (exceptionally rare)
 
-                        "Contact Info Section": {
-                            // - Must contain a professional email. Unprofessional emails (e.g., coolguy99@...) get a low score.
-                            // - Must contain a phone number, a clickable LinkedIn URL and Github URL.
-                            // -  Since You would be given only text and you can't sense link. So, if you encounter any name of social profile, it is ok and everything went good.
-                            // - Although, it is not compulsion but one can also mention the link of coding profiles too like that of LeetCode, CodeForces, etc.
-                            // - This section would have liberal review, if everything is mentioned correctly, then one can easily score full.
-                        },
-                        "Course Work Section" : {
-                            // - Must contain a set of courses taken by student during this degree.
-                            // - The most important or compulsory to have courses for Computer Science Students are: Operating System, Computer Networks, Database Management System, Object Oriented Programming, Data Structures and Algorithms. Apart from that it is optional if someones want to mention any course.
-                            // - The course names should be in full form. Course work cannot have names like ML, OS, etc.
-                            // - It is ok if coursework is not provided in separated section, and provided along with education section or skills section.
-                            // - This section will have liberal review too, if everything is mentioned correctly, then one can easily score full.
-                        },
-                        "Technical Skills Section": {
-                            // - Organization: Are skills logically grouped (e.g., 'Languages', 'Frameworks & Libraries', 'Databases', 'Developer Tools')? A single block of unorganized skills gets a low score.
-                            // - Relevance: Are the skills modern and relevant for the target role?
-                            // - Validation: Critically check if the skills listed are actually demonstrated in the Experience or Projects sections. If a skill is listed but not used in project section or experience section, it still qualifies but it would have been great if they were mentioned. 
-                            // A core skill like language, tool or framework not mentioned in skill section but used in project becomes reason of concern. But it would be okay if it's an API or some other side, easy to use integrating stuff
-                        },
-                        "Experience Section": {
-                            // - Score this section heavily based on the 'Impact & Action-Orientation Score'.
-                            // - Each entry MUST have Company Name, Role, and Dates.
-                            // - Bullet points (3-5 per role is ideal) are evaluated individually for quality. Vague, responsibility-listing points (e.g., "Wrote code for the front-end") get very low scores. High scores are for impact-driven points (e.g., "Engineered a new caching strategy using Redis, reducing API response times by 45% for over 10,000 daily active users.").
-                        },
-                        "Projects Section": {
-                            // - For new grads, this is the most important section. 2-4 high-quality projects are ideal.
-                            // - Project Name: Penalize generic names like 'Twitter Clone' or 'E-commerce Website'. Creative and descriptive names are rewarded like 'ShortFolio - A portfolio website builder'
-                            // - Links: GitHub repo link and live deployment link is **mandatory**. Any missing link results in a score below 40 for that project.
-                            // - You can provide a link for demo video too in case live project link is not available due to any issues.
-                            // - Technology Stack: Must clearly list the technologies used.
-                            // - Bullet Points: As with Experience, these MUST be impact-driven. What was the feature? What was the outcome? (e.g., "Implemented JWT-based authentication to secure user data and create protected API routes."). It would be great if the bullet points contain numerical metrics.
-                        },
-                        "Education Section": {
-                            // - Must include University Name, Degree, and Graduation Date (or expected date).
-                            // - Reverse chronological order is mandatory.
-                            // - Consistency: Information provided for one degree (e.g., GPA, coursework) should be consistent for others.
-                            // - High GPA (if mentioned and high) or prestigious honors can add a small bonus.
-                            // - If someone is from a prestigious colleges like IITs, NITs, BITS Pilani or any other prestigious college, he/she will get bonus.
-                        },
-                        "Achievements Section": {
-                            // - Score based on the significance and quantification of the achievements.
-                            // - Vague achievements ('Won a hackathon') score lower than specific, quantified ones ('Placed 1st out of 50 teams in Smart India Hackathon 2024 by developing a prototype that...').
-                            // - If the section is empty or contains trivial points, the score should be low.
-                        }
-                    }
-                    "(f) Job Description Score": {
-                        // Judges on the basis of how much a user's resume match to the job description.
-                        // In case the job description is not provided, score the user 100 directly.
-                        // In the analysis of this section, you will mention user what stuff of his/her resume matches with the job description and on what doesn't.
-                        // In case job description is provided, there will be three extra fields: 
-                            1. 'Job Description Given' : It will contain if the job description is given or not, 
-                            2. 'Keywords present' : signify each and every keyword mentioned in the resume
-                            3. 'Keywords absent' : signify each and every keyword not mentioned in the resume
-                            In case job description is absent, skip these fields. And remember you should mention any kind of keyword in  1-2 words, and at max 3-4 keyword (if required). I don't want something like this - 'good in problem solving and analytical thinking', 'problem solving' and 'analytical thinking' are good keywords. Plus, try to search for as many as possible 'Valid' keywords by reading job description properly. Yes, valid only valid ones. Just because I've told you to find many keywords, it doesn't mean you will add every next word to keyword list.
-                    }
-                },
-                "strengths": [
-                    // A list of 2-4 bullet points highlighting what the resume does exceptionally well. Be specific. If nothing is exceptional, say so.
-                ],
-                "weaknesses": [
-                    // A list of 2-4 bullet points detailing the most critical flaws that would cause a recruiter to discard the resume. Be direct and blunt.
-                ],
-                "improvements": [
-                    // A prioritized list of actionable suggestions. Start with the highest-impact changes. For example, "Rewrite every bullet point in your Experience section to include a quantifiable metric. Here, you should try to list out all the possible improvements. There's not point limit. If you found 3 points of improvement then mention it. Or even if you found 10-15 points of improvement, mention all of them without halt as the fate of user is upon you"
-                ]
-            }
+            All scores must cap at 100 and strictly align with your written analysis.
 
-            Resume Data: ${resumeData["resumeContent"]}
-            No of pages in resume: ${resumeData["noOfResumePages"]}
-            Experience (in years): ${resumeData["experienceInYears"]}
-            Job Description : ${resumeData["jobDescription"]}
-            Current Date: ${new Date().toISOString().split('T')[0]} (for your reference so that you can check the dates mentioned in the resume)
+            ────────────────────────────────
+            SCORING RULES (STRICT)
+            ────────────────────────────────
+
+            Resume Length:
+            - 0–5 years experience → 1 page = 100; each extra line reduces score; 2 pages = 0
+            - 5–10+ years → 1 page = 100; 2 pages = 90; >2 pages penalized
+            - Students with >1 page → score = 0
+
+            Clarity & Professionalism:
+            - Penalize every grammar/spelling mistake
+            - Penalize formatting or terminology inconsistencies
+            - Dense, hard-to-scan layouts reduce score
+            - Tone must remain concise and professional
+
+            Impact & Action Orientation (MOST IMPORTANT):
+            - Bullet points without metrics MUST score below 60
+            - Strong action verbs required; repeated verbs reduce score
+            - STAR-like structure is expected
+            - Responsibility-style bullets score very low
+
+            Logical Flow:
+            - Name at top, followed by contact info
+            - Summary (if present) comes after name & links
+            - Reverse chronological order is mandatory
+            - Section order is flexible but should highlight strengths
+
+            ────────────────────────────────
+            SECTION-WISE EVALUATION
+            ────────────────────────────────
+
+            All sections below are mandatory. Missing section → score 0.
+
+            Contact Info:
+            - Professional email required
+            - Phone, LinkedIn, GitHub expected
+            - Liberal scoring if present and clean
+
+            Course Work:
+            - CS fundamentals preferred (OS, CN, DBMS, OOP, DSA)
+            - Full course names only (no abbreviations)
+            - Liberal scoring if correctly listed
+
+            Technical Skills:
+            - Logical grouping required
+            - Skills should align with projects/experience
+            - Missing core skills used elsewhere is a concern
+
+            Experience:
+            - Company, role, dates required
+            - 3–5 bullets per role ideal
+            - Impact-driven bullets score highest
+
+            Projects:
+            - 2–4 high-quality projects ideal (critical for new grads)
+            - Generic names penalized
+            - GitHub + live link mandatory (or demo video)
+            - Tech stack must be clear
+            - Impact-focused bullets preferred
+
+            Education:
+            - Institution, degree, dates required
+            - Reverse chronological order mandatory
+            - Strong GPA / honors / prestigious institutions add minor bonus
+
+            Achievements:
+            - Quantified, competitive achievements score higher
+            - Vague or trivial points score low
+
+            For Experience, Projects, and Achievements:
+            Include **point-level analysis** with:
+            - Original bullet
+            - Refactored bullet
+            - Score (0–10)
+            - Critical analysis
+
+            Point-level scoring does NOT affect global analysis tone.
+
+            ────────────────────────────────
+            JOB DESCRIPTION MATCH
+            ────────────────────────────────
+            - If JD is provided, score alignment strictly
+            - Mention what matches and what doesn’t
+            - Include:
+            - Job Description Given (boolean)
+            - Keywords present (1–2 words each)
+            - Keywords absent (1–2 words each)
+            - If JD is absent, score this section as 100 and skip keyword fields
+
+            ────────────────────────────────
+            OUTPUT FORMAT (JSON ONLY)
+            ────────────────────────────────
+
+            Return a valid JSON object with:
+            - Detailed score object (all criteria)
+            - strengths: 2–4 points (only if truly strong)
+            - weaknesses: 2–4 critical flaws
+            - improvements: prioritized, exhaustive action list (no limit)
+
+            No extra text. No explanations outside JSON.
+
+            ────────────────────────────────
+            INPUT DATA
+            ────────────────────────────────
+
+            Resume Content:
+            ${resumeData["resumeContent"]}
+
+            Number of Pages:
+            ${resumeData["noOfResumePages"]}
+
+            Experience (Years):
+            ${resumeData["experienceInYears"]}
+
+            Job Description:
+            ${resumeData["jobDescription"]}
+
+            Current Date:
+            ${new Date().toISOString().split('T')[0]} (for your reference so that you can check the dates mentioned in the resume)
             `,
             config: {
                 responseMimeType: "application/json",
@@ -322,7 +542,7 @@ const getResumeAnalysis = async (resumeData) => {
 
         return JSON.parse(response['candidates'][0]["content"]["parts"][0]["text"]);
     } catch (error) {
-        console.log("Error Occurred while getting github profile analysis in geminiResponse.js", error.message);
+        console.log("Error Occurred while getting github profile analysis in geminiUtils.js", error.message);
         console.log(error.stack);
         return {};
     }

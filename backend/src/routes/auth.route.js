@@ -1,11 +1,11 @@
 import express from "express";
 import passport from "passport";
-import { signup, login, logout, checkAuth } from "../controllers/auth.controller.js";
+import { signup, login, verifyOTP, logout, checkAuth } from "../controllers/auth.controller.js";
 import { signupValidationSchema, loginValidationSchema } from "../validators/auth.validate.js";
 import { getAnalytics } from "../middlewares/analytics.middleware.js";
 import { protectRoute } from "../middlewares/auth.middleware.js";
 import { CORS_ORIGIN } from "../config/config.js"
-import { generateToken } from "../utils/tokenGenerator.js"
+import { generateAuthToken } from "../utils/tokenGenerator.js"
 import { validate } from "../middlewares/validate.middleware.js";
 import { rateLimit } from 'express-rate-limit';
 
@@ -21,6 +21,7 @@ const loginLimiter = rateLimit({
 
 router.post('/signup', validate(signupValidationSchema), getAnalytics, signup);
 router.post('/login', loginLimiter, validate(loginValidationSchema), getAnalytics, login);
+router.post('/verify-otp', getAnalytics, verifyOTP);
 router.get("/check", checkAuth);
 router.post('/logout', protectRoute, getAnalytics, logout);
 
@@ -36,7 +37,7 @@ router.get(
     passport.authenticate('google', (err, user, info) => {
       if (err) return next(err);
       if (!user) return res.redirect(`${CORS_ORIGIN}/login`);
-      generateToken(user.id, res);
+      generateAuthToken(user.id, res);
       return res.redirect(`${CORS_ORIGIN}/dashboard/${user._id}`);
     })(req, res, next);
   }

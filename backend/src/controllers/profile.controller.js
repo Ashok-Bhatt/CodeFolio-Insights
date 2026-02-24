@@ -1,9 +1,9 @@
-import ProfileModel from '../models/profiles.model.js';
+import ProfileModel from '../models/profile.model.js';
 import UserModel from '../models/user.model.js';
 import mongoose from 'mongoose';
 import redisClient from '../config/redis.js';
 import asyncHandler from '../utils/asyncHandler.js';
-import { PLATFORMS } from '../constant/index.js';
+import { PLATFORMS } from '../constants/index.js';
 import * as platformsFetching from '../utils/fetching/platformsFetch.js';
 
 
@@ -16,7 +16,7 @@ const getProfiles = asyncHandler(async (req, res) => {
     const isAdmin = !!req.user && req.user.isAdmin;
     const isOwner = !!req.user && req.user._id.equals(userId);
     const isPublic = user.profileVisibility === true;
-    
+
     if (!isAdmin && !isOwner && !isPublic) return res.status(403).json({ message: "Profile visibility is set to private." });
 
     const profiles = await ProfileModel.findOneAndUpdate(
@@ -55,19 +55,17 @@ const updateProfile = async (req, res) => {
         }
 
         const profilesData = await redisClient.get(`profileData:${user._id}`);
-        const existingData = profilesData ? JSON.parse(profilesData) : {};
-
         const platformFreshData = await PLATFORMS[platformName].fetchFunction(platformUsername);
         if (!platformFreshData) {
             await session.abortTransaction();
             return res.status(500).json({ message: "Failed to fetch the user data." });
         }
 
-        let mergedData = { ...existingData };
+        let mergedData = { ...profilesData };
         mergedData[platformName] = platformFreshData;
 
         await session.commitTransaction();
-        if (mergedData) await redisClient.set(`profileData:${user._id}`, JSON.stringify(mergedData));
+        if (mergedData) await redisClient.set(`profileData:${user._id}`, mergedData);
 
         return res.status(200).json(profile);
 
@@ -116,7 +114,7 @@ const getProfileCache = asyncHandler(async (req, res) => {
 
     const cachedDataParams = await redisClient.get(`profileData:${userId}`);
 
-    if (cachedDataParams) return res.status(200).json(JSON.parse(cachedDataParams));
+    if (cachedDataParams) return res.status(200).json(cachedDataParams);
     return res.status(200).json(null);
 });
 
@@ -146,8 +144,7 @@ const refreshProfileData = asyncHandler(async (req, res) => {
         github: profileLinks.githubUsername ? await platformsFetching.fetchGitHubData(profileLinks.githubUsername) : null,
     };
 
-    const cachedJson = await redisClient.get(`profileData:${userId}`);
-    const existingData = cachedJson ? JSON.parse(cachedJson) : {};
+    const existingData = await redisClient.get(`profileData:${userId}`) || {};
 
     const mergedData = { ...existingData };
 
@@ -179,7 +176,7 @@ const refreshProfileData = asyncHandler(async (req, res) => {
     });
 
     mergedData.lastUpdated = Date.now();
-    await redisClient.set(`profileData:${userId}`, JSON.stringify(mergedData));
+    await redisClient.set(`profileData:${userId}`, mergedData);
 
     user.lastRefresh = Date.now();
     await user.save();

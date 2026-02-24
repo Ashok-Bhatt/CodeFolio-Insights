@@ -25,8 +25,17 @@ const UserSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    provider: {
+        type: String,
+        enum: ['google', 'credential', 'both'],
+        default: 'credential',
+    },
     profile: {
         type: String,
+    },
+    enable2FA: {
+        type: Boolean,
+        default: false,
     },
     headline: {
         type: String,

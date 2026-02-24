@@ -1,7 +1,7 @@
 import { axiosInstance, asyncWrapper } from "../api/export.js";
 import { useMutation, useQuery } from "@tanstack/react-query"
 
-export const useSaveScore = () => {
+const useSaveScore = () => {
     return useMutation({
         mutationFn: asyncWrapper(async (scoreData) => {
             const response = await axiosInstance.post("/score", scoreData);
@@ -10,7 +10,7 @@ export const useSaveScore = () => {
     });
 }
 
-export const usePlatformScoreStats = (score, platform) => {
+const usePlatformScoreStats = (score, platform) => {
     return useQuery({
         queryKey: ["platformScoreStats", score, platform],
         queryFn: asyncWrapper(async () => {
@@ -21,7 +21,7 @@ export const usePlatformScoreStats = (score, platform) => {
     });
 }
 
-export const useScoreHistory = (platform, username, last = 10) => {
+const useScoreHistory = (platform, username, last = 10) => {
     return useQuery({
         queryKey: ["scoreHistory", platform, username, last],
         queryFn: asyncWrapper(async () => {
@@ -31,3 +31,9 @@ export const useScoreHistory = (platform, username, last = 10) => {
         enabled: !!platform,
     });
 }
+
+export {
+    useSaveScore,
+    usePlatformScoreStats,
+    useScoreHistory,
+};

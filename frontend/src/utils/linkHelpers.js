@@ -1,4 +1,4 @@
-export const PLATFORM_TO_BACKEND_KEY = {
+const PLATFORM_TO_BACKEND_KEY = {
     'leetcode': 'leetCodeUsername',
     'interviewbit': 'interviewbitUsername',
     'github': 'githubUsername',
@@ -8,7 +8,7 @@ export const PLATFORM_TO_BACKEND_KEY = {
     'codechef': 'codechefUsername',
 };
 
-export const getDefaultUrl = (platform, username) => {
+const getDefaultUrl = (platform, username) => {
 
     const urlMap = {
         leetcode: `https://leetcode.com/${username}`,
@@ -25,7 +25,7 @@ export const getDefaultUrl = (platform, username) => {
     return urlMap[platform] || username;
 };
 
-export const transformBackendToFrontend = (backendData, platforms) => {
+const transformBackendToFrontend = (backendData, platforms) => {
 
     const links = [];
 
@@ -48,7 +48,7 @@ export const transformBackendToFrontend = (backendData, platforms) => {
     return links;
 };
 
-export const transformFrontendToBackend = (linksArray) => {
+const transformFrontendToBackend = (linksArray) => {
 
     const backendData = {};
     const seenPlatforms = new Set();
@@ -62,4 +62,11 @@ export const transformFrontendToBackend = (linksArray) => {
     });
 
     return backendData;
+};
+
+export {
+    PLATFORM_TO_BACKEND_KEY,
+    getDefaultUrl,
+    transformBackendToFrontend,
+    transformFrontendToBackend,
 };

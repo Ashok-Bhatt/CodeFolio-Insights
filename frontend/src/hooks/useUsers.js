@@ -1,38 +1,51 @@
 import { axiosInstance, asyncWrapper } from "../api/export.js";
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import useAuthStore from "../store/useAuthStore.js";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
-export const useCheckAuth = () => {
+const useCheckAuth = () => {
     return useQuery({
         queryKey: ["checkAuth"],
         retry: 3,
         queryFn: asyncWrapper(async () => {
-            const response = await axiosInstance.get("/auth/check", { withCredentials: true });
+            const response = await axiosInstance.get("/auth/check");
+            if (response.data) {
+                useAuthStore.setState({ user: response.data.user, token: response.data.token });
+            }
             return response.data;
         })
     })
 }
 
-export const useLogin = () => {
+const useLogin = () => {
     return useMutation({
         mutationFn: asyncWrapper(async (formData) => {
             const response = await axiosInstance.post("/auth/login", formData);
             return response.data;
-        }),
-        retry: 3,
+        })
     })
 }
 
-export const useSignUp = () => {
+const useSignUp = () => {
     return useMutation({
         mutationFn: asyncWrapper(async (formData) => {
             const response = await axiosInstance.post("/auth/signup", formData);
             return response.data;
-        }),
-        retry: 3,
+        })
     })
 }
 
-export const useUser = (id) => {
+const useVerifyOTP = () => {
+    return useMutation({
+        mutationFn: asyncWrapper(async (otpData) => {
+            const response = await axiosInstance.post("/auth/verify-otp", otpData);
+            return response.data;
+        })
+    })
+}
+
+const useUser = (id) => {
     return useQuery({
         queryKey: ["user", id],
         retry: 3,
@@ -44,36 +57,59 @@ export const useUser = (id) => {
     })
 }
 
-export const useUpdateUser = () => {
+const useUpdateUser = () => {
     return useMutation({
         mutationFn: asyncWrapper(async (formData) => {
-            const response = await axiosInstance.patch("/user", formData);
+            const response = await axiosInstance.patch("/user", formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
             return response.data;
-        }),
+        })
     })
 }
 
-export const useChangePassword = () => {
+const useChangePassword = () => {
     return useMutation({
         mutationFn: asyncWrapper(async (passwordData) => {
             const response = await axiosInstance.patch("/user/password", passwordData);
             return response.data;
-        }),
+        })
     })
 }
 
-// Obsolete useUpdateLastRefresh removed as per backend refactor
+const useToggle2FA = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: asyncWrapper(async () => {
+            const response = await axiosInstance.patch("/user/2fa", {});
+            return response.data;
+        }),
+        onSuccess: (data) => {
+            queryClient.invalidateQueries(['authUser']);
+            toast.success(data.message);
+        },
+        onError: (error) => {
+            toast.error(error.message || "Failed to toggle 2FA");
+        }
+    });
+};
 
-export const useLogout = () => {
+const useLogout = () => {
+    const navigate = useNavigate();
     return useMutation({
         mutationFn: asyncWrapper(async () => {
             const response = await axiosInstance.post("/auth/logout", {});
             return response.data;
         }),
+        onSuccess: () => {
+            useAuthStore.setState({ user: null, token: null });
+            localStorage.removeItem("preference-storage");
+            navigate('/login');
+        }
     })
 }
 
-export const useUsers = (params) => {
+const useUsers = (params) => {
     return useQuery({
         queryKey: ["users", params],
         queryFn: asyncWrapper(async () => {
@@ -84,13 +120,25 @@ export const useUsers = (params) => {
     })
 }
 
-// Obsolete useAddProfileView removed as per backend refactor
-
-export const useToggleProfileVisibility = () => {
+const useToggleProfileVisibility = () => {
     return useMutation({
         mutationFn: asyncWrapper(async () => {
             const response = await axiosInstance.patch("/user/visibility", {});
             return response.data;
-        }),
+        })
     })
 }
+
+export {
+    useCheckAuth,
+    useLogin,
+    useSignUp,
+    useVerifyOTP,
+    useUser,
+    useUpdateUser,
+    useChangePassword,
+    useToggle2FA,
+    useLogout,
+    useUsers,
+    useToggleProfileVisibility,
+};

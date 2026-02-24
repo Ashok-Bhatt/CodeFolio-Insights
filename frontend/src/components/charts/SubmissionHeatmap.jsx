@@ -26,19 +26,44 @@ const generateFullYearData = (year, calendarData) => {
   return days;
 };
 
+const generateLast365DaysData = (calendarData) => {
+  const days = [];
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const start = new Date(today);
+  start.setDate(start.getDate() - 364);
+
+  for (let d = new Date(start); d <= today; d.setDate(d.getDate() + 1)) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const dayOfMonth = String(d.getDate()).padStart(2, '0');
+    const key = `${y}-${m}-${dayOfMonth}`;
+
+    days.push({
+      date: new Date(d),
+      count: calendarData[key] || 0,
+      dateString: key
+    });
+  }
+  return days;
+};
+
 const groupDataByMonth = (days) => {
   const months = [];
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const daysByMonth = {};
 
   days.forEach(day => {
+    const year = day.date.getFullYear();
     const mIndex = day.date.getMonth();
-    if (!daysByMonth[mIndex]) daysByMonth[mIndex] = [];
-    daysByMonth[mIndex].push(day);
+    const key = `${year}-${String(mIndex).padStart(2, '0')}`;
+    if (!daysByMonth[key]) daysByMonth[key] = { mIndex, days: [] };
+    daysByMonth[key].days.push(day);
   });
 
-  Object.keys(daysByMonth).sort((a, b) => a - b).forEach(mIndex => {
-    const monthDays = daysByMonth[mIndex];
+  Object.keys(daysByMonth).sort().forEach(key => {
+    const { mIndex, days: monthDays } = daysByMonth[key];
     if (monthDays.length === 0) return;
 
     const weeks = [];
@@ -62,12 +87,30 @@ const groupDataByMonth = (days) => {
   return months;
 };
 
-const getColorClass = (count) => {
-  if (count === 0) return 'bg-gray-100';
-  if (count <= 2) return 'bg-green-100';
-  if (count <= 4) return 'bg-green-300';
-  if (count <= 8) return 'bg-green-500';
-  return 'bg-green-700';
+const getGreenHeatColor = (count) => {
+  if (count <= 0) return 'white';
+  if (count === 1) return 'rgb(1, 102, 32)';
+  if (count === 2) return 'rgb(16, 153, 50)';
+  if (count >= 3 && count <= 5) return 'rgb(40, 194, 68)';
+  if (count >= 6) return 'rgb(127, 255, 139)';
+  return 'white';
+};
+
+const getYearWithZeros = (year) => {
+  const data = {};
+  const yearNum = parseInt(year);
+  if (isNaN(yearNum)) return {};
+
+  const start = new Date(yearNum, 0, 1);
+  const end = new Date(yearNum, 11, 31);
+
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const dayOfMonth = String(d.getDate()).padStart(2, '0');
+    data[`${y}-${m}-${dayOfMonth}`] = 0;
+  }
+  return data;
 };
 
 const calculateOverallStats = (calendar) => {
@@ -77,8 +120,9 @@ const calculateOverallStats = (calendar) => {
   const allDates = [];
   const allDataMap = {};
 
-  Object.values(calendar).forEach(yearData => {
-    Object.entries(yearData).forEach(([dateStr, count]) => {
+  Object.entries(calendar).forEach(([year, yearData]) => {
+    const data = yearData === null ? getYearWithZeros(year) : yearData;
+    Object.entries(data).forEach(([dateStr, count]) => {
       if (count > 0) {
         totalSubmissions += count;
         allDataMap[dateStr] = count;
@@ -145,10 +189,40 @@ const calculateOverallStats = (calendar) => {
 const SubmissionHeatmap = ({ calendar, className, title }) => {
   const [selectedYear, setSelectedYear] = useState(null);
 
-  const years = useMemo(() => {
-    if (!calendar) return [];
-    return Object.keys(calendar).sort((a, b) => b - a);
+  const enrichedCalendar = useMemo(() => {
+    if (!calendar) return calendar;
+    const currentYear = String(new Date().getFullYear());
+    const previousYear = String(Number(currentYear) - 1);
+
+    if (calendar[currentYear] && calendar[previousYear]) {
+      const merged = { ...calendar[previousYear], ...calendar[currentYear] };
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const cutoff = new Date(today);
+      cutoff.setDate(cutoff.getDate() - 364);
+
+      const currentData = {};
+      Object.entries(merged).forEach(([dateStr, count]) => {
+        const d = new Date(dateStr);
+        if (d >= cutoff && d <= today) {
+          currentData[dateStr] = count;
+        }
+      });
+
+      return { current: currentData, ...calendar };
+    }
+    return calendar;
   }, [calendar]);
+
+  const years = useMemo(() => {
+    if (!enrichedCalendar) return [];
+    return Object.keys(enrichedCalendar).sort((a, b) => {
+      if (a === 'current') return -1;
+      if (b === 'current') return 1;
+      return b - a;
+    });
+  }, [enrichedCalendar]);
 
   useEffect(() => {
     if (years.length > 0 && !selectedYear) {
@@ -159,11 +233,15 @@ const SubmissionHeatmap = ({ calendar, className, title }) => {
   const globalStats = useMemo(() => calculateOverallStats(calendar), [calendar]);
 
   const currentYearData = useMemo(() => {
-    if (!calendar || !selectedYear) return {};
-    return calendar[selectedYear] || {};
-  }, [calendar, selectedYear]);
+    if (!enrichedCalendar || !selectedYear) return {};
+    return enrichedCalendar[selectedYear] ?? {};
+  }, [enrichedCalendar, selectedYear]);
 
   const monthlyGroups = useMemo(() => {
+    if (selectedYear === 'current') {
+      const fullData = generateLast365DaysData(currentYearData);
+      return groupDataByMonth(fullData);
+    }
     const fullYearData = generateFullYearData(selectedYear, currentYearData);
     return groupDataByMonth(fullYearData);
   }, [selectedYear, currentYearData]);
@@ -217,26 +295,27 @@ const SubmissionHeatmap = ({ calendar, className, title }) => {
 
       <div className="w-full overflow-x-auto pb-4 custom-scrollbar">
         <div className="flex gap-4 min-w-max">
-          <div className="flex flex-col justify-between py-1 mr-2 text-[10px] text-gray-400 font-black h-[112px] uppercase">
+          <div className="flex flex-col justify-between py-1 mr-2 text-[10px] text-gray-500 font-black h-[112px] uppercase">
             <span>Mon</span><span className="invisible">Tue</span><span>Wed</span><span className="invisible">Thu</span><span>Fri</span><span className="invisible">Sat</span><span>Sun</span>
           </div>
 
-          {monthlyGroups.map((month) => (
-            <div key={month.name} className="flex flex-col gap-2">
+          {monthlyGroups.map((month, index) => (
+            <div key={`${month.name}-${index}`} className="flex flex-col gap-2">
               <div className="flex gap-1">
                 {month.weeks.map((week, wIndex) => (
                   <div key={wIndex} className="flex flex-col gap-1">
                     {week.map((day, dIndex) => (
                       <div
                         key={dIndex}
-                        className={`w-3 h-3 rounded-[2px] border transition-all duration-300 ${day ? `${getColorClass(day.count)} ${day.count > 0 ? 'border-green-200' : 'border-gray-200'}` : 'bg-transparent border-transparent'}`}
+                        style={{ backgroundColor: day ? getGreenHeatColor(day.count) : 'transparent' }}
+                        className={`w-3 h-3 rounded-[2px] transition-all duration-300 ${day ? (day.count > 0 ? 'border border-green-400/10' : 'border border-gray-200') : ''}`}
                         title={day ? `${day.count} submissions on ${day.dateString}` : ''}
                       />
                     ))}
                   </div>
                 ))}
               </div>
-              <span className="text-[10px] font-black text-gray-400 text-center uppercase tracking-widest">{month.name}</span>
+              <span className="text-[10px] font-black text-gray-500 text-center uppercase tracking-widest">{month.name}</span>
             </div>
           ))}
         </div>

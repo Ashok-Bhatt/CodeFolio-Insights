@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-export const deleteUploads = async () => {
+const deleteUploads = async () => {
     const uploadsDir = path.join(process.cwd(), 'uploads');
     if (fs.existsSync(uploadsDir)) {
         const files = fs.readdirSync(uploadsDir);
@@ -13,4 +13,8 @@ export const deleteUploads = async () => {
         }
         console.log(`🧹 Cleared ${files.length} files from uploads directory`);
     }
+};
+
+export {
+    deleteUploads,
 };

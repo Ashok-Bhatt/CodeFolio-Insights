@@ -1,13 +1,13 @@
 import UserModel from "../models/user.model.js";
 import redisClient from "../config/redis.js";
-import ProfileModel from "../models/profiles.model.js";
+import ProfileModel from "../models/profile.model.js";
 import { destroyFile, uploadFile } from "../utils/cloudinary.js";
 import bcrypt from "bcrypt";
 import { getSearchQuery, getSortQuery } from "../utils/query/userQuery.js"
 import asyncHandler from '../utils/asyncHandler.js';
 import ProfileViewModel from "../models/profileView.model.js";
 import { ENV } from "../config/config.js";
-import { addProfileView } from "../services/profileView.services.js";
+import { addProfileView } from "../services/profileView.service.js";
 
 const getUser = asyncHandler(async (req, res) => {
     const userId = req.params.userId;
@@ -22,7 +22,7 @@ const getUser = asyncHandler(async (req, res) => {
     const isAdmin = !!req.user && req.user.isAdmin;
     const isOwner = !!req.user && req.user._id.equals(userId);
     const isPublic = user.profileVisibility === true;
-    
+
     if (!isAdmin && !isOwner && !isPublic) return res.status(403).json({ message: "Profile visibility is set to private." });
 
     if (viewerDeviceToken && !viewerSignedDeviceToken) {
@@ -184,24 +184,32 @@ const toggleProfileVisibility = asyncHandler(async (req, res) => {
 });
 
 const getUserHighlights = asyncHandler(async (req, res) => {
-    const cachedData = await redisClient.get("userHighlights");
-    if (cachedData) return res.status(200).json(JSON.parse(cachedData));
-
     const totalUsers = await UserModel.countDocuments();
-    const sampleUsers = await UserModel.find({ profile: { $exists: true, $ne: "" } })
+    const sampleUsersSize = 5;
+    const sampleUsers = await UserModel.find({ profileVisibility: true })
+        .limit(sampleUsersSize)
         .select("name profile")
-        .limit(4)
         .lean();
 
-    const response = {
+    return res.status(200).json({
         totalUsers,
         sampleUsers
-    };
+    });
+});
 
-    // Cache for 1 hour (3600 seconds)
-    await redisClient.set("userHighlights", JSON.stringify(response), "EX", 3600);
+const toggle2FA = asyncHandler(async (req, res) => {
+    const userId = req.user._id;
+    const user = await UserModel.findById(userId);
 
-    return res.status(200).json(response);
+    if (!user) return res.status(404).json({ message: "User not found!" });
+
+    user.enable2FA = !user.enable2FA;
+    await user.save();
+
+    return res.status(200).json({
+        message: `Two-Factor Authentication ${user.enable2FA ? "Enabled" : "Disabled"}`,
+        enable2FA: user.enable2FA
+    });
 });
 
 export {
@@ -211,4 +219,5 @@ export {
     updateUserInfo,
     changePassword,
     toggleProfileVisibility,
+    toggle2FA,
 }

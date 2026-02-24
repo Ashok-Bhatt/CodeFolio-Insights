@@ -61,7 +61,6 @@ const Code360 = () => {
 
                 <BadgeCollection
                     title="Badges"
-                    defaultBadgesCount={2}
                     badges={badges}
                 />
 

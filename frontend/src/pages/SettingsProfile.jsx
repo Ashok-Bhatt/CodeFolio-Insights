@@ -77,9 +77,8 @@ const SettingsProfile = () => {
 
             fields.forEach(field => {
                 let value = user[field] || '';
-                if (field === 'countryCode' && value.startsWith('+')) {
-                    value = value.substring(1); // Strip '+' for backend enum compliance
-                }
+                if ((field === 'countryCode' || field === 'phone') && value === '') return;
+                if (field === 'countryCode' && value.startsWith('+')) value = value.substring(1);
                 formData.append(field, value);
             });
 

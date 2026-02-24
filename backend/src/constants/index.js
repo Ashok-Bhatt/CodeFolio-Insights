@@ -137,7 +137,7 @@ const VIDEOS = {
         {
             link: "https://www.youtube.com/watch?v=LlkcvvGbs9I",
             title: "HACK GITHUB CONTRIBUTION GRAPH! (2025)",
-            description: "n this video, I'll teach you how you can hack your GitHub contribution graph (Github Activity Generator) in 5 minutes. At the end of this video, you'll be able to generate beautiful art and fill it randomly to make it look like you've been a frequent contributor. ",
+            description: "In this video, I'll teach you how you can hack your GitHub contribution graph (Github Activity Generator) in 5 minutes. At the end of this video, you'll be able to generate beautiful art and fill it randomly to make it look like you've been a frequent contributor. ",
             time: 326,
             views: 98000,
         }

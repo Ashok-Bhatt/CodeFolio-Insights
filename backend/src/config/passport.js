@@ -23,6 +23,7 @@ passport.use(new GoogleStrategy({
             if (user) {
                 // Link Google account to existing user
                 user.googleId = profile.id;
+                user.provider = 'both';
                 if (!user.profile) user.profile = profile.photos[0].value;
                 await user.save();
                 return done(null, user);
@@ -34,6 +35,7 @@ passport.use(new GoogleStrategy({
                 name: profile.displayName,
                 email: profile.emails[0].value,
                 profile: profile.photos[0].value,
+                provider: 'google',
                 jobTitle: 'Developer',
                 lastRefresh: Date.now(),
             });
@@ -45,18 +47,5 @@ passport.use(new GoogleStrategy({
         }
     }
 ));
-
-passport.serializeUser((user, done) => {
-    done(null, user.id);
-});
-
-passport.deserializeUser(async (id, done) => {
-    try {
-        const user = await UserModel.findById(id);
-        done(null, user);
-    } catch (err) {
-        done(err, false);
-    }
-});
 
 export default passport;

@@ -3,7 +3,6 @@ import { getRepoCountScore, getFollowersCountScore, getFollowingRatioScore, getL
 import { getUserProfileData, getGithubContributionBadges, getUserLanguageStats, getProfileReadme, getMultiYearContributionCalendar, getGithubPinnedRepos, getUserStarsAndForks, getMultiYearContributionCount, getLastYearContributionCalendar } from "../utils/fetching/githubFetch.js"
 import { fetchLeetCodeProfileData, fetchLeetCodeUserMultiYearSubmissionData, fetchLeetCodeContestData, fetchLeetCodeBadgesData, fetchLeetCodeProblemsCount, fetchLeetCodeTopicWiseProblemsData } from "../utils/fetching/scrapeSpideyFetch.js"
 import { getProblemsSolvedCountScore, getAcceptanceRateScore, getContestPerformanceScore, getSubmissionConsistencyScore, getBadgesScore } from "../utils/scoring/leetcodeScore.js";
-import asyncHandler from "../utils/asyncHandler.js";
 
 const getAnalysisGithubData = async (username) => {
     try {
@@ -65,7 +64,7 @@ const getGithubScore = async (githubData) => {
         const totalCommitsScore = getTotalCommitsScore(contributionCount.commitsCount);
         const pullRequestsCountScore = getPullRequestsCountScore(contributionCount.pullRequestsCount);
         const issuesCountScore = getIssuesCountScore(contributionCount.issuesCount);
-        const restrictedContributionCountScore = getRestrictedContributionCountScore(contributionCount.restrictedCintributionCount);
+        const restrictedContributionCountScore = getRestrictedContributionCountScore(contributionCount.restrictedContributionCount);
         const forksCountScore = getForksCountScore(forksCount);
         const starsCountScore = getStarsCountScore(starsCount);
         const profileReadmeScore = getProfileReadmeScore(profileReadme);

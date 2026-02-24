@@ -1,11 +1,10 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import session from 'express-session';
 import passport from './config/passport.js';
 import AuthRouter from './routes/auth.route.js';
 import AnalyzeRouter from './routes/analyze.route.js';
-import ProfilesRouter from './routes/profiles.route.js';
+import ProfileRouter from './routes/profile.route.js';
 import UserRouter from './routes/user.route.js';
 import ScoreRouter from './routes/score.route.js';
 import AnalyticsRouter from './routes/analytics.route.js';
@@ -35,23 +34,13 @@ app.use(
     })
 );
 
-// Express session middleware
-app.use(
-    session({
-        secret: SESSION_SECRET,
-        resave: false,
-        saveUninitialized: false,
-    })
-);
-
 // Passport middleware
 app.use(passport.initialize());
-app.use(passport.session());
 
 // Routes
 app.use('/auth', AuthRouter);
 app.use('/analyze', AnalyzeRouter);
-app.use('/profiles', ProfilesRouter);
+app.use('/profile', ProfileRouter);
 app.use('/user', UserRouter);
 app.use('/analytics', AnalyticsRouter);
 app.use('/score', ScoreRouter);

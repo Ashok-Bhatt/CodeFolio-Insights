@@ -1,11 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { X } from "lucide-react";
 import { HackerrankCertificateCard } from "./card/export.js";
+import { useResponsiveCount } from '../hooks/export.js';
 
-const CertificatesCollection = ({ certificates = [], title = "Certificates", defaultCertificatesCount = 2, className = "" }) => {
+const CertificatesCollection = ({ certificates = [], title = "Certificates", className = "" }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const displayedCertificates = certificates.slice(0, defaultCertificatesCount);
+    const containerRef = useRef(null);
+
+    // Estimate CertificateCard width as 180px + gap-6 (24px)
+    const fitCount = useResponsiveCount(containerRef, 180, 24);
+    const displayedCertificates = certificates.slice(0, fitCount || 0);
 
     const toggleModal = () => {
         setIsModalOpen(!isModalOpen);
@@ -31,20 +36,24 @@ const CertificatesCollection = ({ certificates = [], title = "Certificates", def
                 </div>
 
                 {certificates.length > 0 ? (
-                    <div className="flex flex-col items-center">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full mb-4">
+                    <div className="flex flex-col items-center w-full">
+                        <div
+                            ref={containerRef}
+                            className="flex justify-center gap-6 w-full mb-4 overflow-hidden flex-nowrap"
+                        >
                             {displayedCertificates.map((cert, index) => (
-                                <HackerrankCertificateCard
-                                    key={cert.id || index}
-                                    data={cert}
-                                />
+                                <div key={cert.id || index} className="flex-shrink-0 w-full md:w-[calc(50%-12px)] lg:w-[180px]">
+                                    <HackerrankCertificateCard
+                                        data={cert}
+                                    />
+                                </div>
                             ))}
                         </div>
 
-                        {certificates.length > defaultCertificatesCount && (
+                        {certificates.length > displayedCertificates.length && (
                             <button
                                 onClick={toggleModal}
-                                className="text-blue-500 hover:text-blue-700 font-medium text-sm underline mt-2 focus:outline-none"
+                                className="text-blue-500 hover:text-blue-700 font-medium text-sm underline mt-2 focus:outline-none transition-colors"
                             >
                                 show more
                             </button>
@@ -76,6 +85,7 @@ const CertificatesCollection = ({ certificates = [], title = "Certificates", def
                                     <HackerrankCertificateCard
                                         key={`modal-${cert.id || index}`}
                                         data={cert}
+                                        isExpanded={true}
                                     />
                                 ))}
                             </div>

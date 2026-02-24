@@ -4,6 +4,7 @@ import { useAuthStore } from '../../store/export.js';
 import { useToggleProfileVisibility } from '../../hooks/useUsers.js';
 import { InfoTooltip } from '../export.js';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const DashboardSidebar = ({ userData }) => {
     const { userId } = useParams();
@@ -14,7 +15,8 @@ const DashboardSidebar = ({ userData }) => {
     const [isDevStatsOpen, setIsDevStatsOpen] = useState(true);
     const navigate = useNavigate();
 
-    const { data: toggleProfileVisibilityData, mutateAsync: toggleProfileVisibilityMutation, isSuccess: isProfileVisibilityToggled } = useToggleProfileVisibility();
+    const setAuthUser = useAuthStore((state) => state.setUser);
+    const { mutateAsync: toggleProfileVisibilityMutation } = useToggleProfileVisibility();
 
     useEffect(() => {
         if (userData) {
@@ -22,11 +24,19 @@ const DashboardSidebar = ({ userData }) => {
         }
     }, [userData]);
 
-    useEffect(() => {
-        if (isProfileVisibilityToggled) {
-            setProfileVisibility(toggleProfileVisibilityData?.profileVisibility);
+    const handleToggleVisibility = async () => {
+        try {
+            const data = await toggleProfileVisibilityMutation();
+            if (data && user) {
+                const updatedUser = { ...user, profileVisibility: data.profileVisibility };
+                setAuthUser(updatedUser);
+                setProfileVisibility(data.profileVisibility);
+                toast.success(data.message);
+            }
+        } catch (error) {
+            toast.error("Failed to update visibility");
         }
-    }, [isProfileVisibilityToggled, toggleProfileVisibilityData]);
+    };
 
     const userLinks = [
         { name: 'Email', icon: <Mail className={`w-5 h-5 cursor-pointer hover:text-blue-500 transition-all hover:scale-110 ${userData?.email ? "text-slate-800" : "text-slate-300"}`} />, url: userData?.email ? `mailto:${userData?.email}` : "" },
@@ -62,7 +72,7 @@ const DashboardSidebar = ({ userData }) => {
                         />
                         <span className="text-xs font-black text-slate-500 uppercase tracking-widest">Public Profile</span>
                         <button
-                            onClick={() => toggleProfileVisibilityMutation({ profileVisibility: !profileVisibility })}
+                            onClick={handleToggleVisibility}
                             className={`relative w-10 h-5 rounded-full transition-all ${profileVisibility === true ? 'bg-green-500' : 'bg-slate-200'}`}
                         >
                             <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full transition-transform ${profileVisibility === true ? 'translate-x-5' : 'translate-x-0'}`} />

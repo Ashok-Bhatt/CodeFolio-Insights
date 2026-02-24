@@ -38,7 +38,6 @@ const CodingProfiles = () => {
 
                     <BadgeCollection
                         title="Badges"
-                        defaultBadgesCount={2}
                         badges={getBadges(data)}
                     />
 

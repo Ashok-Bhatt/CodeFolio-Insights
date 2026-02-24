@@ -3,7 +3,7 @@ import UserModel from '../models/user.model.js';
 import jwt from "jsonwebtoken";
 import asyncHandler from '../utils/asyncHandler.js';
 
-export const protectRoute = asyncHandler(async (req, res, next) => {
+const protectRoute = asyncHandler(async (req, res, next) => {
     const token = req.cookies.token || req.header("Authorization")?.replace("Bearer ", "");
     if (!token) return res.status(401).json({ message: "Unauthenticated User! Token not provided" });
 
@@ -16,7 +16,7 @@ export const protectRoute = asyncHandler(async (req, res, next) => {
     next();
 });
 
-export const optionalAuth = asyncHandler(async (req, res, next) => {
+const optionalAuth = asyncHandler(async (req, res, next) => {
     const token = req.cookies.token || req.header("Authorization")?.replace("Bearer ", "");
 
     if (!token) {
@@ -31,3 +31,8 @@ export const optionalAuth = asyncHandler(async (req, res, next) => {
 
     next();
 });
+
+export {
+    protectRoute,
+    optionalAuth,
+};

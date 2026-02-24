@@ -2,7 +2,7 @@ import { axiosInstance, asyncWrapper } from "../api/export.js";
 import { useMutation, useQuery } from "@tanstack/react-query"
 
 // LeetCode hook
-export const useLeetcodeAnalysis = (username) => {
+const useLeetcodeAnalysis = (username) => {
     return useQuery({
         queryKey: ["leetcodeData", username],
         queryFn: asyncWrapper(async () => {
@@ -15,7 +15,7 @@ export const useLeetcodeAnalysis = (username) => {
 }
 
 // GitHub hook
-export const useGithubAnalysis = (username) => {
+const useGithubAnalysis = (username) => {
     return useQuery({
         queryKey: ["githubData", username],
         queryFn: asyncWrapper(async () => {
@@ -28,7 +28,7 @@ export const useGithubAnalysis = (username) => {
 }
 
 // Resume hook
-export const useResumeAnalysis = () => {
+const useResumeAnalysis = () => {
     return useMutation({
         mutationFn: asyncWrapper(async (formData) => {
             const response = await axiosInstance.post("/analyze/resume", formData, {
@@ -40,3 +40,9 @@ export const useResumeAnalysis = () => {
         }),
     });
 }
+
+export {
+    useLeetcodeAnalysis,
+    useGithubAnalysis,
+    useResumeAnalysis,
+};

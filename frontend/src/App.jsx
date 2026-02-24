@@ -1,21 +1,30 @@
 import { useAuthStore } from './store/export.js';
 import { useCheckAuth } from './hooks/useUsers.js';
 import { useEffect } from 'react';
-import { Route, Routes, Navigate } from 'react-router-dom';
+import { Route, Routes, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { Landing, LoginPage, SignupPage, CodingProfiles, SettingsPage, SettingsProfile, LinkPage, PageNotFound, Account } from './pages/export.js';
 import { HomeLayout, DashboardLayout, AnalyzerLayout } from "./layouts/export.js";
 import { LeetCode, GFG, Code360, Interviewbit, CodeChef, HackerRank, Github } from './pages/platforms/export.js';
-import { LeetcodeAnalyse, GithubAnalyse, ResumeAnalyse } from './pages/analyse/export.js';
+import { LeetcodeAnalyze, GithubAnalyze, ResumeAnalyze } from './pages/analyze/export.js';
 import { ProtectedRoute, AppearanceSettings } from './components/export.js';
 
 const App = () => {
     const { data, isSuccess } = useCheckAuth();
+    const { user } = useAuthStore();
+    const location = useLocation();
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (isSuccess && data) {
             useAuthStore.setState({ user: data.user, token: data.token });
         }
     }, [isSuccess, data]);
+
+    useEffect(() => {
+        if (user && ['/login', '/signup'].includes(location.pathname)) {
+            navigate(`/dashboard/${user._id}`);
+        }
+    }, [user, location.pathname, navigate]);
 
     return (
         <Routes>
@@ -39,9 +48,9 @@ const App = () => {
                 </Route>
                 <Route path="analyzer" element={<AnalyzerLayout />}>
                     <Route index element={<Navigate to="leetcode" replace />} />
-                    <Route path="leetcode" element={<LeetcodeAnalyse />} />
-                    <Route path="github" element={<GithubAnalyse />} />
-                    <Route path="resume" element={<ResumeAnalyse />} />
+                    <Route path="leetcode" element={<LeetcodeAnalyze />} />
+                    <Route path="github" element={<GithubAnalyze />} />
+                    <Route path="resume" element={<ResumeAnalyze />} />
                 </Route>
                 <Route path="settings" element={
                     <ProtectedRoute requiresAuthentication={true}>
