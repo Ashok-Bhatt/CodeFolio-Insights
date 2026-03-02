@@ -1,10 +1,12 @@
 import * as scrapeSpideyFetching from './scrapeSpideyFetch.js';
 import * as githubFetching from './githubFetch.js';
 
-const fetchGfgData = async (username) => {
+const fetchGfgData = async (username, year = null) => {
     return {
         profile: await scrapeSpideyFetching.fetchGfgUserData(username),
-        submission: await scrapeSpideyFetching.fetchGfgUserMultiYearSubmissionData(username),
+        submission: year
+            ? { [year]: await scrapeSpideyFetching.fetchGfgUserSubmissionData(username, year) }
+            : await scrapeSpideyFetching.fetchGfgUserMultiYearSubmissionData(username),
     }
 }
 
@@ -15,28 +17,34 @@ const fetchCodeChefData = async (username) => {
     }
 }
 
-const fetchInterviewbitData = async (username) => {
+const fetchInterviewbitData = async (username, year = null) => {
     return {
         profile: await scrapeSpideyFetching.fetchInterviewbitUserData(username),
         badges: await scrapeSpideyFetching.fetchInterviewbitBadgesData(username),
-        submission: await scrapeSpideyFetching.fetchInterviewbitUserMultiYearSubmissionData(username),
+        submission: year
+            ? { [year]: await scrapeSpideyFetching.fetchInterviewbitUserSubmissionData(username, year) }
+            : await scrapeSpideyFetching.fetchInterviewbitUserMultiYearSubmissionData(username),
     }
 }
 
-const fetchCode360Data = async (username) => {
+const fetchCode360Data = async (username, year = null) => {
     return {
         profile: await scrapeSpideyFetching.fetchCode360UserData(username),
-        submission: await scrapeSpideyFetching.fetchCode360UserMultiYearSubmissionData(username),
+        submission: year
+            ? { [year]: await scrapeSpideyFetching.fetchCode360UserSubmissionData(username, year) }
+            : await scrapeSpideyFetching.fetchCode360UserMultiYearSubmissionData(username),
     }
 }
 
-const fetchLeetCodeData = async (username) => {
+const fetchLeetCodeData = async (username, year = null) => {
     return {
         profile: (await scrapeSpideyFetching.fetchLeetCodeProfileData(username))?.matchedUser,
         badges: (await scrapeSpideyFetching.fetchLeetCodeBadgesData(username))?.matchedUser,
         contest: await scrapeSpideyFetching.fetchLeetCodeContestData(username),
         problems: (await scrapeSpideyFetching.fetchLeetCodeProblemsCount(username))?.matchedUser?.submitStats,
-        submission: await scrapeSpideyFetching.fetchLeetCodeUserMultiYearSubmissionData(username),
+        submission: year
+            ? { [year]: (await scrapeSpideyFetching.fetchLeetCodeUserSubmissionData(username, year))?.matchedUser?.userCalendar?.submissionCalendar }
+            : await scrapeSpideyFetching.fetchLeetCodeUserMultiYearSubmissionData(username),
         topicStats: (await scrapeSpideyFetching.fetchLeetCodeTopicWiseProblemsData(username))?.matchedUser?.tagProblemCounts,
     }
 }

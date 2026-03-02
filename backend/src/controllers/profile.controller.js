@@ -55,14 +55,14 @@ const updateProfile = async (req, res) => {
         }
 
         const profilesData = await redisClient.get(`profileData:${user._id}`);
-        const platformFreshData = await PLATFORMS[platformName].fetchFunction(platformUsername);
-        if (!platformFreshData) {
+        const platformrefreshedData = await PLATFORMS[platformName].fetchFunction(platformUsername);
+        if (!platformrefreshedData) {
             await session.abortTransaction();
             return res.status(500).json({ message: "Failed to fetch the user data." });
         }
 
         let mergedData = { ...profilesData };
-        mergedData[platformName] = platformFreshData;
+        mergedData[platformName] = platformrefreshedData;
 
         await session.commitTransaction();
         if (mergedData) await redisClient.set(`profileData:${user._id}`, mergedData);
@@ -134,19 +134,35 @@ const refreshProfileData = asyncHandler(async (req, res) => {
 
     if (!profileLinks) return res.status(404).json({ message: "User profiles not configured." });
 
-    const freshData = {
-        gfg: profileLinks.gfgUsername ? await platformsFetching.fetchGfgData(profileLinks.gfgUsername) : null,
-        codechef: profileLinks.codechefUsername ? await platformsFetching.fetchCodeChefData(profileLinks.codechefUsername) : null,
-        interviewbit: profileLinks.interviewbitUsername ? await platformsFetching.fetchInterviewbitData(profileLinks.interviewbitUsername) : null,
-        code360: profileLinks.code360Username ? await platformsFetching.fetchCode360Data(profileLinks.code360Username) : null,
-        hackerrank: profileLinks.hackerrankUsername ? await platformsFetching.fetchHackerRankData(profileLinks.hackerrankUsername) : null,
-        leetcode: profileLinks.leetCodeUsername ? await platformsFetching.fetchLeetCodeData(profileLinks.leetCodeUsername) : null,
-        github: profileLinks.githubUsername ? await platformsFetching.fetchGitHubData(profileLinks.githubUsername) : null,
+    const cachedData = await redisClient.get(`profileData:${userId}`) || {};
+
+    const PLATFORMS_WITH_MULTIYEAR_SUBMISSION_DATA = ['gfg', 'interviewbit', 'code360', 'leetcode'];
+    const currentYear = new Date().getFullYear();
+
+    const fetchPlatformData = async (platform, username) => {
+        if (!username) return null;
+        if (platform === 'github') return await platformsFetching.fetchGitHubData(username);
+
+        if (PLATFORMS_WITH_MULTIYEAR_SUBMISSION_DATA.includes(platform)) {
+            const hasCurrentYearData = cachedData[platform]?.submission?.[currentYear];
+            if (hasCurrentYearData) {
+                return await PLATFORMS[platform].fetchFunction(username, currentYear);
+            }
+        }
+        return await PLATFORMS[platform].fetchFunction(username);
     };
 
-    const existingData = await redisClient.get(`profileData:${userId}`) || {};
+    const refreshedData = {
+        gfg: await fetchPlatformData('gfg', profileLinks.gfgUsername),
+        codechef: await fetchPlatformData('codechef', profileLinks.codechefUsername),
+        interviewbit: await fetchPlatformData('interviewbit', profileLinks.interviewbitUsername),
+        code360: await fetchPlatformData('code360', profileLinks.code360Username),
+        hackerrank: await fetchPlatformData('hackerrank', profileLinks.hackerrankUsername),
+        leetcode: await fetchPlatformData('leetcode', profileLinks.leetCodeUsername),
+        github: await fetchPlatformData('github', profileLinks.githubUsername),
+    };
 
-    const mergedData = { ...existingData };
+    const mergedData = { ...cachedData };
 
     Object.keys(PLATFORMS).forEach(platform => {
         let usernameKey = PLATFORMS[platform]?.field;
@@ -154,18 +170,22 @@ const refreshProfileData = asyncHandler(async (req, res) => {
         if (!profileLinks[usernameKey]) {
             mergedData[platform] = null;
         } else {
-            if (freshData[platform]) {
+            if (refreshedData[platform]) {
                 if (!mergedData[platform]) {
-                    mergedData[platform] = freshData[platform];
+                    mergedData[platform] = refreshedData[platform];
                 } else {
-                    const freshPlatformData = freshData[platform];
+                    const refreshedPlatformData = refreshedData[platform];
                     const cachedPlatformData = mergedData[platform];
 
                     const mergedPlatformData = { ...cachedPlatformData };
 
-                    Object.keys(freshPlatformData).forEach(key => {
-                        if (freshPlatformData[key] !== null && freshPlatformData[key] !== undefined) {
-                            mergedPlatformData[key] = freshPlatformData[key];
+                    Object.keys(refreshedPlatformData).forEach(key => {
+                        if (refreshedPlatformData[key] !== null && refreshedPlatformData[key] !== undefined) {
+                            if (key === 'submission' && mergedPlatformData[key]) {
+                                mergedPlatformData[key] = { ...mergedPlatformData[key], ...refreshedPlatformData[key] };
+                            } else {
+                                mergedPlatformData[key] = refreshedPlatformData[key];
+                            }
                         }
                     });
 
