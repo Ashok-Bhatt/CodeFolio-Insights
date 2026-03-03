@@ -3,7 +3,7 @@ import { Search, GitBranch, TrendingUp, Code, Zap, Brain, FolderOpen, GitCommit,
 import { useGithubAnalysis } from "../../hooks/useAnalyzer.js";
 import { useAuthStore } from '../../store/export.js';
 import { useProfileLinks } from '../../hooks/useProfiles.js';
-import { StatCard, AnalysisCard, VideoSuggestionCard, ProblemStatsCard } from '../../components/card/export.js';
+import { StatCard, AnalysisCard, VideoSuggestionCard, DistributionCard } from '../../components/card/export.js';
 import { SubmissionChart, BarChartDistribution } from '../../components/charts/export.js';
 import { ErrorContainer, ScoreMeter, MemeContainer } from '../../components/export.js';
 import { LANGUAGE_COLORS } from '../../constants/index.js';
@@ -187,12 +187,11 @@ const GithubAnalyse = () => {
                             className="col-span-1"
                         />
 
-                        <ProblemStatsCard
+                        <DistributionCard
                             title="Language Distribution"
                             problemsData={languageData}
                             className="col-span-1"
                             includeLabels={true}
-                            orientation="vertical"
                         />
                     </div>
 

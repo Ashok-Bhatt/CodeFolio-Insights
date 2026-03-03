@@ -124,11 +124,7 @@ const getUserRepos = async (username, repoCount) => {
 const getGithubContributionBadges = async (username) => {
     try {
         const githubBadgesResponse = await scrapeSpideyAPI.get(`/api/v1/github/user/badges?user=${username}&apiKey=${SCRAPE_SPIDEY_API_KEY}`);
-        if (githubBadgesResponse.status >= 400) {
-            return [];
-        } else {
-            return githubBadgesResponse.data;
-        }
+        return githubBadgesResponse.data;
     } catch (error) {
         console.log("Error occurred while fetching github badges: ", error.message);
         console.log(error.stack);

@@ -1,10 +1,11 @@
 import React from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { getTotalActiveDays } from '../../utils/dataHelpers.js';
+import { getStreaksAndActiveDays } from '../../utils/calendar.js';
 import { StatCard, ProblemsCard } from '../../components/card/export.js';
 import { BadgeCollection, ContestAchievements } from '../../components/export.js';
 import { SubmissionHeatmap, ContestGraph } from '../../components/charts/export.js';
-import { getContestData, getContestAchievements } from '../../utils/dataHelpers.js';
+import { getContestData, getContestAchievements, getBadges } from '../../utils/dataHelpers.js';
+import { useMemo } from 'react';
 
 const Code360 = () => {
     const { data } = useOutletContext();
@@ -29,17 +30,12 @@ const Code360 = () => {
         }
     ];
 
-    const badges = [
-        ...(platformData?.profile?.dsa_domain_data?.badges_hash?.achiever?.gp?.map((badge) => ({ icon: "/Images/Code360 Badges/Guided Path/achiever.svg", name: badge, subTitle: "Achiever", subTitleIcon: null })) || []),
-        ...(platformData?.profile?.dsa_domain_data?.badges_hash?.achiever?.ptm?.map((badge) => ({ icon: "/Images/Code360 Badges/Practice/achiever.svg", name: badge, subTitle: "Achiever", subTitleIcon: null })) || []),
-        ...(platformData?.profile?.dsa_domain_data?.badges_hash?.achiever?.sgp?.map((badge) => ({ icon: "/Images/Code360 Badges/Special Guided Path/achiever.svg", name: badge, subTitle: "Achiever", subTitleIcon: null })) || []),
-        ...(platformData?.profile?.dsa_domain_data?.badges_hash?.specialist?.gp?.map((badge) => ({ icon: "/Images/Code360 Badges/Guided Path/specialist.svg", name: badge, subTitle: "Specialist", subTitleIcon: null })) || []),
-        ...(platformData?.profile?.dsa_domain_data?.badges_hash?.specialist?.ptm?.map((badge) => ({ icon: "/Images/Code360 Badges/Practice/specialist.svg", name: badge, subTitle: "Specialist", subTitleIcon: null })) || []),
-        ...(platformData?.profile?.dsa_domain_data?.badges_hash?.specialist?.sgp?.map((badge) => ({ icon: "/Images/Code360 Badges/Special Guided Path/specialist.svg", name: badge, subTitle: "Specialist", subTitleIcon: null })) || []),
-        ...(platformData?.profile?.dsa_domain_data?.badges_hash?.master?.gp?.map((badge) => ({ icon: "/Images/Code360 Badges/Guided Path/master.svg", name: badge, subTitle: "Master", subTitleIcon: null })) || []),
-        ...(platformData?.profile?.dsa_domain_data?.badges_hash?.master?.ptm?.map((badge) => ({ icon: "/Images/Code360 Badges/Practice/master.svg", name: badge, subTitle: "Master", subTitleIcon: null })) || []),
-        ...(platformData?.profile?.dsa_domain_data?.badges_hash?.master?.sgp?.map((badge) => ({ icon: "/Images/Code360 Badges/Special Guided Path/master.svg", name: badge, subTitle: "Master", subTitleIcon: null })) || []),
-    ];
+    const totalProblems = useMemo(() => platformData?.profile?.dsa_domain_data?.problem_count_data?.total_count || 0, [platformData]);
+    const totalContests = useMemo(() => platformData?.profile?.contests?.user_rating_data?.length || 0, [platformData]);
+    const { activeDays } = useMemo(() => getStreaksAndActiveDays(platformData?.submission || {}), [platformData]);
+    const contestData = useMemo(() => (getContestData(data)?.Code360) || [], [data]);
+    const achievements = useMemo(() => getContestAchievements(data).filter((achievement) => achievement.platform === "Code360"), [data]);
+    const badges = useMemo(() => getBadges(data).Code360, [data]);
 
     return (
         <div className="space-y-8 animate-float-in">
@@ -47,14 +43,14 @@ const Code360 = () => {
 
                 <StatCard
                     title="Total Problems"
-                    value={platformData?.profile?.dsa_domain_data?.problem_count_data?.total_count || 0}
+                    value={totalProblems}
                     color="blue"
                     index={0}
                 />
 
                 <StatCard
                     title="Active Days"
-                    value={getTotalActiveDays(platformData?.submission)}
+                    value={activeDays}
                     color="green"
                     index={1}
                 />
@@ -69,15 +65,15 @@ const Code360 = () => {
                     problemsData={platformProblemsData}
                 />
 
-                {platformData?.profile?.contests?.user_rating_data?.length > 0 && (
+                {totalContests > 0 && (
                     <>
                         <ContestGraph
-                            contestData={(getContestData(data)?.Code360) || []}
+                            contestData={contestData}
                             className="col-span-1"
                         />
 
                         <ContestAchievements
-                            achievements={getContestAchievements(data).filter((achievement) => achievement.platform === "Code360")}
+                            achievements={achievements}
                             className="col-span-1"
                         />
                     </>

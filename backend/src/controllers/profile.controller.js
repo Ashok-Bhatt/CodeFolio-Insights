@@ -170,17 +170,16 @@ const refreshProfileData = asyncHandler(async (req, res) => {
         if (!profileLinks[usernameKey]) {
             mergedData[platform] = null;
         } else {
-            if (refreshedData[platform]) {
-                if (!mergedData[platform]) {
-                    mergedData[platform] = refreshedData[platform];
+            const refreshedPlatformData = refreshedData[platform];
+            const cachedPlatformData = mergedData[platform];
+            const mergedPlatformData = { ...cachedPlatformData };
+
+            if (refreshedPlatformData) {
+                if (!mergedPlatformData) {
+                    mergedData[platform] = refreshedPlatformData;
                 } else {
-                    const refreshedPlatformData = refreshedData[platform];
-                    const cachedPlatformData = mergedData[platform];
-
-                    const mergedPlatformData = { ...cachedPlatformData };
-
                     Object.keys(refreshedPlatformData).forEach(key => {
-                        if (refreshedPlatformData[key] !== null && refreshedPlatformData[key] !== undefined) {
+                        if (refreshedPlatformData[key] != null && refreshedPlatformData[key] != undefined && refreshedPlatformData[key] != [] && refreshedPlatformData[key] != {}) {
                             if (key === 'submission' && mergedPlatformData[key]) {
                                 mergedPlatformData[key] = { ...mergedPlatformData[key], ...refreshedPlatformData[key] };
                             } else {

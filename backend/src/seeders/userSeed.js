@@ -1,7 +1,7 @@
-import UserModel from "../../models/user.model.js"
+import UserModel from "../models/user.model.js"
 import bcrypt from 'bcrypt';
 import { faker } from '@faker-js/faker';
-import { connectToDB } from "../../config/db.js";
+import { connectToDB } from "../config/db.js";
 
 const createDummyUser = async () => {
     try {

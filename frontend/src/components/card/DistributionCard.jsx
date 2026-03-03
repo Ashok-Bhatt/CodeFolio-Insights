@@ -1,9 +1,7 @@
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from 'recharts';
 import { PieChart as PieChartIcon } from "lucide-react";
 
-const ProblemStatsCard = ({ problemsData, title = "Problem Difficulty", className = "", includeLabels = true, orientation = "vertical" }) => {
-    
-    const isHorizontal = orientation === "horizontal";
+const DistributionCard = ({ problemsData, title = "Problem Difficulty", className = "", includeLabels = true }) => {
 
     return (
         <div className={`bg-white/90 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-gray-100 animate-float-in ${className}`}>
@@ -14,8 +12,8 @@ const ProblemStatsCard = ({ problemsData, title = "Problem Difficulty", classNam
                 <h3 className="text-xl font-black text-gray-800 uppercase tracking-widest">{title}</h3>
             </div>
 
-            <div className={`flex ${isHorizontal ? 'flex-col lg:flex-row items-center gap-8' : 'flex-col'}`}>
-                <div className={`h-64 ${isHorizontal ? 'w-full lg:w-1/2' : 'w-full'}`}>
+            <div className="flex flex-col lg:flex-row items-center gap-8 px-4">
+                <div className="h-64 w-full lg:w-1/2 min-w-[200px]">
                     <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                             <Pie
@@ -49,13 +47,18 @@ const ProblemStatsCard = ({ problemsData, title = "Problem Difficulty", classNam
                 </div>
 
                 {includeLabels && (
-                    <div className={`grid ${isHorizontal ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 w-full lg:w-1/2 mt-0' : 'grid-cols-5 w-full mt-8'} gap-3`}>
-                        {problemsData.map((item) => (
-                            <div key={item.name} className="flex flex-col items-center justify-center p-4 rounded-2xl bg-gray-50/50 border border-gray-100 group transition-all hover:bg-white hover:shadow-md">
-                                <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{item.name}</div>
-                                <div className="text-2xl font-black text-gray-800 tabular-nums group-hover:scale-110 transition-transform" style={{ color: item.color }}>{item.value}</div>
-                            </div>
-                        ))}
+                    <div className="w-full lg:w-1/2 max-h-64 overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
+                        <div className="grid grid-cols-1 gap-2 pb-2">
+                            {problemsData.map((item) => (
+                                <div key={item.name} className="flex items-center justify-between p-3 px-5 rounded-2xl bg-gray-50/50 border border-gray-100 group transition-all hover:bg-white hover:shadow-md">
+                                    <div className="flex items-center gap-3 min-w-0">
+                                        <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
+                                        <div className="text-[12px] font-black text-gray-500 uppercase tracking-widest truncate">{item.name}</div>
+                                    </div>
+                                    <div className="text-lg font-black text-gray-800 tabular-nums group-hover:scale-110 transition-transform ml-4" style={{ color: item.color }}>{item.value}</div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 )}
             </div>
@@ -63,4 +66,4 @@ const ProblemStatsCard = ({ problemsData, title = "Problem Difficulty", classNam
     );
 };
 
-export default ProblemStatsCard;
+export default DistributionCard;

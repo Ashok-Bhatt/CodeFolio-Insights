@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Search, CheckCircle, Target, Zap, Award, MessageSquareQuote, Rocket, Brain, RefreshCw, BarChart3, TrendingUp, AlertCircle } from 'lucide-react';
 import { getRandomHexColor } from '../../utils/colors.js';
 import { BadgeCollection, ScoreMeter, TopicStats, ErrorContainer, MemeContainer } from '../../components/export.js';
-import { StatCard, ProblemStatsCard, VideoSuggestionCard, AnalysisCard } from '../../components/card/export.js';
+import { StatCard, DistributionCard, VideoSuggestionCard, AnalysisCard } from '../../components/card/export.js';
 import { SubmissionChart } from "../../components/charts/export.js"
 import { useAuthStore } from '../../store/export.js';
 import { useLeetcodeAnalysis } from '../../hooks/useAnalyzer.js';
@@ -213,7 +213,7 @@ const LeetcodeAnalyse = () => {
                             submissionData={getLeetcodeSubmissionData(analysisData?.submissionCalendar)}
                         />
 
-                        <ProblemStatsCard
+                        <DistributionCard
                             title="Difficulty Breakdown"
                             problemsData={getLeetcodeDifficultyData(analysisData?.problemsCount?.matchedUser?.submitStats?.acSubmissionNum)}
                         />

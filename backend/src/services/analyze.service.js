@@ -37,7 +37,7 @@ const getAnalysisLeetCodeData = async (username) => {
     try {
         const problemsCount = await fetchLeetCodeProblemsCount(username);
         const multiYearSubmissionCalendar = await fetchLeetCodeUserMultiYearSubmissionData(username);
-        const submissionCalendar = multiYearSubmissionCalendar[String(new Date().getFullYear())];
+        const submissionCalendar = multiYearSubmissionCalendar[String(new Date().getFullYear())] || {};
         const contestData = await fetchLeetCodeContestData(username);
         const profileInfo = await fetchLeetCodeProfileData(username);
         const badges = await fetchLeetCodeBadgesData(username);
@@ -58,7 +58,6 @@ const getGithubScore = async (githubData) => {
         let score = 0;
 
         const { userData, starsCount, forksCount, pinnedRepos, lastYearContributionStats, contributionCount, profileReadme, contributionBadges, languageStats, currentStreak, maxStreak, activeDays, totalContributions } = githubData;
-    
         const repoCountScore = getRepoCountScore(userData.public_repos);
         const languagesCountScore = getLanguagesCountScore(Object.entries(languageStats).length);
         const totalCommitsScore = getTotalCommitsScore(contributionCount.commitsCount);

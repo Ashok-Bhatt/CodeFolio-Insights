@@ -185,6 +185,7 @@ export {
     fetchInterviewbitUserMultiYearSubmissionData,
     fetchHackerRankUserData,
     fetchCode360UserData,
+    fetchCode360UserSubmissionData,
     fetchCode360UserMultiYearSubmissionData,
     fetchLeetCodeProfileData,
     fetchLeetCodeUserSubmissionData,

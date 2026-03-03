@@ -11,7 +11,7 @@ import AnalyticsRouter from './routes/analytics.route.js';
 import { connectToDB } from './config/db.js';
 import { PORT, SESSION_SECRET, CORS_ORIGIN } from './config/config.js';
 import cookieParser from "cookie-parser";
-import { createAdmin } from './utils/seed/adminSeed.js';
+import { createAdmin } from './seeders/adminSeed.js';
 import { deleteUploads } from './utils/fileCleanup.js';
 
 

@@ -25,7 +25,6 @@ const TopicAnalysis = ({ data = {}, title = "Topic Analysis", className }) => {
         <div className={`bg-white p-6 rounded-2xl shadow-xl border border-gray-100 font-sans ${className}`}>
             <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-bold text-gray-800">{title}</h3>
-                <Info size={16} className="text-gray-400" />
             </div>
 
             <div className="space-y-3">

@@ -64,7 +64,8 @@ const fetchGitHubData = async (username) => {
         contributions: profileData?.created_at ? await githubFetching.getMultiYearContributionCount(username, new Date(profileData.created_at).getFullYear(), new Date().getFullYear()) : null,
         calendar: profileData?.created_at ? await githubFetching.getMultiYearContributionCalendar(username, new Date(profileData.created_at).getFullYear(), new Date().getFullYear()) : null,
         badges: await githubFetching.getGithubContributionBadges(username),
-        languageStats: await githubFetching.getUserLanguageStats(username)
+        languageStats: await githubFetching.getUserLanguageStats(username),
+        starsAndForks: await githubFetching.getUserStarsAndForks(username),
     }
 }
 
