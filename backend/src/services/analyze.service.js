@@ -1,6 +1,6 @@
 import { getStreaksAndActiveDays } from "../utils/calendar.js";
 import { getRepoCountScore, getFollowersCountScore, getFollowingRatioScore, getLanguagesCountScore, getStarsCountScore, getForksCountScore, getTotalCommitsScore, getProfileReadmeScore, getPullRequestsCountScore, getIssuesCountScore, getStreakScore, getPinnedReposScore, getRestrictedContributionCountScore } from "../utils/scoring/githubScore.js";
-import { getUserProfileData, getGithubContributionBadges, getUserLanguageStats, getProfileReadme, getMultiYearContributionCalendar, getGithubPinnedRepos, getUserStarsAndForks, getMultiYearContributionCount, getLastYearContributionCalendar } from "../utils/fetching/githubFetch.js"
+import { getUserProfileData, getGithubContributionBadges, getUserLanguageStats, getProfileReadme, getMultiYearContributionCalendar, getGithubPinnedRepos, getUserStarsAndForks, getMultiYearContributionCount, getLastYearContributionCalendar, getUserRepos } from "../utils/fetching/githubFetch.js"
 import { fetchLeetCodeProfileData, fetchLeetCodeUserMultiYearSubmissionData, fetchLeetCodeContestData, fetchLeetCodeBadgesData, fetchLeetCodeProblemsCount, fetchLeetCodeTopicWiseProblemsData } from "../utils/fetching/scrapeSpideyFetch.js"
 import { getProblemsSolvedCountScore, getAcceptanceRateScore, getContestPerformanceScore, getSubmissionConsistencyScore, getBadgesScore } from "../utils/scoring/leetcodeScore.js";
 
@@ -12,19 +12,20 @@ const getAnalysisGithubData = async (username) => {
         const contributionBadges = await getGithubContributionBadges(username);
         if (!contributionBadges) return null;
 
-        const [{ starsCount, forksCount }, pinnedRepos, lastYearContributionStats, contributionCalendar, contributionCount, profileReadme, languageStats] = await Promise.all([
+        const [{ starsCount, forksCount }, pinnedRepos, userRepos, lastYearContributionCalendar, multiYearContributionCalendar, contributionCount, profileReadme, languageStats] = await Promise.all([
             getUserStarsAndForks(username),
             getGithubPinnedRepos(username),
+            getUserRepos(username, userData.public_repos),
             getLastYearContributionCalendar(username),
             getMultiYearContributionCalendar(username, new Date(userData.created_at).getFullYear(), new Date().getFullYear()),
             getMultiYearContributionCount(username, new Date(userData.created_at).getFullYear(), new Date().getFullYear()),
             getProfileReadme(username),
-            getUserLanguageStats(username)
+            getUserLanguageStats(username),
         ]);
 
-        const { currentStreak, maxStreak, activeDays, totalContributions } = getStreaksAndActiveDays(contributionCalendar);
+        const { currentStreak, maxStreak, activeDays, totalContributions } = getStreaksAndActiveDays(multiYearContributionCalendar);
 
-        return { userData, starsCount, forksCount, pinnedRepos, lastYearContributionStats, contributionCount, profileReadme, contributionBadges, languageStats, currentStreak, maxStreak, activeDays, totalContributions };
+        return { userData, starsCount, forksCount, pinnedRepos, userRepos, lastYearContributionCalendar, multiYearContributionCalendar, contributionCount, profileReadme, contributionBadges, languageStats, currentStreak, maxStreak, activeDays, totalContributions };
 
     } catch (error) {
         console.log("Error occurred while fetching github data for analysis:", error);

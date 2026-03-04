@@ -6,7 +6,6 @@ import toast from 'react-hot-toast';
 
 const Account = () => {
     const user = useAuthStore((state) => state.user);
-    console.log(user);
     const { mutateAsync: changePassword, isPending: isLoading } = useChangePassword();
     const { mutate: toggle2FA, isPending: isToggling2FA } = useToggle2FA();
 

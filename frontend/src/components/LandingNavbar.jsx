@@ -7,8 +7,6 @@ const LandingNavbar = () => {
     const { user } = useAuthStore();
     const { mutate: logout, isPending: isLoggingOut } = useLogout();
 
-    console.log(user);
-
     return (
         <div className="fixed top-0 left-0 right-0 z-50 w-full px-4 py-4 pointer-events-none">
             <nav className="container mx-auto flex justify-between items-center py-4 bg-white/80 backdrop-blur-md rounded-2xl px-6 shadow-lg border border-white/60 pointer-events-auto">

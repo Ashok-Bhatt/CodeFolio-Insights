@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Search, GitBranch, TrendingUp, Code, Zap, Brain, FolderOpen, GitCommit, Star, GitFork, Users, UserPlus, GitPullRequest, MessageSquareQuote, AlertCircle, CheckCircle, Target, BarChart3 } from 'lucide-react';
+import { Search, TrendingUp, Code, Zap, Brain, FolderOpen, GitCommit, Star, GitFork, Users, UserPlus, GitPullRequest, AlertCircle, CheckCircle, Target, BarChart3 } from 'lucide-react';
 import { useGithubAnalysis } from "../../hooks/useAnalyzer.js";
 import { useAuthStore } from '../../store/export.js';
 import { useProfileLinks } from '../../hooks/useProfiles.js';
-import { StatCard, AnalysisCard, VideoSuggestionCard, DistributionCard } from '../../components/card/export.js';
-import { SubmissionChart, BarChartDistribution } from '../../components/charts/export.js';
-import { ErrorContainer, ScoreMeter, MemeContainer } from '../../components/export.js';
+import { StatCard, AnalysisCard, VideoSuggestionCard } from '../../components/card/export.js';
+import { SubmissionHeatmap, DistributionChart } from '../../components/charts/export.js';
+import { ErrorContainer, ScoreMeter, MemeContainer, BadgeCollection } from '../../components/export.js';
 import { LANGUAGE_COLORS } from '../../constants/index.js';
 
 const GithubAnalyse = () => {
@@ -20,8 +20,6 @@ const GithubAnalyse = () => {
         await refetch();
     };
 
-    const commitData = (Object.entries(analysisData?.lastYearContributionStats || {})).map(date => { return { name: date[0], submissions: date[1] } });
-
     const suggestedVideo = analysisData?.profileAnalysis?.video;
 
     const totalBytes = analysisData?.languageStats ? Object.values(analysisData.languageStats).reduce((a, b) => a + b, 0) : 0;
@@ -33,15 +31,14 @@ const GithubAnalyse = () => {
     })).sort((a, b) => b.value - a.value) : [];
 
     const repoTypeData = [
-        { name: 'Personal', value: analysisData?.userData?.public_repos || 0, color: '#10b981' },
-        { name: 'Forked', value: analysisData?.forksCount || 0, color: '#6366f1' },
-        { name: 'Starred', value: analysisData?.starsCount || 0, color: '#f59e0b' }
+        { name: 'Personal', value: analysisData?.userRepos?.filter((repo) => !repo.fork)?.length || 0, color: '#10b981' },
+        { name: 'Forked', value: analysisData?.userRepos?.filter((repo) => repo.fork)?.length || 0, color: '#6366f1' },
     ];
 
     const gitHubStats = [
         { title: "Total Repos", value: analysisData?.userData?.public_repos || 0, color: "green", Icon: FolderOpen },
         { title: "Total Commits", value: analysisData?.contributionCount?.commitsCount || 0, color: "blue", Icon: GitCommit },
-        { title: "Total Stars", value: analysisData?.userData?.starsCount || 0, color: "amber", Icon: Star },
+        { title: "Total Stars", value: analysisData?.starsCount || 0, color: "amber", Icon: Star },
         { title: "Total Forks", value: analysisData?.forksCount || 0, color: "purple", Icon: GitFork },
         { title: "Followers", value: analysisData?.userData?.followers || 0, color: "blue", Icon: Users },
         { title: "Following", value: analysisData?.userData?.following || 0, color: "purple", Icon: UserPlus },
@@ -93,25 +90,15 @@ const GithubAnalyse = () => {
             {analysisData && (
                 <div className="space-y-8">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <div className="lg:col-span-1 bg-white/90 backdrop-blur-sm p-6 rounded-3xl shadow-xl border border-gray-100 animate-float-in">
-                            <ScoreMeter
-                                score={analysisData?.scoreData?.overall}
-                                scoreComparison={analysisData?.scoreComparison}
-                            />
-                        </div>
+                        <ScoreMeter
+                            score={analysisData?.scoreData?.overall}
+                            scoreComparison={analysisData?.scoreComparison}
+                        />
 
-                        <div className="lg:col-span-2 bg-white/90 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-gray-100 animate-float-in" style={{ animationDelay: '200ms' }}>
-                            <div className="flex items-center gap-3 mb-6">
-                                <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl shadow-lg">
-                                    <MessageSquareQuote className="h-6 w-6 text-white" />
-                                </div>
-                                <h3 className="text-2xl font-black text-gray-800">AI Performance Review</h3>
-                            </div>
-
-                            <MemeContainer
-                                score={analysisData?.scoreData?.overall ?? 0}
-                            />
-                        </div>
+                        <MemeContainer
+                            score={analysisData?.scoreData?.overall ?? 0}
+                            className="lg:col-span-2"
+                        />
 
                         {Object.keys(analysisData?.profileAnalysis || {}).length > 0 ? (
                             <div className="lg:col-span-3 animate-float-in" style={{ animationDelay: '300ms' }}>
@@ -181,24 +168,29 @@ const GithubAnalyse = () => {
                     </div>
 
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-                        <SubmissionChart
-                            title="Commit Activity"
-                            submissionData={commitData}
-                            className="col-span-1"
-                        />
-
-                        <DistributionCard
+                        <DistributionChart
                             title="Language Distribution"
                             problemsData={languageData}
                             className="col-span-1"
                             includeLabels={true}
                         />
+
+                        <DistributionChart
+                            title="Repo Type Distribution"
+                            problemsData={repoTypeData}
+                            className="col-span-1"
+                            includeLabels={true}
+                        />
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <BarChartDistribution
-                            title={<><GitBranch className="w-5 h-5 text-orange-500" /> Repositories</>}
-                            data={repoTypeData}
+                    <SubmissionHeatmap
+                        calendar={analysisData?.multiYearContributionCalendar}
+                    />
+
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                        <BadgeCollection
+                            badges={analysisData?.contributionBadges || []}
+                            title="GitHub Badges"
                         />
 
                         {suggestedVideo && (

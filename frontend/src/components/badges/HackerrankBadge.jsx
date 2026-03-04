@@ -1,6 +1,6 @@
 import React from 'react';
 import { Star } from 'lucide-react';
-import { hackerrankBadgeSVG } from '../../constants/svgConstants';
+import { HACKERRANK_BADGES_SVG } from '../../constants/svgConstants';
 
 const HackerrankBadge = ({ stars, skillIcon, skillName, className = "" }) => {
     // Determine badge color based on stars
@@ -20,7 +20,7 @@ const HackerrankBadge = ({ stars, skillIcon, skillName, className = "" }) => {
                 className="absolute inset-0 w-full h-full drop-shadow-xl"
             >
                 <path
-                    d={hackerrankBadgeSVG}
+                    d={HACKERRANK_BADGES_SVG}
                     fill={color}
                     className="transition-colors duration-500"
                 />

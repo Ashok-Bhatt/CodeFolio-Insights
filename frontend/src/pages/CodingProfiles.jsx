@@ -29,8 +29,6 @@ const CodingProfiles = () => {
     const { activeDays } = useMemo(() => getStreaksAndActiveDays(combinedHeatmapData), [combinedHeatmapData]);
     const contestCount = useMemo(() => Object.entries(contestData).reduce((total, [key, value]) => total + value.length, 0), [contestData]);
 
-    console.log(badges);
-
     return (
         <div className="space-y-8 animate-float-in">
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
