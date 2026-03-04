@@ -7,7 +7,6 @@ import AnalyzeRouter from './routes/analyze.route.js';
 import ProfileRouter from './routes/profile.route.js';
 import UserRouter from './routes/user.route.js';
 import ScoreRouter from './routes/score.route.js';
-import AnalyticsRouter from './routes/analytics.route.js';
 import { connectToDB } from './config/db.js';
 import { PORT, SESSION_SECRET, CORS_ORIGIN } from './config/config.js';
 import cookieParser from "cookie-parser";
@@ -42,7 +41,6 @@ app.use('/auth', AuthRouter);
 app.use('/analyze', AnalyzeRouter);
 app.use('/profile', ProfileRouter);
 app.use('/user', UserRouter);
-app.use('/analytics', AnalyticsRouter);
 app.use('/score', ScoreRouter);
 
 
