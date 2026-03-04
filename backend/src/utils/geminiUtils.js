@@ -1,45 +1,9 @@
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 import { GEMINI_API_KEY } from "../config/config.js";
-import { complexAnalysisSchema, simpleAnalysisSchema, simpleListSchema, jobDescriptionSchema, videoSchema } from "./schema/geminiResponse.js";
+import { profileAnalysisSchema, resumeAnalysisSchema } from "../schema/geminiResponse.js";
 import { VIDEOS } from "../constants/index.js";
 
 const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
-
-const getCommitAnalysis = async (commitMessages) => {
-    try {
-        const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
-            contents: `You will be given an array of commits and you need to rate them some score out of 10 on the basis of their quality. Return the array of size similar to input one representing the quality of each commit \n\n ${commitMessages}`,
-            config: {
-                responseMimeType: "application/json",
-                responseSchema: {
-                    type: Type.ARRAY,
-                    items: {
-                        type: Type.OBJECT,
-                        properties: {
-                            rating: {
-                                type: Type.INTEGER,
-                            },
-                            commitMessage: {
-                                type: Type.STRING,
-                            },
-                            improvedCommitMessage: {
-                                type: Type.STRING,
-                            }
-                        },
-                        required: ["rating", "commitMessage", "improvedCommitMessage"],
-                    }
-                }
-            }
-        });
-
-        return JSON.parse(response['candidates'][0]["content"]["parts"][0]["text"]);
-    } catch (error) {
-        console.log("Error Occurred while getting commit analysis in geminiUtils.js", error.message);
-        console.log(error.stack);
-        return {};
-    }
-}
 
 const getGithubProfileAnalysis = async (githubData) => {
     try {
@@ -154,31 +118,7 @@ const getGithubProfileAnalysis = async (githubData) => {
             `,
             config: {
                 responseMimeType: "application/json",
-                responseSchema: {
-                    type: Type.OBJECT,
-                    properties: {
-                        analysis: {
-                            type: Type.ARRAY,
-                            items: {
-                                type: Type.STRING,
-                            }
-                        },
-                        strongPoints: {
-                            type: Type.ARRAY,
-                            items: {
-                                type: Type.STRING,
-                            }
-                        },
-                        improvementAreas: {
-                            type: Type.ARRAY,
-                            items: {
-                                type: Type.STRING,
-                            }
-                        },
-                        video: videoSchema,
-                    },
-                    required: ["analysis", "strongPoints", "improvementAreas", "video"],
-                }
+                responseSchema: profileAnalysisSchema,
             }
         });
 
@@ -311,31 +251,7 @@ const getLeetCodeProfileAnalysis = async (leetCodeData) => {
             `,
             config: {
                 responseMimeType: "application/json",
-                responseSchema: {
-                    type: Type.OBJECT,
-                    properties: {
-                        analysis: {
-                            type: Type.ARRAY,
-                            items: {
-                                type: Type.STRING,
-                            }
-                        },
-                        strongPoints: {
-                            type: Type.ARRAY,
-                            items: {
-                                type: Type.STRING,
-                            }
-                        },
-                        improvementAreas: {
-                            type: Type.ARRAY,
-                            items: {
-                                type: Type.STRING,
-                            }
-                        },
-                        video: videoSchema
-                    },
-                    required: ["analysis", "strongPoints", "improvementAreas", "video"],
-                }
+                responseSchema: profileAnalysisSchema,
             }
         });
 
@@ -504,39 +420,7 @@ const getResumeAnalysis = async (resumeData) => {
             `,
             config: {
                 responseMimeType: "application/json",
-                responseSchema: {
-                    type: Type.OBJECT,
-                    properties: {
-                        scoreAnalysis: {
-                            type: Type.OBJECT,
-                            properties: {
-                                resumeLength: simpleAnalysisSchema,
-                                impact: simpleAnalysisSchema,
-                                professionalism: simpleAnalysisSchema,
-                                logicalFlow: simpleAnalysisSchema,
-                                section: {
-                                    type: Type.OBJECT,
-                                    properties: {
-                                        contact: simpleAnalysisSchema,
-                                        coursework: simpleAnalysisSchema,
-                                        education: simpleAnalysisSchema,
-                                        projects: complexAnalysisSchema,
-                                        achievements: complexAnalysisSchema,
-                                        technicalSkills: simpleAnalysisSchema,
-                                        experience: complexAnalysisSchema,
-                                    },
-                                    required: ["contact", "coursework", "education", "projects", "achievements", "technicalSkills", "experience"],
-                                },
-                                jobDescription: jobDescriptionSchema,
-                            },
-                            required: ["resumeLength", "impact", "professionalism", "logicalFlow", "section", "jobDescription"],
-                        },
-                        strengths: simpleListSchema,
-                        weaknesses: simpleListSchema,
-                        improvements: simpleListSchema,
-                    },
-                    required: ["scoreAnalysis", "strengths", "weaknesses", "improvements"],
-                }
+                responseSchema: resumeAnalysisSchema,
             }
         });
 
@@ -549,7 +433,6 @@ const getResumeAnalysis = async (resumeData) => {
 }
 
 export {
-    getCommitAnalysis,
     getGithubProfileAnalysis,
     getLeetCodeProfileAnalysis,
     getResumeAnalysis,

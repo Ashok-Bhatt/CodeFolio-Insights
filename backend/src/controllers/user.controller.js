@@ -1,13 +1,36 @@
 import UserModel from "../models/user.model.js";
-import redisClient from "../config/redis.js";
 import ProfileModel from "../models/profile.model.js";
 import { destroyFile, uploadFile } from "../utils/cloudinary.js";
 import bcrypt from "bcrypt";
-import { getSearchQuery, getSortQuery } from "../utils/query/userQuery.js"
 import asyncHandler from '../utils/asyncHandler.js';
 import ProfileViewModel from "../models/profileView.model.js";
 import { ENV } from "../config/config.js";
 import { addProfileView } from "../services/profileView.service.js";
+
+
+const getSearchQuery = (searchField, searchOrder, cursor) => {
+    const compare = searchOrder == 1 ? '$gt' : '$lt';
+    const secondaryCompare = '$lt';
+    const cursorId = new mongoose.Types.ObjectId(cursor._id)
+    let cursorValue;
+
+    if (searchField == "createdAt" || searchField == "updatedAt") cursorValue = new Date(cursor[searchField]);
+    else if (searchField == "profileViews") cursorValue = parseInt(cursor[searchField]);
+    else cursorValue = cursor[searchField];
+
+    return {
+        $or: [
+            { [searchField]: { [compare]: cursorValue } },
+            { [searchField]: cursorValue, _id: { [secondaryCompare]: cursorId } }
+        ]
+    }
+}
+
+const getSortQuery = (searchField, searchOrder) => {
+    return { [searchField]: searchOrder, _id: -1 };
+}
+
+
 
 const getUser = asyncHandler(async (req, res) => {
     const userId = req.params.userId;

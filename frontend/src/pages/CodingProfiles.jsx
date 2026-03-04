@@ -3,8 +3,9 @@ import { useOutletContext } from 'react-router-dom';
 import { BadgeCollection, TopicAnalysis, Contest, ContestAchievements } from '../components/export.js';
 import { StatCard, ProblemsCard } from '../components/card/export.js';
 import { SubmissionHeatmap } from '../components/charts/export.js';
-import { getTotalProblems, getTotalActiveDays, getBadges, getTopicAnalysis, getContestCount, getContestData, getDsaProblemsData, getContestAchievements } from '../utils/dataHelpers.js';
+import { getTotalProblems, getBadges, getTopicAnalysis, getContestData, getDsaProblemsData, getContestAchievements, getFundamentalProblemsData, getCompetitiveProgrammingProblemsData } from '../utils/dataHelpers.js';
 import { getCombinedHeatmap } from '../utils/export.js';
+import { getStreaksAndActiveDays } from "../utils/calendar.js"
 
 const CodingProfiles = () => {
     const { data } = useOutletContext();
@@ -17,6 +18,17 @@ const CodingProfiles = () => {
         data?.code360?.submission
     ), [data]);
 
+    const totalProblems = useMemo(() => getTotalProblems(data), [data]);
+    const badges = useMemo(() => Object.values(getBadges(data)).flat(), [data]);
+    const topicAnalysis = useMemo(() => getTopicAnalysis(data), [data]);
+    const contestData = useMemo(() => getContestData(data), [data]);
+    const dsaProblemsData = useMemo(() => getDsaProblemsData(data), [data]);
+    const fundamentalProblemsData = useMemo(() => getFundamentalProblemsData(data), [data]);
+    const competitiveProgrammingProblemsData = useMemo(() => getCompetitiveProgrammingProblemsData(data), [data]);
+    const contestAchievements = useMemo(() => getContestAchievements(data), [data]);
+    const { activeDays } = useMemo(() => getStreaksAndActiveDays(combinedHeatmapData), [combinedHeatmapData]);
+    const contestCount = useMemo(() => Object.entries(contestData).reduce((total, [key, value]) => total + value.length, 0), [contestData]);
+
     return (
         <div className="space-y-8 animate-float-in">
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
@@ -24,13 +36,13 @@ const CodingProfiles = () => {
                     <div className="grid grid-cols-2 gap-4">
                         <StatCard
                             title="Total Problems"
-                            value={getTotalProblems(data)}
+                            value={totalProblems}
                             color="blue"
                             index={0}
                         />
                         <StatCard
                             title="Active Days"
-                            value={getTotalActiveDays(combinedHeatmapData)}
+                            value={activeDays}
                             color="green"
                             index={1}
                         />
@@ -38,44 +50,37 @@ const CodingProfiles = () => {
 
                     <BadgeCollection
                         title="Badges"
-                        badges={getBadges(data)}
+                        badges={badges}
                     />
 
                     <TopicAnalysis
                         title="DSA Topic Analysis"
-                        data={getTopicAnalysis(data)}
+                        data={topicAnalysis}
                     />
 
-                    {getContestCount(data) > 0 && (
-                        <Contest
-                            data={getContestData(data)}
-                        />
-                    )}
+                    {contestCount > 0 && <Contest
+                        data={contestData}
+                    />}
                 </div>
 
                 <div className="xl:col-span-1 space-y-8">
                     <ProblemsCard
                         title="Fundamentals"
-                        problemsData={
-                            [{ name: 'GeeksForGeeks', value: (data.gfg?.profile?.problemsSolved?.School || 0) + (data.gfg?.profile?.problemsSolved?.Basic || 0), color: '#10B981' },
-                            { name: 'HackerRank', value: data?.hackerrank?.profile?.badges?.reduce((total, badge) => total + badge.solved, 0) || 0, color: '#FBBF24' },]
-                        }
+                        problemsData={fundamentalProblemsData}
                     />
 
                     <ProblemsCard
                         title="DSA"
-                        problemsData={getDsaProblemsData(data)}
+                        problemsData={dsaProblemsData}
                     />
 
                     <ProblemsCard
                         title="Competitive Programming"
-                        problemsData={
-                            [{ name: 'Codechef', value: (data?.codechef?.profile?.problemsSolved || 0), color: '#10B981' },]
-                        }
+                        problemsData={competitiveProgrammingProblemsData}
                     />
 
-                    {getContestCount(data) > 0 && <ContestAchievements
-                        achievements={getContestAchievements(data)}
+                    {contestCount > 0 && <ContestAchievements
+                        achievements={contestAchievements}
                     />}
                 </div>
 

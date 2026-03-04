@@ -1,39 +1,39 @@
 const getPolishedGithubHeatmap = (githubData) => {
-    const zeroPad = (numStr) => {
-        const num = parseInt(numStr, 10);
-        return num.toString().padStart(2, '0');
-    };
+  const zeroPad = (numStr) => {
+    const num = parseInt(numStr, 10);
+    return num.toString().padStart(2, '0');
+  };
 
-    const polishedHeatmap = {};
+  const polishedHeatmap = {};
 
-    if (!githubData) return {};
+  if (!githubData) return {};
 
-    for (const week of githubData) {
-        const days = week.contributionDays;
+  for (const week of githubData) {
+    const days = week.contributionDays;
 
-        if (!days || !Array.isArray(days)) continue;
+    if (!days || !Array.isArray(days)) continue;
 
-        for (const day of days) {
-            const { contributionCount, date } = day;
+    for (const day of days) {
+      const { contributionCount, date } = day;
 
-            if (contributionCount === undefined || !date) continue;
+      if (contributionCount === undefined || !date) continue;
 
-            const parts = date.split('-');
+      const parts = date.split('-');
 
-            if (parts.length === 3) {
-                const year = parts[0];
-                const month = parts[1];
-                const dayOfMonth = parts[2];
+      if (parts.length === 3) {
+        const year = parts[0];
+        const month = parts[1];
+        const dayOfMonth = parts[2];
 
-                const polishedMonth = zeroPad(month);
-                const polishedDay = zeroPad(dayOfMonth);
-                const polishedDate = `${year}-${polishedMonth}-${polishedDay}`;
+        const polishedMonth = zeroPad(month);
+        const polishedDay = zeroPad(dayOfMonth);
+        const polishedDate = `${year}-${polishedMonth}-${polishedDay}`;
 
-                polishedHeatmap[polishedDate] = contributionCount;
-            }
-        }
+        polishedHeatmap[polishedDate] = contributionCount;
+      }
     }
-    return polishedHeatmap;
+  }
+  return polishedHeatmap;
 };
 
 const getStreaksAndActiveDays = (calendar) => {
@@ -49,8 +49,8 @@ const getStreaksAndActiveDays = (calendar) => {
   let maxStreak = 0;
   let currentStreak = 0;
   let tempStreak = 0;
-  const activeDays = allDates.filter((date)=>calendar[new Date(date).getFullYear()][date] > 0).length;
-  const totalContributions = allDates.filter((date)=>calendar[new Date(date).getFullYear()][date] > 0).reduce((acc, date)=>acc + calendar[new Date(date).getFullYear()][date], 0);
+  const activeDays = allDates.filter((date) => calendar[new Date(date).getFullYear()][date] > 0).length;
+  const totalContributions = allDates.filter((date) => calendar[new Date(date).getFullYear()][date] > 0).reduce((acc, date) => acc + calendar[new Date(date).getFullYear()][date], 0);
 
   for (let i = 0; i < allDates.length; i++) {
     if (calendar[new Date(allDates[i]).getFullYear()][allDates[i]] > 0) {
@@ -74,6 +74,6 @@ const getStreaksAndActiveDays = (calendar) => {
 };
 
 export {
-    getPolishedGithubHeatmap,
-    getStreaksAndActiveDays,
-}
+  getPolishedGithubHeatmap,
+  getStreaksAndActiveDays,
+};

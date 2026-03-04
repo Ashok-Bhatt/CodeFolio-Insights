@@ -1,5 +1,4 @@
 import { githubGraphQlQuery, githubRestApiQuery, scrapeSpideyAPI } from "../../api/axiosInstance.js";
-import { getCommitAnalysis } from "../geminiUtils.js";
 import { SCRAPE_SPIDEY_API_KEY } from "../../config/config.js";
 import { GITHUB_API_QUERIES } from "../../constants/index.js";
 import { getPolishedGithubHeatmap } from "../../utils/calendar.js";
@@ -11,31 +10,6 @@ const getUserProfileData = async (username) => {
     const data = await githubRestApiQuery(`/users/${username}`);
     if (data == null) return null;
     return data;
-}
-
-const getCommitsQualityReport = async (username) => {
-
-    let commitsArray = [];
-    const userRepoData = await githubRestApiQuery(`/users/${username}/repos?per_page=${PAGE_SIZE}`);
-    if (userRepoData == null) return [];
-
-    for (let i = 0; i < userRepoData.length && commitsArray.length < TOTAL_COMMITS_LIMIT; i++) {
-        const repoData = userRepoData[i];
-        const repoName = repoData["name"];
-
-        const repoCommits = await githubRestApiQuery(`/repos/${username}/${repoName}/commits?per_page=${PAGE_SIZE}`);
-        if (repoCommits != null) {
-            for (let j = 0; j < repoCommits.length; j++) {
-                if (commitsArray.length < TOTAL_COMMITS_LIMIT) {
-                    commitsArray.push(repoCommits[j]["commit"]["message"]);
-                } else {
-                    break;
-                }
-            }
-        }
-    }
-
-    return getCommitAnalysis(commitsArray);
 }
 
 const getCommitsPerRepo = async (reponame, username) => {
@@ -124,11 +98,7 @@ const getUserRepos = async (username, repoCount) => {
 const getGithubContributionBadges = async (username) => {
     try {
         const githubBadgesResponse = await scrapeSpideyAPI.get(`/api/v1/github/user/badges?user=${username}&apiKey=${SCRAPE_SPIDEY_API_KEY}`);
-        if (githubBadgesResponse.status >= 400) {
-            return [];
-        } else {
-            return githubBadgesResponse.data;
-        }
+        return githubBadgesResponse.data;
     } catch (error) {
         console.log("Error occurred while fetching github badges: ", error.message);
         console.log(error.stack);
@@ -202,7 +172,6 @@ export {
     getUserProfileData,
     getUserRepos,
     getRepoLanguages,
-    getCommitsQualityReport,
     getGithubContributionBadges,
     getUserLanguageStats,
     getProfileReadme,

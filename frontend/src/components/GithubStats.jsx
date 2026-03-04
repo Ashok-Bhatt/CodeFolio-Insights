@@ -1,8 +1,9 @@
-const GithubStats = ({ statsArray }) => {
+const GithubStats = ({ title = "Github Stats", statsArray }) => {
+
     if (!statsArray || statsArray.length === 0) {
         return (
             <div className="bg-white p-6 rounded-2xl shadow-xl border border-gray-100">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">Stats</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">{title}</h3>
                 <p className="text-gray-500">No statistics data available.</p>
             </div>
         );
@@ -10,7 +11,7 @@ const GithubStats = ({ statsArray }) => {
 
     return (
         <div className="bg-white p-6 rounded-2xl shadow-xl border border-gray-100/50">
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">Stats</h3>
+            <h3 className="text-2xl font-bold text-gray-900 mb-6">{title}</h3>
             <div className="space-y-3">
                 {statsArray.map((stat, index) => (
                     <div
