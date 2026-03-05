@@ -1,5 +1,5 @@
-import * as scrapeSpideyFetching from './scrapeSpideyFetch.js';
-import * as githubFetching from './githubFetch.js';
+import * as scrapeSpideyFetching from './scrape-spidey.fetch.util.js';
+import * as githubFetching from './github.fetch.util.js';
 
 const fetchGfgData = async (username, year = null) => {
     return {

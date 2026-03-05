@@ -1,4 +1,4 @@
-import asyncHandler from '../utils/asyncHandler.js';
+import asyncHandler from '../utils/async-handler.util.js';
 import * as AnalyzeService from "../services/analyze.service.js";
 
 const analyzeGithub = asyncHandler(async (req, res) => {

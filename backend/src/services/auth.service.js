@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import UserModel from "../models/user.model.js";
 import VerificationModel from "../models/verification.model.js";
-import { sendOtpEmail } from '../utils/nodemailer.js';
+import { sendOtpEmail } from '../utils/nodemailer.util.js';
 
 // Helper to generate 6-digit OTP
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();

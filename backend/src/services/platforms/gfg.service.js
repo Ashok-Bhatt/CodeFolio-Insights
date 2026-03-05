@@ -1,6 +1,6 @@
 import axios from "axios";
-import { configBrowserPage } from "../../utils/scrapper.js";
-import { getNormalizedGfgHeatmap, isLeapYear, getDateDetailsFromDayOfYear, scrapeGfgTooltipData } from "../../utils/calendar.js";
+import { configBrowserPage } from "../../utils/scrapper.util.js";
+import { getNormalizedGfgHeatmap, isLeapYear, getDateDetailsFromDayOfYear, scrapeGfgTooltipData } from "../../utils/calendar.util.js";
 
 const GFG_HEADERS = {
     "Content-Type": "application/json",

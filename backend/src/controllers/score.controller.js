@@ -1,4 +1,4 @@
-import asyncHandler from '../utils/asyncHandler.js';
+import asyncHandler from '../utils/async-handler.util.js';
 import * as ScoreService from "../services/score.service.js";
 
 const getUserScoreHistory = asyncHandler(async (req, res) => {

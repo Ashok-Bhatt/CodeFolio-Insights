@@ -1,13 +1,13 @@
-import { getStreaksAndActiveDays } from "../utils/calendar.js";
-import * as githubScoring from "../utils/scoring/githubScore.js";
-import * as githubFetching from "../utils/fetching/githubFetch.js"
-import * as scrapeSpideyFetch from "../utils/fetching/scrapeSpideyFetch.js"
-import * as leetcodeScoring from "../utils/scoring/leetcodeScore.js";
-import { getPdfContent } from "../utils/pdfUtils.js";
+import { getStreaksAndActiveDays } from "../utils/calendar.util.js";
+import * as githubScoring from "../utils/scoring/github.score.util.js";
+import * as githubFetching from "../utils/fetching/github.fetch.util.js"
+import * as scrapeSpideyFetch from "../utils/fetching/scrape-spidey.fetch.util.js"
+import * as leetcodeScoring from "../utils/scoring/leetcode.score.util.js";
+import { getPdfContent } from "../utils/pdf.util.js";
 import redisClient from "../config/redis.config.js";
-import { getGithubProfileAnalysis, getLeetCodeProfileAnalysis, getResumeAnalysis } from "../utils/geminiUtils.js";
+import { getGithubProfileAnalysis, getLeetCodeProfileAnalysis, getResumeAnalysis } from "../utils/gemini.util.js";
 import { getScoreComparison, savePlatformScore } from "./score.service.js";
-import scoreModel from "../models/score.model.js";
+import ScoreModel from "../models/score.model.js";
 
 const getAnalysisGithubData = async (username) => {
     try {
@@ -239,7 +239,7 @@ const analyzeResume = async (file, experienceInYears = "0 - 2 Years (New Grad)",
     const platform = resumeAnalysis?.scoreAnalysis?.jobDescription?.isJobDescriptionGiven ? "Resume with JD" : "Generic Resume";
 
     try {
-        await scoreModel.create({ userId, score: score, platform });
+        await ScoreModel.create({ userId, score: score, platform });
     } catch (error) {
         console.log('Failed to save resume score:', error.message);
     }

@@ -1,4 +1,4 @@
-import { getStreaksAndActiveDays } from "../calendar.js";
+import { getStreaksAndActiveDays } from "../calendar.util.js";
 
 // Natural logarithm (ln) is Math.log()
 

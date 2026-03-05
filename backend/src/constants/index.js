@@ -1,4 +1,4 @@
-import * as platformsFetching from '../utils/fetching/platformsFetch.js';
+import * as platformsFetching from '../utils/fetching/platforms.fetch.util.js';
 
 const MAX_PDF_SIZE = 5 * 1024 * 1024;
 
@@ -8,6 +8,8 @@ const VALID_EXPERIENCE_YEARS_RANGE = [
     "6 - 10 Years (Senior)",
     "10+ Years (Lead/Architect)"
 ];
+
+const DAILY_API_POINT_LIMIT = 100;
 
 const GITHUB_API_QUERIES = {
     GITHUB_TOTAL_PINNED_REPO_COUNT_QUERY: `
@@ -175,4 +177,5 @@ export {
     GITHUB_API_QUERIES,
     PLATFORMS,
     VIDEOS,
+    DAILY_API_POINT_LIMIT
 }

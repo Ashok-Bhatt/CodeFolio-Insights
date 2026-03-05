@@ -3,7 +3,7 @@
 // The logarithm to base 10 (log10) is Math.log10()
 
 // Total commits limit remains relevant for the commits quality function
-import { TOTAL_COMMITS_LIMIT } from "../fetching/githubFetch.js";
+import { TOTAL_COMMITS_LIMIT } from "../fetching/github.fetch.util.js";
 
 const getRepoCountScore = (repoCount) => {
     // Logarithmic: Harder to max out, maxes around 50 repos (log10(51) is approx 1.7)
@@ -87,13 +87,13 @@ const getPinnedReposScore = (pinnedRepos) => {
     for (let i = 0; i < pinnedRepos.length; i++) {
         const pinnedRepo = pinnedRepos[i];
         let pinnedRepoScore = 50;
-        
+
         if (pinnedRepo.readmeFile) pinnedRepoScore = pinnedRepoScore + 30;
         if (pinnedRepo.description) pinnedRepoScore = pinnedRepoScore + 5;
         if (pinnedRepo.license) pinnedRepoScore = pinnedRepoScore + 10;
-        if (pinnedRepo.repositoryTopics?.nodes) pinnedRepoScore = pinnedRepoScore + (Math.min(pinnedRepo.repositoryTopics?.nodes.length, 10))/2;
+        if (pinnedRepo.repositoryTopics?.nodes) pinnedRepoScore = pinnedRepoScore + (Math.min(pinnedRepo.repositoryTopics?.nodes.length, 10)) / 2;
 
-        score += pinnedRepoScore/6;
+        score += pinnedRepoScore / 6;
     }
 
     return Math.min(100, score);
@@ -105,11 +105,11 @@ const getStreakScore = (maxStreak, currentStreak, activeDays) => {
     // Note: Current Streak is less weighted as it's volatile.
     const maxStreakWeight = 45 * Math.log10(maxStreak + 1);
     const activeDaysWeight = 37.5 * Math.log10(activeDays + 1);
-    
+
     // Add a small linear component for current streak, capped at 10 points
     const currentStreakWeight = 50 * Math.log10(currentStreak + 1);
 
-    const value = activeDaysWeight*0.7 + maxStreakWeight*0.2 + currentStreakWeight*0.1;
+    const value = activeDaysWeight * 0.7 + maxStreakWeight * 0.2 + currentStreakWeight * 0.1;
     return Math.min(100, value);
 }
 

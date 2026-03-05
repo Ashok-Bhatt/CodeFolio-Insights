@@ -17,8 +17,8 @@ import GithubRouter from './routes/platforms/github.route.js';
 import { connectToDB } from './config/db.config.js';
 import { PORT, SESSION_SECRET, CORS_ORIGIN } from './config/env.config.js';
 import cookieParser from "cookie-parser";
-import { createAdmin } from './seeders/adminSeed.js';
-import { deleteUploads } from './utils/fileCleanup.js';
+import { createAdmin } from './seeders/admin.seed.js';
+import { deleteUploads } from './utils/file-cleanup.util.js';
 
 
 const app = express();

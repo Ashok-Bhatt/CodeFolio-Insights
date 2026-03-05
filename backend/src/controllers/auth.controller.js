@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken';
 import UserModel from "../models/user.model.js";
 import { JWT_SECRET } from '../config/env.config.js';
-import { generateAuthToken, generateVerificationToken, deleteAuthToken, deleteVerificationToken } from '../utils/token.js';
-import asyncHandler from '../utils/asyncHandler.js';
+import { generateAuthToken, generateVerificationToken, deleteAuthToken, deleteVerificationToken } from '../utils/token.util.js';
+import asyncHandler from '../utils/async-handler.util.js';
 import * as AuthService from '../services/auth.service.js';
 
 const signup = asyncHandler(async (req, res) => {

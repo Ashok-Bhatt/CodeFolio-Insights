@@ -1,5 +1,5 @@
-import { configBrowserPage } from "../../utils/scrapper.js";
-import { getNormalizedCodeChefHeatmap } from "../../utils/calendar.js";
+import { configBrowserPage } from "../../utils/scrapper.util.js";
+import { getNormalizedCodeChefHeatmap } from "../../utils/calendar.util.js";
 
 const getUserInfo = async (username, includeAchievements) => {
     const url = `https://www.codechef.com/users/${username}`;

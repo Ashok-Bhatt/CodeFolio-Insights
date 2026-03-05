@@ -1,4 +1,4 @@
-import { configBrowserPage } from "../../utils/scrapper.js";
+import { configBrowserPage } from "../../utils/scrapper.util.js";
 
 const getGithubBadges = async (username) => {
     const url = `https://github.com/${username}?tab=achievements`;

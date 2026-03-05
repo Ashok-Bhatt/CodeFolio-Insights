@@ -1,9 +1,9 @@
-import scoreModel from "../models/score.model.js";
+import ScoreModel from "../models/score.model.js";
 
 const getScoreComparison = async (score, platform) => {
     try {
-        const equalOrLesserScore = await scoreModel.find({ platform, score: { $lte: score } })
-        const greaterScores = await scoreModel.find({ platform, score: { $gt: score } });
+        const equalOrLesserScore = await ScoreModel.find({ platform, score: { $lte: score } })
+        const greaterScores = await ScoreModel.find({ platform, score: { $gt: score } });
 
         if (!greaterScores || !equalOrLesserScore) return null;
 
@@ -22,12 +22,12 @@ const getScoreComparison = async (score, platform) => {
 
 const savePlatformScore = async (score, platform, username) => {
     try {
-        const existingScore = await scoreModel.findOne({ platform, username });
+        const existingScore = await ScoreModel.findOne({ platform, username });
         if (existingScore) {
             await existingScore.updateOne({ $set: { score } });
             return existingScore;
         } else {
-            const newScore = await scoreModel.create({ score, platform, username });
+            const newScore = await ScoreModel.create({ score, platform, username });
             return newScore;
         }
     } catch (error) {
@@ -41,13 +41,13 @@ const getUserScoreHistory = async (userId, platform, last, username) => {
     let scoreHistory;
     if (platform === "Leetcode" || platform === "Github") {
         if (!username || !username.trim()) throw new Error("username not provided");
-        scoreHistory = await scoreModel.find({
+        scoreHistory = await ScoreModel.find({
             username,
             platform,
         }).sort({ createdAt: -1 }).limit(last);
     } else {
         if (!userId) throw new Error("You are not authenticated!");
-        scoreHistory = await scoreModel.find({
+        scoreHistory = await ScoreModel.find({
             userId: userId,
             platform,
         }).sort({ createdAt: -1 }).limit(last);

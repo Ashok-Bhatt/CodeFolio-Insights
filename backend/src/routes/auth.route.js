@@ -5,7 +5,7 @@ import { signupValidationSchema, loginValidationSchema } from "../validators/aut
 import { getAnalytics } from "../middlewares/analytics.middleware.js";
 import { protectRoute } from "../middlewares/auth.middleware.js";
 import { CORS_ORIGIN } from "../config/env.config.js"
-import { generateAuthToken } from "../utils/token.js"
+import { generateAuthToken } from "../utils/token.util.js"
 import { validate } from "../middlewares/validate.middleware.js";
 import { rateLimit } from 'express-rate-limit';
 

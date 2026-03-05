@@ -1,5 +1,5 @@
 import UserModel from "../models/user.model.js";
-import asyncHandler from '../utils/asyncHandler.js';
+import asyncHandler from '../utils/async-handler.util.js';
 
 const checkProfileVisibility = asyncHandler(async (req, res, next) => {
     const profileName = req.query.username;

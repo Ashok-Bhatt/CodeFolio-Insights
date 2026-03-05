@@ -1,4 +1,4 @@
-import asyncHandler from '../utils/asyncHandler.js';
+import asyncHandler from '../utils/async-handler.util.js';
 import { ENV } from "../config/env.config.js";
 import * as UserService from "../services/user.service.js";
 

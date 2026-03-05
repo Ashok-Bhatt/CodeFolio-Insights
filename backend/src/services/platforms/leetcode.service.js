@@ -1,6 +1,6 @@
 import axios from "axios";
 import { LEETCODE_GRAPHQL_ENDPOINT, LEETCODE_GRAPHQL_QUERIES } from "../../constants/platforms/leetcode.constants.js";
-import { getNormalizedLeetCodeHeatmap } from "../../utils/calendar.js";
+import { getNormalizedLeetCodeHeatmap } from "../../utils/calendar.util.js";
 
 const makeApiCall = async (query, variables = {}) => {
     try {

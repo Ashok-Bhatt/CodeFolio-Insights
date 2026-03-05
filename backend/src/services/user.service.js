@@ -1,9 +1,9 @@
 import UserModel from "../models/user.model.js";
 import ProfileModel from "../models/profile.model.js";
-import ProfileViewModel from "../models/profileView.model.js";
-import { destroyFile, uploadFile } from "../utils/cloudinary.js";
+import ProfileViewModel from "../models/profile-view.model.js";
+import { destroyFile, uploadFile } from "../utils/cloudinary.util.js";
 import bcrypt from "bcrypt";
-import { addProfileView } from "./profileView.service.js";
+import { addProfileView } from "./profile-view.service.js";
 import mongoose from "mongoose";
 
 const getSearchQuery = (searchField, searchOrder, cursor) => {

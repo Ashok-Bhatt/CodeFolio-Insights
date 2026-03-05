@@ -1,6 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 import { GEMINI_API_KEY } from "../config/env.config.js";
-import { profileAnalysisSchema, resumeAnalysisSchema } from "../schema/geminiResponse.js";
+import { profileAnalysisSchema, resumeAnalysisSchema } from "../schema/gemini.schema.js";
 import { VIDEOS } from "../constants/index.js";
 
 const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
@@ -257,7 +257,7 @@ const getLeetCodeProfileAnalysis = async (leetCodeData) => {
 
         return JSON.parse(response['candidates'][0]["content"]["parts"][0]["text"]);
     } catch (error) {
-        console.log("Error Occurred while getting github profile analysis in geminiUtils.js", error.message);
+        console.log("Error Occurred while getting github profile analysis in gemini.util.js", error.message);
         console.log(error.stack);
         return {};
     }
@@ -426,7 +426,7 @@ const getResumeAnalysis = async (resumeData) => {
 
         return JSON.parse(response['candidates'][0]["content"]["parts"][0]["text"]);
     } catch (error) {
-        console.log("Error Occurred while getting github profile analysis in geminiUtils.js", error.message);
+        console.log("Error Occurred while getting github profile analysis in gemini.util.js", error.message);
         console.log(error.stack);
         return {};
     }

@@ -1,7 +1,7 @@
 import { githubGraphQlQuery, githubRestApiQuery, scrapeSpideyAPI } from "../../api/axiosInstance.js";
 import { SCRAPE_SPIDEY_API_KEY } from "../../config/env.config.js";
 import { GITHUB_API_QUERIES } from "../../constants/index.js";
-import { getNormalizedGithubHeatmap } from "../../utils/calendar.js";
+import { getNormalizedGithubHeatmap } from "../calendar.util.js";
 
 const PAGE_SIZE = 100;
 const TOTAL_COMMITS_LIMIT = 25;

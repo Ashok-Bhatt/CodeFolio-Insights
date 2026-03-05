@@ -2,7 +2,7 @@ import ProfileModel from '../models/profile.model.js';
 import UserModel from '../models/user.model.js';
 import redisClient from '../config/redis.config.js';
 import { PLATFORMS } from '../constants/index.js';
-import * as platformsFetching from '../utils/fetching/platformsFetch.js';
+import * as platformsFetching from '../utils/fetching/platforms.fetch.util.js';
 import mongoose from 'mongoose';
 
 const getProfiles = async (userId, currentUser) => {

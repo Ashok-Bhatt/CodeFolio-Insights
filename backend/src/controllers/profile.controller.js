@@ -1,4 +1,4 @@
-import asyncHandler from '../utils/asyncHandler.js';
+import asyncHandler from '../utils/async-handler.util.js';
 import * as ProfileService from '../services/profile.service.js';
 
 const getProfiles = asyncHandler(async (req, res) => {
