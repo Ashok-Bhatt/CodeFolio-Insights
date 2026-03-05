@@ -1,5 +1,5 @@
 import axios from "axios";
-import { GITHUB_TOKEN} from "../config/config.js";
+import { GITHUB_TOKEN} from "../config/env.config.js";
 
 // GitHub Instance
 const githubAPI = axios.create({

@@ -1,14 +1,21 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import passport from './config/passport.js';
+import passport from './config/passport.config.js';
 import AuthRouter from './routes/auth.route.js';
 import AnalyzeRouter from './routes/analyze.route.js';
 import ProfileRouter from './routes/profile.route.js';
 import UserRouter from './routes/user.route.js';
 import ScoreRouter from './routes/score.route.js';
-import { connectToDB } from './config/db.js';
-import { PORT, SESSION_SECRET, CORS_ORIGIN } from './config/config.js';
+import GfgRouter from './routes/platforms/gfg.route.js';
+import HackerRankRouter from './routes/platforms/hackerrank.route.js';
+import InterviewBitRouter from './routes/platforms/interviewbit.route.js';
+import LeetCodeRouter from './routes/platforms/leetcode.route.js';
+import CodeChefRouter from './routes/platforms/codechef.route.js';
+import Code360Router from './routes/platforms/code360.route.js';
+import GithubRouter from './routes/platforms/github.route.js';
+import { connectToDB } from './config/db.config.js';
+import { PORT, SESSION_SECRET, CORS_ORIGIN } from './config/env.config.js';
 import cookieParser from "cookie-parser";
 import { createAdmin } from './seeders/adminSeed.js';
 import { deleteUploads } from './utils/fileCleanup.js';
@@ -42,6 +49,13 @@ app.use('/analyze', AnalyzeRouter);
 app.use('/profile', ProfileRouter);
 app.use('/user', UserRouter);
 app.use('/score', ScoreRouter);
+app.use('/platform/gfg', GfgRouter);
+app.use('/platform/hackerrank', HackerRankRouter);
+app.use('/platform/interviewbit', InterviewBitRouter);
+app.use('/platform/leetcode', LeetCodeRouter);
+app.use('/platform/codechef', CodeChefRouter);
+app.use('/platform/code360', Code360Router);
+app.use('/platform/github', GithubRouter);
 
 
 // Global Error Handler

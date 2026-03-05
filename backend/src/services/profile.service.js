@@ -1,6 +1,6 @@
 import ProfileModel from '../models/profile.model.js';
 import UserModel from '../models/user.model.js';
-import redisClient from '../config/redis.js';
+import redisClient from '../config/redis.config.js';
 import { PLATFORMS } from '../constants/index.js';
 import * as platformsFetching from '../utils/fetching/platformsFetch.js';
 import mongoose from 'mongoose';

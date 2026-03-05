@@ -1,5 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
-import { GEMINI_API_KEY } from "../config/config.js";
+import { GEMINI_API_KEY } from "../config/env.config.js";
 import { profileAnalysisSchema, resumeAnalysisSchema } from "../schema/geminiResponse.js";
 import { VIDEOS } from "../constants/index.js";
 

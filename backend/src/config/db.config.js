@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { MONGO_CONN, DB_NAME } from './config.js';
+import { MONGO_CONN, DB_NAME } from './env.config.js';
 
 mongoose.set('toJSON', {
     transform: (doc, ret) => {

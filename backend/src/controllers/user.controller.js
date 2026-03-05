@@ -1,5 +1,5 @@
 import asyncHandler from '../utils/asyncHandler.js';
-import { ENV } from "../config/config.js";
+import { ENV } from "../config/env.config.js";
 import * as UserService from "../services/user.service.js";
 
 const getUser = asyncHandler(async (req, res) => {

@@ -4,7 +4,7 @@ import { signup, login, verifyOTP, logout, checkAuth } from "../controllers/auth
 import { signupValidationSchema, loginValidationSchema } from "../validators/auth.validate.js";
 import { getAnalytics } from "../middlewares/analytics.middleware.js";
 import { protectRoute } from "../middlewares/auth.middleware.js";
-import { CORS_ORIGIN } from "../config/config.js"
+import { CORS_ORIGIN } from "../config/env.config.js"
 import { generateAuthToken } from "../utils/token.js"
 import { validate } from "../middlewares/validate.middleware.js";
 import { rateLimit } from 'express-rate-limit';

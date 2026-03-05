@@ -27,6 +27,7 @@ const SMTP_PORT = process.env.SMTP_PORT || 587;
 const SMTP_USER = process.env.SMTP_USER;
 const SMTP_PASS = process.env.SMTP_PASS;
 const EMAIL_FROM = process.env.EMAIL_FROM;
+const PUPPETEER_EXECUTABLE_PATH = process.env.PUPPETEER_EXECUTABLE_PATH;
 
 export {
     PORT,
@@ -55,4 +56,5 @@ export {
     SMTP_USER,
     SMTP_PASS,
     EMAIL_FROM,
+    PUPPETEER_EXECUTABLE_PATH,
 }

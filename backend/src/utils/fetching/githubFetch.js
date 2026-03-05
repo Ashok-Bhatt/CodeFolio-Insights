@@ -1,7 +1,7 @@
 import { githubGraphQlQuery, githubRestApiQuery, scrapeSpideyAPI } from "../../api/axiosInstance.js";
-import { SCRAPE_SPIDEY_API_KEY } from "../../config/config.js";
+import { SCRAPE_SPIDEY_API_KEY } from "../../config/env.config.js";
 import { GITHUB_API_QUERIES } from "../../constants/index.js";
-import { getPolishedGithubHeatmap } from "../../utils/calendar.js";
+import { getNormalizedGithubHeatmap } from "../../utils/calendar.js";
 
 const PAGE_SIZE = 100;
 const TOTAL_COMMITS_LIMIT = 25;
@@ -57,14 +57,14 @@ const getLastYearContributionCalendar = async (username) => {
     const query = GITHUB_API_QUERIES.GITHUB_LAST_YEAR_CONTRIBUTION_CALENDAR_QUERY;
     const contributionCalendarData = await githubGraphQlQuery(query, { username });
     if (contributionCalendarData == null) return {};
-    else return getPolishedGithubHeatmap(contributionCalendarData["data"]["user"]["contributionsCollection"]["contributionCalendar"]["weeks"]);
+    else return getNormalizedGithubHeatmap(contributionCalendarData["data"]["user"]["contributionsCollection"]["contributionCalendar"]["weeks"]);
 }
 
 const getYearlyContributionCalendar = async (username, year) => {
     const query = GITHUB_API_QUERIES.GITHUB_YEARLY_CONTRIBUTION_CALENDAR_QUERY;
     const contributionCalendarData = await githubGraphQlQuery(query, { username, from: `${year}-01-01T00:00:00Z`, to: `${year}-12-31T23:59:59Z` });
     if (contributionCalendarData == null) return {};
-    return getPolishedGithubHeatmap(contributionCalendarData["data"]["user"]["contributionsCollection"]["contributionCalendar"]["weeks"]);
+    return getNormalizedGithubHeatmap(contributionCalendarData["data"]["user"]["contributionsCollection"]["contributionCalendar"]["weeks"]);
 }
 
 const getMultiYearContributionCalendar = async (username, startYear, endYear) => {

@@ -4,7 +4,7 @@ import * as githubFetching from "../utils/fetching/githubFetch.js"
 import * as scrapeSpideyFetch from "../utils/fetching/scrapeSpideyFetch.js"
 import * as leetcodeScoring from "../utils/scoring/leetcodeScore.js";
 import { getPdfContent } from "../utils/pdfUtils.js";
-import redisClient from "../config/redis.js";
+import redisClient from "../config/redis.config.js";
 import { getGithubProfileAnalysis, getLeetCodeProfileAnalysis, getResumeAnalysis } from "../utils/geminiUtils.js";
 import { getScoreComparison, savePlatformScore } from "./score.service.js";
 import scoreModel from "../models/score.model.js";
