@@ -63,86 +63,88 @@ const ApiProjects = () => {
     }
 
     return (
-        <div className="flex-grow space-y-8 pb-20">
-            {/* Header Section */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div className="space-y-2">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/20">
-                            <LayoutGrid className="w-5 h-5 text-white" />
-                        </div>
-                        <h1 className="text-3xl font-black text-slate-800 uppercase tracking-tight">
-                            My Projects
-                        </h1>
-                    </div>
-                </div>
-
-                <button
-                    onClick={() => setIsCreateModalOpen(true)}
-                    className="flex items-center justify-center gap-3 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-black px-8 py-4 rounded-2xl shadow-xl shadow-blue-500/20 hover:shadow-blue-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all transform uppercase tracking-widest text-[10px]"
-                >
-                    <Plus className="w-4 h-4" />
-                    Create New Project
-                </button>
-            </div>
-
-            {/* Content Grid */}
-            {projects?.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-float-in">
-                    {projects.map((project) => (
-                        <ProjectCard
-                            key={project._id}
-                            project={project}
-                            onDeleteRequest={() => setProjectToDelete(project)}
-                            onEditRequest={() => setProjectToEdit(project)}
-                        />
-                    ))}
-                </div>
-            ) : (
-                <div className="bg-white/50 backdrop-blur-sm border-2 border-dashed border-slate-200 rounded-[2rem] p-16 text-center space-y-6 animate-float-in">
-                    <div className="w-20 h-20 bg-blue-50 rounded-3xl flex items-center justify-center border border-blue-100 mx-auto transform hover:rotate-12 transition-transform">
-                        <LayoutGrid className="w-10 h-10 text-blue-400" />
-                    </div>
+        <div className="h-full overflow-y-auto custom-scrollbar pr-4 flex-grow space-y-8 pb-20 animate-float-in">
+            <div className="max-w-7xl mx-auto space-y-8">
+                {/* Header Section */}
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div className="space-y-2">
-                        <h3 className="text-xl font-black text-slate-800 uppercase tracking-tight">
-                            No Projects Found
-                        </h3>
-                        <p className="text-slate-500 font-medium max-w-sm mx-auto">
-                            You haven't created any API projects yet. Create your first project to get an API key and start integrating!
-                        </p>
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+                                <LayoutGrid className="w-5 h-5 text-white" />
+                            </div>
+                            <h1 className="text-3xl font-black text-slate-800 uppercase tracking-tight">
+                                My Projects
+                            </h1>
+                        </div>
                     </div>
+
                     <button
                         onClick={() => setIsCreateModalOpen(true)}
-                        className="px-10 py-4 bg-blue-50 text-blue-600 font-black text-[10px] uppercase tracking-widest rounded-2xl border border-blue-100 hover:bg-blue-100 transition-all"
+                        className="flex items-center justify-center gap-3 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-black px-8 py-4 rounded-2xl shadow-xl shadow-blue-500/20 hover:shadow-blue-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all transform uppercase tracking-widest text-[10px]"
                     >
-                        Get Started Now
+                        <Plus className="w-4 h-4" />
+                        Create New Project
                     </button>
                 </div>
-            )}
 
-            {/* Modals */}
-            <CreateApiProjectModal
-                isOpen={isCreateModalOpen}
-                onClose={() => setIsCreateModalOpen(false)}
-                onCreate={handleCreateProject}
-                isPending={isCreating}
-            />
+                {/* Content Grid */}
+                {projects?.length > 0 ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-float-in">
+                        {projects.map((project) => (
+                            <ProjectCard
+                                key={project._id}
+                                project={project}
+                                onDeleteRequest={() => setProjectToDelete(project)}
+                                onEditRequest={() => setProjectToEdit(project)}
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="bg-white/50 backdrop-blur-sm border-2 border-dashed border-slate-200 rounded-[2rem] p-16 text-center space-y-6 animate-float-in">
+                        <div className="w-20 h-20 bg-blue-50 rounded-3xl flex items-center justify-center border border-blue-100 mx-auto transform hover:rotate-12 transition-transform">
+                            <LayoutGrid className="w-10 h-10 text-blue-400" />
+                        </div>
+                        <div className="space-y-2">
+                            <h3 className="text-xl font-black text-slate-800 uppercase tracking-tight">
+                                No Projects Found
+                            </h3>
+                            <p className="text-slate-500 font-medium max-w-sm mx-auto">
+                                You haven't created any API projects yet. Create your first project to get an API key and start integrating!
+                            </p>
+                        </div>
+                        <button
+                            onClick={() => setIsCreateModalOpen(true)}
+                            className="px-10 py-4 bg-blue-50 text-blue-600 font-black text-[10px] uppercase tracking-widest rounded-2xl border border-blue-100 hover:bg-blue-100 transition-all"
+                        >
+                            Get Started Now
+                        </button>
+                    </div>
+                )}
 
-            <DeleteApiProjectModal
-                isOpen={!!projectToDelete}
-                onClose={() => setProjectToDelete(null)}
-                onDelete={handleDeleteProject}
-                projectName={projectToDelete?.name}
-                isPending={isDeleting}
-            />
+                {/* Modals */}
+                <CreateApiProjectModal
+                    isOpen={isCreateModalOpen}
+                    onClose={() => setIsCreateModalOpen(false)}
+                    onCreate={handleCreateProject}
+                    isPending={isCreating}
+                />
 
-            <EditApiProjectModal
-                isOpen={!!projectToEdit}
-                onClose={() => setProjectToEdit(null)}
-                onUpdate={handleUpdateProject}
-                project={projectToEdit}
-                isPending={isUpdating}
-            />
+                <DeleteApiProjectModal
+                    isOpen={!!projectToDelete}
+                    onClose={() => setProjectToDelete(null)}
+                    onDelete={handleDeleteProject}
+                    projectName={projectToDelete?.name}
+                    isPending={isDeleting}
+                />
+
+                <EditApiProjectModal
+                    isOpen={!!projectToEdit}
+                    onClose={() => setProjectToEdit(null)}
+                    onUpdate={handleUpdateProject}
+                    project={projectToEdit}
+                    isPending={isUpdating}
+                />
+            </div>
         </div>
     );
 };

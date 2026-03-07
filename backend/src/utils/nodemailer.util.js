@@ -44,4 +44,53 @@ const sendOtpEmail = async (email, otp) => {
     }
 };
 
-export { sendOtpEmail };
+const sendContactEmail = async ({ name, email, subject, message }) => {
+    const mailOptions = {
+        from: EMAIL_FROM,
+        to: EMAIL_FROM, // Send to yourself
+        replyTo: email, // Reply to the user
+        subject: `[Contact Form] ${subject} - from ${name}`,
+        html: `
+            <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; color: #334155;">
+                <div style="background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%); padding: 30px; border-radius: 20px 20px 0 0; text-align: center;">
+                    <h2 style="color: white; margin: 0; text-transform: uppercase; letter-spacing: 2px; font-size: 20px;">New Contact Inquiry</h2>
+                </div>
+                
+                <div style="padding: 40px; background: white; border: 1px solid #f1f5f9; border-top: none; border-radius: 0 0 20px 20px;">
+                    <div style="margin-bottom: 25px;">
+                        <span style="font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">From</span>
+                        <p style="margin: 5px 0 0 0; color: #1e293b; font-weight: 700; font-size: 16px;">${name} &lt;${email}&gt;</p>
+                    </div>
+
+                    <div style="margin-bottom: 25px;">
+                        <span style="font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">Subject</span>
+                        <p style="margin: 5px 0 0 0; color: #1e293b; font-weight: 700; font-size: 16px;">${subject}</p>
+                    </div>
+
+                    <div style="margin-bottom: 30px; padding: 20px; background: #f8fafc; border-radius: 15px; border-left: 4px solid #3b82f6;">
+                        <span style="font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">Message</span>
+                        <p style="margin: 10px 0 0 0; color: #334155; line-height: 1.6; white-space: pre-wrap;">${message}</p>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 40px;">
+                        <a href="mailto:${email}" style="display: inline-block; padding: 14px 30px; background: #1e293b; color: white; text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Reply to ${name}</a>
+                    </div>
+                </div>
+                
+                <p style="text-align: center; color: #94a3b8; font-size: 11px; margin-top: 30px;">
+                    &copy; 2026 CodeFolio Insights &bull; Automated System
+                </p>
+            </div>
+        `,
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        return true;
+    } catch (error) {
+        console.error('Error sending contact email:', error);
+        return false;
+    }
+};
+
+export { sendOtpEmail, sendContactEmail };

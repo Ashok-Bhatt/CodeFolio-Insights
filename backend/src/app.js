@@ -10,6 +10,7 @@ import ScoreRouter from './routes/score.route.js';
 import PlatformRouter from './routes/platform.route.js';
 import AnalyticsRouter from './routes/analytics.route.js';
 import ProjectRouter from './routes/project.route.js';
+import EmailRouter from './routes/email.route.js';
 import { SESSION_SECRET, CORS_ORIGIN } from './config/env.config.js';
 import cookieParser from "cookie-parser";
 import { publicApiRateLimiter } from './middlewares/rate-limiter.middleware.js';
@@ -45,14 +46,15 @@ app.use(
 app.use(passport.initialize());
 
 // Routes
-app.use('/auth', AuthRouter);
-app.use('/analyze', AnalyzeRouter);
-app.use('/profile', ProfileRouter);
-app.use('/user', UserRouter);
-app.use('/score', ScoreRouter);
-app.use('/analytics', AnalyticsRouter);
-app.use('/project', ProjectRouter);
-app.use('/platform', cors(publicRoutesConfiguration), verifyApiKey, publicApiRateLimiter, getAnalytics, PlatformRouter);
+app.use('/api/auth', AuthRouter);
+app.use('/api/analyze', AnalyzeRouter);
+app.use('/api/profile', ProfileRouter);
+app.use('/api/user', UserRouter);
+app.use('/api/score', ScoreRouter);
+app.use('/api/analytics', AnalyticsRouter);
+app.use('/api/project', ProjectRouter);
+app.use('/api/email', EmailRouter);
+app.use('/api/platform', cors(publicRoutesConfiguration), verifyApiKey, publicApiRateLimiter, getAnalytics, PlatformRouter);
 
 // Global Error Handler
 app.use((err, req, res, next) => {

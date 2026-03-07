@@ -9,12 +9,12 @@ import GithubRouter from "./platforms/github.route.js";
 
 const router = express.Router();
 
-router.get("/codechef", CodeChefRouter);
-router.get("/code360", Code360Router);
-router.get("/gfg", GfgRouter);
-router.get("/hackerrank", HackerRankRouter);
-router.get("/interviewbit", InterviewBitRouter);
-router.get("/leetcode", LeetCodeRouter);
-router.get("/github", GithubRouter);
+router.use("/codechef", CodeChefRouter);
+router.use("/code360", Code360Router);
+router.use("/gfg", GfgRouter);
+router.use("/hackerrank", HackerRankRouter);
+router.use("/interviewbit", InterviewBitRouter);
+router.use("/leetcode", LeetCodeRouter);
+router.use("/github", GithubRouter);
 
 export default router;

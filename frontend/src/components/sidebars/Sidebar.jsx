@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, LayoutDashboard, Terminal, LogOut, ChartLine, ChartArea, Settings, Webhook } from 'lucide-react';
+import { ChevronLeft, ChevronRight, LayoutDashboard, Terminal, LogOut, ChartLine, ChartArea, Settings, Webhook, Contact } from 'lucide-react';
 import { useAuthStore, usePreferenceStore } from '../../store/export.js';
 import { useLogout } from '../../hooks/useUsers.js';
 
@@ -28,6 +28,7 @@ const Sidebar = () => {
         { name: 'Dashboard', path: `/dashboard/${user?._id}`, Icon: LayoutDashboard },
         { name: 'Analyzers', path: '/analyzer', Icon: ChartArea },
         { name: 'API Access', path: '/public-apis', Icon: Webhook },
+        { name: 'Contact Us', path: '/contact-us', Icon: Contact },
         { name: 'Settings', path: '/settings', Icon: Settings },
     ];
 

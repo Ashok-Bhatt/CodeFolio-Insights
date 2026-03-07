@@ -9,7 +9,7 @@ const useCheckAuth = () => {
         queryKey: ["checkAuth"],
         retry: 3,
         queryFn: asyncWrapper(async () => {
-            const response = await axiosInstance.get("/auth/check");
+            const response = await axiosInstance.get("/api/auth/check");
             if (response.data) {
                 useAuthStore.setState({ user: response.data.user, token: response.data.token });
             }
@@ -21,7 +21,7 @@ const useCheckAuth = () => {
 const useLogin = () => {
     return useMutation({
         mutationFn: asyncWrapper(async (formData) => {
-            const response = await axiosInstance.post("/auth/login", formData);
+            const response = await axiosInstance.post("/api/auth/login", formData);
             return response.data;
         })
     })
@@ -30,7 +30,7 @@ const useLogin = () => {
 const useSignUp = () => {
     return useMutation({
         mutationFn: asyncWrapper(async (formData) => {
-            const response = await axiosInstance.post("/auth/signup", formData);
+            const response = await axiosInstance.post("/api/auth/signup", formData);
             return response.data;
         })
     })
@@ -39,7 +39,7 @@ const useSignUp = () => {
 const useVerifyOTP = () => {
     return useMutation({
         mutationFn: asyncWrapper(async (otpData) => {
-            const response = await axiosInstance.post("/auth/verify-otp", otpData);
+            const response = await axiosInstance.post("/api/auth/verify-otp", otpData);
             return response.data;
         })
     })
@@ -50,7 +50,7 @@ const useUser = (id) => {
         queryKey: ["user", id],
         retry: 3,
         queryFn: asyncWrapper(async () => {
-            const response = await axiosInstance.get(`/user/${id}`);
+            const response = await axiosInstance.get(`/api/user/${id}`);
             return response.data;
         }),
         enabled: !!id,
@@ -60,7 +60,7 @@ const useUser = (id) => {
 const useUpdateUser = () => {
     return useMutation({
         mutationFn: asyncWrapper(async (formData) => {
-            const response = await axiosInstance.patch("/user", formData, {
+            const response = await axiosInstance.patch("/api/user", formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             return response.data;
@@ -71,7 +71,7 @@ const useUpdateUser = () => {
 const useChangePassword = () => {
     return useMutation({
         mutationFn: asyncWrapper(async (passwordData) => {
-            const response = await axiosInstance.patch("/user/password", passwordData);
+            const response = await axiosInstance.patch("/api/user/password", passwordData);
             return response.data;
         })
     })
@@ -81,7 +81,7 @@ const useToggle2FA = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: asyncWrapper(async () => {
-            const response = await axiosInstance.patch("/user/2fa", {});
+            const response = await axiosInstance.patch("/api/user/2fa", {});
             return response.data;
         }),
         onSuccess: (data) => {
@@ -98,7 +98,7 @@ const useLogout = () => {
     const navigate = useNavigate();
     return useMutation({
         mutationFn: asyncWrapper(async () => {
-            const response = await axiosInstance.post("/auth/logout", {});
+            const response = await axiosInstance.post("/api/auth/logout", {});
             return response.data;
         }),
         onSuccess: () => {
@@ -113,7 +113,7 @@ const useUsers = (params) => {
     return useQuery({
         queryKey: ["users", params],
         queryFn: asyncWrapper(async () => {
-            const response = await axiosInstance.get("/user", { params });
+            const response = await axiosInstance.get("/api/user", { params });
             return response.data;
         }),
         retry: false,
@@ -123,7 +123,7 @@ const useUsers = (params) => {
 const useToggleProfileVisibility = () => {
     return useMutation({
         mutationFn: asyncWrapper(async () => {
-            const response = await axiosInstance.patch("/user/visibility", {});
+            const response = await axiosInstance.patch("/api/user/visibility", {});
             return response.data;
         })
     })
@@ -133,7 +133,7 @@ const useUpdateApiKey = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: asyncWrapper(async (apiKeyData) => {
-            const response = await axiosInstance.patch("/user/api-key", apiKeyData);
+            const response = await axiosInstance.patch("/api/user/api-key", apiKeyData);
             return response.data;
         }),
         onSuccess: (data) => {

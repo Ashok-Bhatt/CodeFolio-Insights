@@ -155,6 +155,18 @@ const getCodingChallengeMedal = async (req, res) => {
     }
 };
 
+const getCreatedPublicFavoriteList = async (req, res) => {
+    try {
+        const { userSlug, user } = req.query;
+        const slug = userSlug || user;
+        if (!slug) return res.status(400).json({ message: "userSlug or user is required" });
+        const data = await LeetCodeService.getCreatedPublicFavoriteList(slug);
+        res.status(200).json(data);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 export {
     getUserProfile,
     getLanguageStats,
@@ -170,4 +182,5 @@ export {
     getCodingChallengeMedal,
     getUpcomingContests,
     getGlobalTopRankers,
+    getCreatedPublicFavoriteList,
 };

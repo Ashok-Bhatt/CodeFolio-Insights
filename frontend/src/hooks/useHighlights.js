@@ -9,7 +9,7 @@ const useHighlights = () => {
     useEffect(() => {
         const fetchHighlights = async () => {
             try {
-                const response = await axiosInstance.get("/user/highlights");
+                const response = await axiosInstance.get("/api/user/highlights");
                 setHighlights(response.data);
             } catch (err) {
                 console.error("Failed to fetch highlights:", err);

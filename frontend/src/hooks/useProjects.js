@@ -6,7 +6,7 @@ const useProjects = () => {
     return useQuery({
         queryKey: ["projects"],
         queryFn: asyncWrapper(async () => {
-            const response = await axiosInstance.get("/project/all");
+            const response = await axiosInstance.get("/api/project/all");
             return response.data;
         }),
     });
@@ -16,7 +16,7 @@ const useCreateProject = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: asyncWrapper(async (projectData) => {
-            const response = await axiosInstance.post("/project", projectData);
+            const response = await axiosInstance.post("/api/project", projectData);
             return response.data;
         }),
         onSuccess: () => {
@@ -33,7 +33,7 @@ const useUpdateProject = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: asyncWrapper(async ({ id, projectData }) => {
-            const response = await axiosInstance.put(`/project/${id}`, projectData);
+            const response = await axiosInstance.patch(`/api/project/${id}`, projectData);
             return response.data;
         }),
         onSuccess: () => {
@@ -50,7 +50,7 @@ const useDeleteProject = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: asyncWrapper(async (id) => {
-            const response = await axiosInstance.delete(`/project/${id}`);
+            const response = await axiosInstance.delete(`/api/project/${id}`);
             return response.data;
         }),
         onSuccess: () => {

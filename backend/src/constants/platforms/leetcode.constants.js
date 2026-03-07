@@ -19,8 +19,15 @@ export const LEETCODE_GRAPHQL_QUERIES = {
                     company
                     jobTitle
                     skillTags
+                    postViewCount
+                    postViewCountDiff
                     reputation
+                    reputationDiff
                     solutionCount
+                    solutionCountDiff
+                    categoryDiscussCount
+                    categoryDiscussCountDiff
+                    certificationLevel
                 }
             }
         }
@@ -52,6 +59,10 @@ export const LEETCODE_GRAPHQL_QUERIES = {
             }
             userContestRankingHistory(username: $username) {
                 attended
+                trendDirection
+                problemsSolved
+                totalProblems
+                finishTimeInSeconds
                 rating
                 ranking
                 contest {
@@ -66,6 +77,14 @@ export const LEETCODE_GRAPHQL_QUERIES = {
         query userProfileUserQuestionProgressV2($userSlug: String!) {
             userProfileUserQuestionProgressV2(userSlug: $userSlug) {
                 numAcceptedQuestions {
+                    count
+                    difficulty
+                }
+                numFailedQuestions {
+                    count
+                    difficulty
+                }
+                numUntouchedQuestions {
                     count
                     difficulty
                 }
@@ -91,6 +110,11 @@ export const LEETCODE_GRAPHQL_QUERIES = {
                         count
                         submissions
                     }
+                    totalSubmissionNum {
+                        difficulty
+                        count
+                        submissions
+                    }
                 }
             }
         }
@@ -106,8 +130,17 @@ export const LEETCODE_GRAPHQL_QUERIES = {
                 badges {
                     id
                     name
+                    shortName
                     displayName
                     icon
+                    hoverText
+                    medal {
+                        slug
+                        config {
+                            iconGif
+                            iconGifBackground
+                        }
+                    }
                     creationDate
                     category
                 }
@@ -122,6 +155,13 @@ export const LEETCODE_GRAPHQL_QUERIES = {
                     activeYears
                     streak
                     totalActiveDays
+                    dccBadges {
+                        timestamp
+                        badge {
+                            name
+                            icon
+                        }
+                    }
                     submissionCalendar
                 }
             }
@@ -143,12 +183,26 @@ export const LEETCODE_GRAPHQL_QUERIES = {
         query questionOfToday {
             activeDailyCodingChallengeQuestion {
                 date
+                userStatus
                 link
                 question {
                     titleSlug
                     title
+                    translatedTitle
                     acRate
                     difficulty
+                    freqBar
+                    frontendQuestionId: questionFrontendId
+                    isFavor
+                    paidOnly: isPaidOnly
+                    status
+                    hasVideoSolution
+                    hasSolution
+                    topicTags {
+                        name
+                        id
+                        slug
+                    }
                 }
             }
         }
@@ -158,9 +212,21 @@ export const LEETCODE_GRAPHQL_QUERIES = {
         query skillStats($username: String!) {
             matchedUser(username: $username) {
                 tagProblemCounts {
-                    advanced { tagName tagSlug problemsSolved }
-                    intermediate { tagName tagSlug problemsSolved }
-                    fundamental { tagName tagSlug problemsSolved }
+                    advanced {
+                        tagName
+                        tagSlug
+                        problemsSolved
+                    }
+                    intermediate {
+                        tagName
+                        tagSlug
+                        problemsSolved
+                    }
+                    fundamental {
+                        tagName
+                        tagSlug
+                        problemsSolved
+                    }
                 }
             }
         }
@@ -173,6 +239,8 @@ export const LEETCODE_GRAPHQL_QUERIES = {
                 titleSlug
                 startTime
                 duration
+                originStartTime
+                isVirtual
             }
         }
     `,
@@ -181,16 +249,73 @@ export const LEETCODE_GRAPHQL_QUERIES = {
         query globalRankingPaginated($page: Int) {
             globalRanking(page: $page) {
                 totalUsers
+                userPerPage
+                totalPages
                 rankingNodes {
                     ranking
                     currentRating
+                    currentGlobalRanking
+                    dataRegion
                     user {
                         username
+                        nameColor
+                        activeBadge {
+                            displayName
+                            icon
+                        }
                         profile {
+                            userSlug
                             userAvatar
+                            countryCode
+                            countryName
                             realName
                         }
                     }
+                }
+            }
+        }
+    `,
+    
+    codingChallengeMedal: `
+        query codingChallengeMedal($year: Int!, $month: Int!) {
+            dailyChallengeMedal(year: $year, month: $month) {
+                name
+                config {
+                    icon
+                }
+            }
+        }
+    `,
+
+    contestRatingHistogram: `
+        query contestRatingHistogram {
+            contestRatingHistogram {
+                userCount
+                ratingStart
+                ratingEnd
+                topPercentage
+            }
+        }
+    `,
+
+    createdPublicFavoriteList: `
+        query createdPublicFavoriteList($userSlug: String!) {
+            createdPublicFavoriteList(userSlug: $userSlug) {
+                hasMore
+                totalLength
+                favorites {
+                    slug
+                    coverUrl
+                    coverEmoji
+                    coverBackgroundColor
+                    name
+                    isPublicFavorite
+                    lastQuestionAddedAt
+                    hasCurrentQuestion
+                    viewCount
+                    description
+                    questionNumber
+                    isDefaultList
                 }
             }
         }
