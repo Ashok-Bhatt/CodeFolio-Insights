@@ -7,23 +7,42 @@ import { protectRoute } from "../middlewares/auth.middleware.js";
 import { CORS_ORIGIN } from "../config/env.config.js"
 import { generateAuthToken } from "../utils/token.util.js"
 import { validate } from "../middlewares/validate.middleware.js";
-import { rateLimit } from 'express-rate-limit';
+import { loginRateLimiter } from "../middlewares/rate-limiter.middleware.js";
 
 const router = express.Router();
 
-const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // Limit each IP to 5 login requests per window
-  message: { message: "Too many login attempts, please try again after 15 minutes" },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
+router.post(
+    '/signup', 
+    getAnalytics, 
+    validate(signupValidationSchema), 
+    signup
+);
 
-router.post('/signup', validate(signupValidationSchema), getAnalytics, signup);
-router.post('/login', loginLimiter, validate(loginValidationSchema), getAnalytics, login);
-router.post('/verify-otp', getAnalytics, verifyOTP);
-router.get("/check", checkAuth);
-router.post('/logout', protectRoute, getAnalytics, logout);
+router.post(
+    '/login', 
+    getAnalytics, 
+    loginRateLimiter, 
+    validate(loginValidationSchema), 
+    login
+);
+
+router.post(
+    '/verify-otp', 
+    getAnalytics, 
+    verifyOTP
+);
+
+router.get(
+    "/check", 
+    checkAuth
+);
+
+router.post(
+    '/logout', 
+    getAnalytics, 
+    protectRoute, 
+    logout
+);
 
 router.get('/google',
   getAnalytics,

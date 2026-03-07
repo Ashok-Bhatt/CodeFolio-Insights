@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, LayoutDashboard, Terminal, LogOut, ChartLine, ChartArea, Settings } from 'lucide-react';
+import { ChevronLeft, ChevronRight, LayoutDashboard, Terminal, LogOut, ChartLine, ChartArea, Settings, Webhook } from 'lucide-react';
 import { useAuthStore, usePreferenceStore } from '../../store/export.js';
 import { useLogout } from '../../hooks/useUsers.js';
 
@@ -27,6 +27,7 @@ const Sidebar = () => {
     const sidebarItems = [
         { name: 'Dashboard', path: `/dashboard/${user?._id}`, Icon: LayoutDashboard },
         { name: 'Analyzers', path: '/analyzer', Icon: ChartArea },
+        { name: 'API Access', path: '/public-apis', Icon: Webhook },
         { name: 'Settings', path: '/settings', Icon: Settings },
     ];
 
@@ -66,6 +67,7 @@ const Sidebar = () => {
                                 ? location.pathname.startsWith('/analyzer')
                                 : location.pathname.startsWith(item.path);
                         const Icon = item.Icon;
+
                         return (
                             <li key={item.name} className="relative">
                                 <Link
@@ -96,12 +98,6 @@ const Sidebar = () => {
                                     {isSidebarCollapsed && hoveredItem === item.name && (
                                         <div className="absolute left-full ml-4 px-3 py-2 bg-gray-900 text-white text-[10px] font-black uppercase tracking-widest rounded-lg shadow-2xl z-[100] animate-slide-in-right whitespace-nowrap">
                                             {item.name}
-                                        </div>
-                                    )}
-
-                                    {!isSidebarCollapsed && isActive && item.name === 'Analyzers' && (
-                                        <div className="absolute right-4 animate-float opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <ChartLine size={14} className="text-blue-500" />
                                         </div>
                                     )}
                                 </Link>

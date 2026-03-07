@@ -129,6 +129,24 @@ const useToggleProfileVisibility = () => {
     })
 }
 
+const useUpdateApiKey = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: asyncWrapper(async (apiKeyData) => {
+            const response = await axiosInstance.patch("/user/api-key", apiKeyData);
+            return response.data;
+        }),
+        onSuccess: (data) => {
+            queryClient.invalidateQueries(['checkAuth']);
+            useAuthStore.setState((state) => ({ user: { ...state.user, apiKey: data.apiKey } }));
+            toast.success(data.message || "API Key updated successfully!");
+        },
+        onError: (error) => {
+            toast.error(error.message || "Failed to update API Key");
+        }
+    });
+};
+
 export {
     useCheckAuth,
     useLogin,
@@ -141,4 +159,5 @@ export {
     useLogout,
     useUsers,
     useToggleProfileVisibility,
+    useUpdateApiKey,
 };

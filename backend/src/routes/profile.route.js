@@ -8,9 +8,37 @@ import { userIdValidationSchema } from "../validators/user.validate.js";
 
 const router = Router();
 
-router.route("/fetch/:userId").get(optionalAuth, getAnalytics, validate(userIdValidationSchema), refreshProfileData);
-router.route("/cache/:userId").get(optionalAuth, getAnalytics, validate(userIdValidationSchema), getProfileCache);
-router.route("/:userId").get(optionalAuth, getAnalytics, validate(userIdValidationSchema), getProfiles);
-router.route("/platform").patch(protectRoute, getAnalytics, validate(profileUpdateValidationSchema), updateProfile);
+router.get(
+    "/fetch/:userId",
+    optionalAuth, 
+    getAnalytics, 
+    validate(userIdValidationSchema), 
+    refreshProfileData
+);
+
+router.get(
+    "/cache/:userId",
+    getAnalytics,
+    optionalAuth,
+    validate(userIdValidationSchema),
+    getProfileCache
+);
+
+router.get(
+    "/:userId",
+    getAnalytics,
+    optionalAuth,
+    validate(userIdValidationSchema),
+    getProfiles
+);
+
+router.patch(
+    "/platform",
+    getAnalytics,
+    protectRoute,
+    validate(profileUpdateValidationSchema),
+    updateProfile
+);
+
 
 export default router;

@@ -1,7 +1,9 @@
 import bcrypt from 'bcrypt';
 import UserModel from "../models/user.model.js";
 import VerificationModel from "../models/verification.model.js";
+import ApiProjectModel from '../models/api-project.model.js';
 import { sendOtpEmail } from '../utils/nodemailer.util.js';
+import { generateApiKey } from '../utils/api-key.util.js';
 
 // Helper to generate 6-digit OTP
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
@@ -85,6 +87,8 @@ const verifyOTP = async (otp, verificationId) => {
 
     let user;
     if (verification.type === 'signup') {
+        const apiKey = generateApiKey()
+
         // Only now create the user
         user = new UserModel({
             name: verification.name,
@@ -92,9 +96,18 @@ const verifyOTP = async (otp, verificationId) => {
             password: verification.password, // already hashed
             enable2FA: false,
             provider: 'credential',
+            apiKey: apiKey,
             lastRefresh: Date.now()
         });
         await user.save();
+
+        // Create initial "Testing" project
+        const initialProject = new ApiProjectModel({
+            name: "Testing",
+            userId: user._id,
+            apiKey: apiKey
+        });
+        await initialProject.save();
     } else {
         // Login type
         user = await UserModel.findById(verification.userId);

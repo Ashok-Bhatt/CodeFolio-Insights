@@ -1,4 +1,5 @@
 const throwAxiosError = (error) => {
+    console.log(error);
     const errorMessage = error.response?.data?.message || error.message || 'An unknown API error occurred.';
     throw new Error(errorMessage);
 };

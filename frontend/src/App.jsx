@@ -3,9 +3,10 @@ import { useCheckAuth } from './hooks/useUsers.js';
 import { useEffect } from 'react';
 import { Route, Routes, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { Landing, LoginPage, SignupPage, CodingProfiles, SettingsPage, SettingsProfile, LinkPage, PageNotFound, Account } from './pages/export.js';
-import { HomeLayout, DashboardLayout, AnalyzerLayout } from "./layouts/export.js";
+import { HomeLayout, DashboardLayout, AnalyzerLayout, PublicApisLayout } from "./layouts/export.js";
 import { LeetCode, GFG, Code360, Interviewbit, CodeChef, HackerRank, Github } from './pages/platforms/export.js';
 import { LeetcodeAnalyze, GithubAnalyze, ResumeAnalyze } from './pages/analyze/export.js';
+import { ApiDocumentation, ApiProjects } from './pages/public-apis/export.js';
 import { ProtectedRoute, AppearanceSettings } from './components/export.js';
 
 const App = () => {
@@ -51,6 +52,11 @@ const App = () => {
                     <Route path="leetcode" element={<LeetcodeAnalyze />} />
                     <Route path="github" element={<GithubAnalyze />} />
                     <Route path="resume" element={<ResumeAnalyze />} />
+                </Route>
+                <Route path="public-apis" element={<PublicApisLayout />}>
+                    <Route index element={<Navigate to="documentation" replace />} />
+                    <Route path="documentation" element={<ApiDocumentation />} />
+                    <Route path="projects" element={<ApiProjects />} />
                 </Route>
                 <Route path="settings" element={
                     <ProtectedRoute requiresAuthentication={true}>

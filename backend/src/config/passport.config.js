@@ -1,7 +1,9 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import UserModel from '../models/user.model.js';
+import ApiProjectModel from '../models/api-project.model.js';
 import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_CALLBACK_URL } from './env.config.js';
+import { generateApiKey } from '../utils/api-key.util.js';
 
 passport.use(new GoogleStrategy({
     clientID: GOOGLE_CLIENT_ID,
@@ -12,10 +14,7 @@ passport.use(new GoogleStrategy({
         try {
             // First check if user exists by googleId
             let user = await UserModel.findOne({ googleId: profile.id });
-
-            if (user) {
-                return done(null, user);
-            }
+            if (user) return done(null, user);
 
             // Check if user exists by email (registered via email/password)
             user = await UserModel.findOne({ email: profile.emails[0].value });
@@ -30,6 +29,8 @@ passport.use(new GoogleStrategy({
             }
 
             // Create new user if no existing account found
+            const apiKey = generateApiKey();
+
             const newUser = new UserModel({
                 googleId: profile.id,
                 name: profile.displayName,
@@ -37,10 +38,21 @@ passport.use(new GoogleStrategy({
                 profile: profile.photos[0].value,
                 provider: 'google',
                 jobTitle: 'Developer',
+                apiKey: apiKey,
                 lastRefresh: Date.now(),
             });
 
             await newUser.save();
+
+            // Create initial "Testing" project
+            const initialProject = new ApiProjectModel({
+                name: "Testing",
+                userId: newUser._id,
+                apiKey: apiKey
+            });
+            
+            await initialProject.save();
+
             return done(null, newUser);
         } catch (err) {
             return done(err, false);

@@ -10,11 +10,11 @@ router.get("/user/recent-ac-submissions", LeetCodeController.getRecentAcSubmissi
 router.get("/user/badges", LeetCodeController.getUserBadges);
 router.get("/user/contest-ranking", LeetCodeController.getContestRanking);
 router.get("/user/skill-stats", LeetCodeController.getSkillStats);
-router.get("/user/question-progress-v2", LeetCodeController.getUserProfileQuestionProgressV2);
+router.get("/user/question-progress", LeetCodeController.getUserProfileQuestionProgressV2);
 router.get("/user/session-progress", LeetCodeController.getUserSessionProgress);
-router.get("/contest-rating-histogram", LeetCodeController.getContestRatingHistogram);
+router.get("/contest-rating-distribution", LeetCodeController.getContestRatingHistogram);
 router.get("/coding-challenge-medal", LeetCodeController.getCodingChallengeMedal);
-router.get("/potd", LeetCodeController.getQuestionOfToday);
+router.get("/potd/today", LeetCodeController.getQuestionOfToday);
 router.get("/contests/upcoming", LeetCodeController.getUpcomingContests);
 router.get("/rankings/global", LeetCodeController.getGlobalTopRankers);
 

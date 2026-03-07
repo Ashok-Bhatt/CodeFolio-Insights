@@ -28,6 +28,8 @@ const getSortQuery = (searchField, searchOrder) => {
     return { [searchField]: searchOrder, _id: -1 };
 }
 
+
+
 const getUser = async (userId, currentUser, viewerDeviceToken, viewerSignedDeviceToken) => {
     const user = await UserModel.findById(userId);
     if (!user) throw new Error("User not found.");
