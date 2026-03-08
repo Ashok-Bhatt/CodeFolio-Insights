@@ -6,6 +6,7 @@ import upload from "../middlewares/multer.middleware.js";
 import { checkAdmin } from "../middlewares/admin.middleware.js";
 import validate from "../middlewares/validate.middleware.js";
 import { usersQueryValidationSchema, userInfoUpdateValidationSchema, changePasswordValidationSchema, userIdValidationSchema } from "../validators/user.validate.js";
+import { apiKeyBodyValidationSchema } from "../validators/common.validate.js"
 
 const router = express.Router();
 
@@ -67,6 +68,7 @@ router.patch(
     "/api-key", 
     getAnalytics, 
     protectRoute, 
+    validate(apiKeyBodyValidationSchema),
     updateUserApiKey
 );
 

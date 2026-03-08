@@ -1,7 +1,6 @@
 import asyncHandler from '../utils/async-handler.util.js';
 import { ENV } from "../config/env.config.js";
 import * as UserService from "../services/user.service.js";
-import ApiProjectModel from "../models/api-project.model.js";
 
 const getUser = asyncHandler(async (req, res) => {
     const userId = req.params.userId;
@@ -67,15 +66,8 @@ const updateUserApiKey = asyncHandler(async (req, res) => {
     const { apiKey } = req.body;
     const user = req.user;
 
-    if (apiKey === undefined) return res.status(400).json({ message: "API Key is required" });
-
-    const existingApiKey = await ApiProjectModel.findOne({ apiKey });
-    if (!existingApiKey) return res.status(400).json({ message: "Invalid API Key!" });
-
-    user.apiKey = apiKey;
-    await user.save();
-
-    return res.status(200).json({ message: "Default API Key updated successfully", apiKey: user.apiKey });
+    const result = await UserService.updateUserApiKey(user, apiKey);
+    return res.status(200).json(result);
 });
 
 export {

@@ -1,4 +1,4 @@
-const API_POINTS_COST = [
+export const API_POINTS_COST = [
     // Code360 Endpoints
     {
         baseUrl: "/platform/code360/user/profile",
@@ -155,7 +155,3 @@ const API_POINTS_COST = [
         cost: { base: 1 }
     },
 ];
-
-export {
-    API_POINTS_COST,
-}

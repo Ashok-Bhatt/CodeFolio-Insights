@@ -3,7 +3,7 @@
 // The logarithm to base 10 (log10) is Math.log10()
 
 // Total commits limit remains relevant for the commits quality function
-import { TOTAL_COMMITS_LIMIT } from "../fetching/github.fetch.util.js";
+import { GITHUB_TOTAL_COMMITS_LIMIT } from "../../constants/index.js";
 
 const getRepoCountScore = (repoCount) => {
     // Logarithmic: Harder to max out, maxes around 50 repos (log10(51) is approx 1.7)
@@ -116,7 +116,7 @@ const getStreakScore = (maxStreak, currentStreak, activeDays) => {
 const getCommitsQualityScore = (commitsQualityReport) => {
     // This is often a ratio-based metric, so keeping the linear scaling seems appropriate.
     // It is effectively (Average Quality Score / 10) * 100
-    const value = ((commitsQualityReport.reduce((totalQualityScore, commitQuality) => totalQualityScore + commitQuality, 0)) / TOTAL_COMMITS_LIMIT) * 10;
+    const value = ((commitsQualityReport.reduce((totalQualityScore, commitQuality) => totalQualityScore + commitQuality, 0)) / GITHUB_TOTAL_COMMITS_LIMIT) * 10;
     return Math.min(100, value);
 }
 

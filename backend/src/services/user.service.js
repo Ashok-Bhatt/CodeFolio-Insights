@@ -1,5 +1,6 @@
 import UserModel from "../models/user.model.js";
 import ProfileModel from "../models/profile.model.js";
+import ApiProjectModel from "../models/api-project.model.js"
 import ProfileViewModel from "../models/profile-view.model.js";
 import { destroyFile, uploadFile } from "../utils/cloudinary.util.js";
 import bcrypt from "bcrypt";
@@ -195,6 +196,15 @@ const toggle2FA = async (userId) => {
     };
 };
 
+const updateUserApiKey = async (user, apiKey) => {
+    const existingApiKey = await ApiProjectModel.findOne({ apiKey });
+    if (!existingApiKey) throw new Error("This API Key does not exist!");
+
+    user.apiKey = apiKey;
+    await user.save();
+    return { message: "Default API Key updated successfully", apiKey: user.apiKey }
+}
+
 export {
     getUser,
     getUsers,
@@ -203,4 +213,5 @@ export {
     toggleProfileVisibility,
     getUserHighlights,
     toggle2FA,
+    updateUserApiKey,
 };

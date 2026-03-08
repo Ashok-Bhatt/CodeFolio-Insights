@@ -3,6 +3,8 @@ import { getProjects, getProjectById, createProject, updateProject, deleteProjec
 import { protectRoute } from '../middlewares/auth.middleware.js';
 import { checkAdmin } from '../middlewares/admin.middleware.js';
 import { getAnalytics } from '../middlewares/analytics.middleware.js';
+import validate from '../middlewares/validate.middleware.js';
+import { projectIdAndNameBodySchema, projectIdValidationSchema, projectNameBodySchema, apiKeyPointsLimitValidationSchema } from "../validators/api-project.validate.js"
 
 const router = express.Router();
 
@@ -14,9 +16,10 @@ router.get(
 );
 
 router.get(
-    "/:id", 
+    "/:projectId", 
     getAnalytics, 
     protectRoute, 
+    validate(projectIdValidationSchema),
     getProjectById
 );
 
@@ -24,20 +27,23 @@ router.post(
     "/", 
     getAnalytics, 
     protectRoute, 
+    validate(projectNameBodySchema),
     createProject
 );
 
 router.put(
-    "/:id", 
+    "/", 
     getAnalytics, 
     protectRoute, 
+    validate(projectIdAndNameBodySchema),
     updateProject
 );
 
 router.delete(
-    "/:id", 
+    "/:projectId", 
     getAnalytics, 
     protectRoute, 
+    validate(projectIdValidationSchema),
     deleteProject
 );
 
@@ -47,6 +53,7 @@ router.patch(
     getAnalytics, 
     protectRoute, 
     checkAdmin, 
+    validate(apiKeyPointsLimitValidationSchema),
     changeDailyApiLimit
 );
 
@@ -55,6 +62,7 @@ router.get(
     getAnalytics, 
     protectRoute, 
     checkAdmin, 
+    validate(projectIdValidationSchema),
     getUserProjects
 );
 

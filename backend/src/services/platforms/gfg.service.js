@@ -1,13 +1,7 @@
 import axios from "axios";
 import { configBrowserPage } from "../../utils/scrapper.util.js";
-import { getNormalizedGfgHeatmap, isLeapYear, getDateDetailsFromDayOfYear, scrapeGfgTooltipData } from "../../utils/calendar.util.js";
-
-const GFG_HEADERS = {
-    "Content-Type": "application/json",
-    "Referer": "https://practice.geeksforgeeks.org",
-    "User-Agent": "Mozilla/5.0",
-    "Accept": "application/json",
-};
+import { getNormalizedGfgHeatmap } from "../../utils/calendar.util.js";
+import { GFG_HEADERS } from "../../constants/platform.constants.js";
 
 const getUserInfo = async (username) => {
     const profilePageUrl = `https://www.geeksforgeeks.org/user/${username}`;

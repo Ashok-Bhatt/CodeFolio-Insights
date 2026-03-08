@@ -1,171 +1,92 @@
 import * as LeetCodeService from "../../services/platforms/leetcode.service.js";
+import asyncHandler from "../../utils/async-handler.util.js";
 
-const getUserProfile = async (req, res) => {
-    try {
-        const { user } = req.query;
-        if (!user) return res.status(400).json({ message: "Username is required" });
-        const data = await LeetCodeService.getUserProfile(user);
-        res.status(200).json(data);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+const getUserProfile = asyncHandler(async (req, res) => {
+    const { username } = req.query;
+    const data = await LeetCodeService.getUserProfile(username);
+    return res.status(200).json(data);
+});
 
-const getUserCalendar = async (req, res) => {
-    try {
-        const { user, year } = req.query;
-        if (!user) return res.status(400).json({ message: "Username is required" });
-        const targetYear = parseInt(year) || new Date().getFullYear();
-        const data = await LeetCodeService.getUserCalendar(user, targetYear);
-        res.status(200).json(data);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+const getUserCalendar = asyncHandler(async (req, res) => {
+    const { username, year } = req.query;
+    const data = await LeetCodeService.getUserCalendar(username, year);
+    return res.status(200).json(data);
+});
 
-const getUserBadges = async (req, res) => {
-    try {
-        const { user } = req.query;
-        if (!user) return res.status(400).json({ message: "Username is required" });
-        const data = await LeetCodeService.getUserBadges(user);
-        res.status(200).json(data);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+const getUserBadges = asyncHandler(async (req, res) => {
+    const { username } = req.query;
+    const data = await LeetCodeService.getUserBadges(username);
+    return res.status(200).json(data);
+});
 
-const getContestRanking = async (req, res) => {
-    try {
-        const { user } = req.query;
-        if (!user) return res.status(400).json({ message: "Username is required" });
-        const data = await LeetCodeService.getContestRanking(user);
-        res.status(200).json(data);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+const getContestRanking = asyncHandler(async (req, res) => {
+    const { username } = req.query;
+    const data = await LeetCodeService.getContestRanking(username);
+    return res.status(200).json(data);
+});
 
-const getQuestionOfToday = async (req, res) => {
-    try {
-        const data = await LeetCodeService.getQuestionOfToday();
-        res.status(200).json(data);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+const getQuestionOfToday = asyncHandler(async (req, res) => {
+    const data = await LeetCodeService.getQuestionOfToday();
+    return res.status(200).json(data);
+});
 
-const getUpcomingContests = async (req, res) => {
-    try {
-        const data = await LeetCodeService.getUpcomingContests();
-        res.status(200).json(data);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+const getUpcomingContests = asyncHandler(async (req, res) => {
+    const data = await LeetCodeService.getUpcomingContests();
+    return res.status(200).json(data);
+});
 
-const getGlobalTopRankers = async (req, res) => {
-    try {
-        const { page } = req.query;
-        const pageNum = parseInt(page) || 1;
-        const data = await LeetCodeService.getGlobalTopRankers(pageNum);
-        res.status(200).json(data);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+const getGlobalTopRankers = asyncHandler(async (req, res) => {
+    const { page } = req.query;
+    const data = await LeetCodeService.getGlobalTopRankers(page);
+    return res.status(200).json(data);
+});
 
-const getLanguageStats = async (req, res) => {
-    try {
-        const { user } = req.query;
-        if (!user) return res.status(400).json({ message: "Username is required" });
-        const data = await LeetCodeService.getLanguageStats(user);
-        res.status(200).json(data);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+const getLanguageStats = asyncHandler(async (req, res) => {
+    const { username } = req.query;
+    const data = await LeetCodeService.getLanguageStats(username);
+    return res.status(200).json(data);
+});
 
-const getRecentAcSubmissions = async (req, res) => {
-    try {
-        const { user, limit } = req.query;
-        if (!user) return res.status(400).json({ message: "Username is required" });
-        const queryLimit = parseInt(limit) || 10;
-        const data = await LeetCodeService.getRecentAcSubmissions(user, queryLimit);
-        res.status(200).json(data);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+const getRecentAcSubmissions = asyncHandler(async (req, res) => {
+    const { username, limit } = req.query;
+    const data = await LeetCodeService.getRecentAcSubmissions(username, limit);
+    return res.status(200).json(data);
+});
 
-const getSkillStats = async (req, res) => {
-    try {
-        const { user } = req.query;
-        if (!user) return res.status(400).json({ message: "Username is required" });
-        const data = await LeetCodeService.getSkillStats(user);
-        res.status(200).json(data);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+const getSkillStats = asyncHandler(async (req, res) => {
+    const { username } = req.query;
+    const data = await LeetCodeService.getSkillStats(username);
+    return res.status(200).json(data);
+});
 
-const getUserProfileQuestionProgressV2 = async (req, res) => {
-    try {
-        const { userSlug, user } = req.query;
-        const slug = userSlug || user;
-        if (!slug) return res.status(400).json({ message: "userSlug or user is required" });
-        const data = await LeetCodeService.getUserProfileQuestionProgressV2(slug);
-        res.status(200).json(data);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+const getUserProfileQuestionProgressV2 = asyncHandler(async (req, res) => {
+    const { username } = req.query;
+    const data = await LeetCodeService.getUserProfileQuestionProgressV2(username);
+    return res.status(200).json(data);
+});
 
-const getUserSessionProgress = async (req, res) => {
-    try {
-        const { user } = req.query;
-        if (!user) return res.status(400).json({ message: "Username is required" });
-        const data = await LeetCodeService.getUserSessionProgress(user);
-        res.status(200).json(data);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+const getUserSessionProgress = asyncHandler(async (req, res) => {
+    const { username } = req.query;
+    const data = await LeetCodeService.getUserSessionProgress(username);
+    return res.status(200).json(data);
+});
 
-const getContestRatingHistogram = async (req, res) => {
-    try {
-        const data = await LeetCodeService.getContestRatingHistogram();
-        res.status(200).json(data);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+const getContestRatingHistogram = asyncHandler(async (req, res) => {
+    const data = await LeetCodeService.getContestRatingHistogram();
+    return res.status(200).json(data);
+});
 
-const getCodingChallengeMedal = async (req, res) => {
-    try {
-        const { year, month } = req.query;
-        const targetYear = parseInt(year);
-        const targetMonth = parseInt(month);
-        if (Number.isNaN(targetYear) || Number.isNaN(targetMonth)) {
-            return res.status(400).json({ message: "year and month query params are required and must be integers" });
-        }
-        const data = await LeetCodeService.getCodingChallengeMedal(targetYear, targetMonth);
-        res.status(200).json(data);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+const getCodingChallengeMedal = asyncHandler(async (req, res) => {
+    const { year, month } = req.query;
+    const data = await LeetCodeService.getCodingChallengeMedal(year, month);
+    return res.status(200).json(data);
+});
 
-const getCreatedPublicFavoriteList = async (req, res) => {
-    try {
-        const { userSlug, user } = req.query;
-        const slug = userSlug || user;
-        if (!slug) return res.status(400).json({ message: "userSlug or user is required" });
-        const data = await LeetCodeService.getCreatedPublicFavoriteList(slug);
-        res.status(200).json(data);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+const getCreatedPublicFavoriteList = asyncHandler(async (req, res) => {
+    const { username } = req.query;
+    const data = await LeetCodeService.getCreatedPublicFavoriteList(username);
+    return res.status(200).json(data);
+});
 
 export {
     getUserProfile,

@@ -1,10 +1,7 @@
 import { githubGraphQlQuery, githubRestApiQuery, scrapeSpideyAPI } from "../../api/axiosInstance.js";
 import { SCRAPE_SPIDEY_API_KEY } from "../../config/env.config.js";
-import { GITHUB_API_QUERIES } from "../../constants/index.js";
+import { GITHUB_API_QUERIES, GITHUB_REPO_DATA_PAGE_SIZE } from "../../constants/index.js";
 import { getNormalizedGithubHeatmap } from "../calendar.util.js";
-
-const PAGE_SIZE = 100;
-const TOTAL_COMMITS_LIMIT = 25;
 
 const getUserProfileData = async (username) => {
     const data = await githubRestApiQuery(`/users/${username}`);
@@ -83,7 +80,7 @@ const getUserRepos = async (username, repoCount) => {
     let userReposStat = [];
 
     for (let i = 0; i < Math.ceil(repoCount / 100); i++) {
-        const userRepoData = await githubRestApiQuery(`/users/${username}/repos?per_page=${PAGE_SIZE}&page=${i + 1}`);
+        const userRepoData = await githubRestApiQuery(`/users/${username}/repos?per_page=${GITHUB_REPO_DATA_PAGE_SIZE}&page=${i + 1}`);
         if (userRepoData != null) {
             for (let j = 0; j < userRepoData.length; j++) {
                 const repoData = userRepoData[j];
@@ -150,8 +147,8 @@ const getUserStarsAndForks = async (username) => {
     let starsCount = 0, forksCount = 0;
     const repoCount = (await getUserProfileData(username))?.public_repos;
 
-    for (let i = 0; i < Math.ceil(repoCount / PAGE_SIZE); i++) {
-        const userRepoData = await githubRestApiQuery(`/users/${username}/repos?per_page=${PAGE_SIZE}&page=${i + 1}`);
+    for (let i = 0; i < Math.ceil(repoCount / GITHUB_REPO_DATA_PAGE_SIZE); i++) {
+        const userRepoData = await githubRestApiQuery(`/users/${username}/repos?per_page=${GITHUB_REPO_DATA_PAGE_SIZE}&page=${i + 1}`);
         if (userRepoData != null) {
             for (let j = 0; j < userRepoData.length; j++) {
                 const repoData = userRepoData[j];
@@ -166,8 +163,6 @@ const getUserStarsAndForks = async (username) => {
 
 
 export {
-    PAGE_SIZE,
-    TOTAL_COMMITS_LIMIT,
     getCommitsPerRepo,
     getUserProfileData,
     getUserRepos,

@@ -45,13 +45,13 @@ const login = asyncHandler(async (req, res) => {
 
 const verifyOTP = asyncHandler(async (req, res) => {
     const { otp } = req.body;
-    const vToken = req.cookies.verificationToken || req.header("Authorization")?.replace("Bearer ", "");
+    const verificationToken = req.cookies.verificationToken || req.header("Authorization")?.replace("Bearer ", "");
 
-    if (!vToken) return res.status(401).json({ message: 'Verification session expired' });
+    if (!verificationToken) return res.status(401).json({ message: 'Verification session expired' });
 
     let decoded;
     try {
-        decoded = jwt.verify(vToken, JWT_SECRET);
+        decoded = jwt.verify(verificationToken, JWT_SECRET);
     } catch (err) {
         return res.status(401).json({ message: 'Invalid or expired verification token' });
     }

@@ -1,26 +1,17 @@
 import * as CodeChefService from "../../services/platforms/codechef.service.js";
+import asyncHandler from "../../utils/async-handler.util.js";
 
-const getUserInfo = async (req, res) => {
-    try {
-        const { user, includeAchievements } = req.query;
-        if (!user) return res.status(400).json({ message: "Username is required" });
-        const data = await CodeChefService.getUserInfo(user, includeAchievements);
-        res.status(200).json(data);
-    } catch (error) {
-        res.status(error.statusCode || 500).json({ message: error.message || "Failed to fetch CodeChef user info" });
-    }
-};
+const getUserInfo = asyncHandler(async (req, res) => {
+    const { username, includeAchievements } = req.query;
+    const data = await CodeChefService.getUserInfo(username, includeAchievements);
+    return res.status(200).json(data);
+});
 
-const getUserSubmissions = async (req, res) => {
-    try {
-        const { user } = req.query;
-        if (!user) return res.status(400).json({ message: "Username is required" });
-        const data = await CodeChefService.getUserSubmissions(user);
-        res.status(200).json(data);
-    } catch (error) {
-        res.status(error.statusCode || 500).json({ message: error.message || "Failed to fetch CodeChef user submissions" });
-    }
-};
+const getUserSubmissions = asyncHandler(async (req, res) => {
+    const { username } = req.query;
+    const data = await CodeChefService.getUserSubmissions(username);
+    return res.status(200).json(data);
+});
 
 export {
     getUserInfo,

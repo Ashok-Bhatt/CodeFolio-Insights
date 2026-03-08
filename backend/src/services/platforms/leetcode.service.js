@@ -1,6 +1,7 @@
 import axios from "axios";
-import { LEETCODE_GRAPHQL_ENDPOINT, LEETCODE_GRAPHQL_QUERIES } from "../../constants/platforms/leetcode.constants.js";
+import { LEETCODE_GRAPHQL_ENDPOINT, LEETCODE_GRAPHQL_QUERIES } from "../../constants/index.js";
 import { getNormalizedLeetCodeHeatmap } from "../../utils/calendar.util.js";
+
 
 const makeApiCall = async (query, variables = {}) => {
     try {
@@ -8,12 +9,7 @@ const makeApiCall = async (query, variables = {}) => {
             LEETCODE_GRAPHQL_ENDPOINT,
             { query, variables },
             {
-                headers: {
-                    "Content-Type": "application/json",
-                    "Referer": "https://leetcode.com/",
-                    "Origin": "https://leetcode.com/",
-                    "User-Agent": "Mozilla/5.0",
-                },
+                headers: LEETCODE_HEADERS,
                 timeout: 30000,
             }
         );

@@ -1,12 +1,6 @@
 import axios from "axios";
 import { getNormalizedCode360Heatmap } from "../../utils/calendar.util.js";
-
-const CODE360_HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-    'Referer': 'https://www.naukri.com/code360/',
-    'Accept': 'application/json, text/plain, */*',
-    'Accept-Language': 'en-US,en;q=0.9',
-};
+import { CODE360_HEADERS } from "../../constants/index.js";
 
 const getUserInfo = async (username, includeContests = false) => {
     const userProfileResponse = await axios.get(`https://www.naukri.com/code360/api/v3/public_section/profile/user_details?uuid=${username}&request_differentiator=${new Date().getTime()}&app_context=publicsection&naukri_request=true`, { headers: CODE360_HEADERS });

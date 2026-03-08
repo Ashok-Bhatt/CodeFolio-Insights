@@ -4,9 +4,8 @@ import VerificationModel from "../models/verification.model.js";
 import ApiProjectModel from '../models/api-project.model.js';
 import { sendOtpEmail } from '../utils/nodemailer.util.js';
 import { generateApiKey } from '../utils/api-key.util.js';
-
-// Helper to generate 6-digit OTP
-const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
+import { generateOTP } from '../utils/otp.util.js';
+import { OTP_EXPIRY_TIME } from '../constants/index.js'
 
 const signup = async (name, email, password) => {
     let user = await UserModel.findOne({ email });
@@ -26,7 +25,7 @@ const signup = async (name, email, password) => {
         password: passwordHash,
         otp: otpHash,
         type: 'signup',
-        expiresAt: new Date(Date.now() + 10 * 60 * 1000) // 10 minutes
+        expiresAt: new Date(Date.now() + OTP_EXPIRY_TIME) // 10 minutes
     });
     await verification.save();
 
@@ -64,7 +63,7 @@ const login = async (email, password) => {
         userId: user._id,
         otp: otpHash,
         type: 'login',
-        expiresAt: new Date(Date.now() + 10 * 60 * 1000)
+        expiresAt: new Date(Date.now() + OTP_EXPIRY_TIME)
     });
     await verification.save();
 

@@ -73,52 +73,6 @@ const getStreaksAndActiveDays = (calendar) => {
   };
 };
 
-const isLeapYear = (year) => {
-  return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
-}
-
-const getDateDetailsFromDayOfYear = (year, dayIndex) => {
-  const dateObj = new Date(year, 0, dayIndex + 1);
-  const dateKey = dateObj.toISOString().split('T')[0];
-  const month = dateObj.getMonth() + 1;
-  const dayOfMonth = dateObj.getDate();
-  return { dateKey, month, dayOfMonth };
-}
-
-const scrapeGfgTooltipData = async (page, selector, tooltipSelector) => {
-  try {
-    await page.hover(selector);
-    await page.waitForSelector(tooltipSelector, { visible: true, timeout: 3000 });
-
-    const result = await page.$eval(tooltipSelector, el => {
-      const submissionText = el.textContent.trim();
-      const countMatch = submissionText.match(/\d+/);
-      const count = countMatch ? parseInt(countMatch[0], 10) : 0;
-      const dateTextMatch = submissionText.match(/on\s+(.*)/i);
-      const dateText = dateTextMatch ? dateTextMatch[1].trim() : null;
-
-      let formattedDate = null;
-      if (dateText) {
-        const dateObj = new Date(dateText);
-        if (!isNaN(dateObj)) {
-          const year = dateObj.getFullYear();
-          const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-          const day = String(dateObj.getDate()).padStart(2, '0');
-          formattedDate = `${year}-${month}-${day}`;
-        }
-      }
-      return { count: count, date: formattedDate };
-    });
-
-    await page.mouse.move(1, 1);
-    await new Promise(resolve => setTimeout(resolve, 100));
-    return { count: result.count, date: result.date };
-  } catch (e) {
-    console.log(e.message);
-    return { count: 0, date: null };
-  }
-};
-
 const getSortedHeatmap = (heatmap) => {
   const finalSortedHeatmap = {};
   Object.keys(heatmap).sort().forEach(key => {
@@ -270,10 +224,7 @@ const getNormalizedGfgHeatmap = (heatmap, year) => {
 
 export {
   getStreaksAndActiveDays,
-  isLeapYear,
-  getDateDetailsFromDayOfYear,
   getSortedHeatmap,
-  scrapeGfgTooltipData,
   getNormalizedGithubHeatmap,
   getNormalizedCodeChefHeatmap,
   getNormalizedLeetCodeHeatmap,

@@ -1,81 +1,46 @@
 import * as GfgService from "../../services/platforms/gfg.service.js";
+import asyncHandler from "../../utils/async-handler.util.js";
 
-const getUserInfo = async (req, res) => {
-    try {
-        const { user } = req.query;
-        if (!user) return res.status(400).json({ message: "Username is required" });
-        const data = await GfgService.getUserInfo(user);
-        res.status(200).json(data);
-    } catch (error) {
-        res.status(error.statusCode || 500).json({ message: error.message || "Failed to fetch GFG user info" });
-    }
-};
+const getUserInfo = asyncHandler(async (req, res) => {
+    const { username } = req.query;
+    const data = await GfgService.getUserInfo(username);
+    return res.status(200).json(data);
+});
 
-const getUserSubmissions = async (req, res) => {
-    try {
-        const { user, year } = req.query;
-        if (!user) return res.status(400).json({ message: "Username is required" });
-        const targetYear = parseInt(year) || new Date().getFullYear();
-        const data = await GfgService.getUserSubmissions(user, targetYear);
-        res.status(200).json(data);
-    } catch (error) {
-        res.status(error.statusCode || 500).json({ message: error.message || "Failed to fetch GFG user submissions" });
-    }
-};
+const getUserSubmissions = asyncHandler(async (req, res) => {
+    const { username, year } = req.query;
+    const data = await GfgService.getUserSubmissions(username, year);
+    return res.status(200).json(data);
+});
 
-const getQuestionOfToday = async (req, res) => {
-    try {
-        const data = await GfgService.getQuestionOfToday();
-        res.status(200).json(data);
-    } catch (error) {
-        res.status(error.statusCode || 500).json({ message: error.message || "Failed to fetch GFG question of today" });
-    }
-};
+const getQuestionOfToday = asyncHandler(async (req, res) => {
+    const data = await GfgService.getQuestionOfToday();
+    return res.status(200).json(data);
+});
 
-const getUserProblemsSolved = async (req, res) => {
-    try {
-        const { user } = req.query;
-        if (!user) return res.status(400).json({ message: "Username is required" });
-        const data = await GfgService.getUserProblemsSolved(user);
-        res.status(200).json(data);
-    } catch (error) {
-        res.status(error.statusCode || 500).json({ message: error.message || "Failed to fetch GFG user problems solved" });
-    }
-};
+const getUserProblemsSolved = asyncHandler(async (req, res) => {
+    const { username } = req.query;
+    const data = await GfgService.getUserProblemsSolved(username);
+    return res.status(200).json(data);
+});
 
-const getInstitutionTopThreeRankedUsers = async (req, res) => {
-    try {
-        const { institution } = req.query;
-        if (!institution) return res.status(400).json({ message: "Institution name is required" });
-        const data = await GfgService.getInstitutionTopThreeRankedUsers(institution);
-        res.status(200).json(data);
-    } catch (error) {
-        res.status(error.statusCode || 500).json({ message: error.message || "Failed to fetch GFG institution ranked users" });
-    }
-};
+const getInstitutionTopThreeRankedUsers = asyncHandler(async (req, res) => {
+    const { institution } = req.query;
+    const data = await GfgService.getInstitutionTopThreeRankedUsers(institution);
+    return res.status(200).json(data);
+});
 
-const getInstitutionInfo = async (req, res) => {
-    try {
-        const { institution } = req.query;
-        if (!institution) return res.status(400).json({ message: "Institution name is required" });
-        const data = await GfgService.getInstitutionInfo(institution);
-        res.status(200).json(data);
-    } catch (error) {
-        res.status(error.statusCode || 500).json({ message: error.message || "Failed to fetch GFG institution info" });
-    }
-};
+const getInstitutionInfo = asyncHandler(async (req, res) => {
+    const { institution } = req.query;
+    const data = await GfgService.getInstitutionInfo(institution);
+    return res.status(200).json(data);
+});
 
-const getMonthlyPotds = async (req, res) => {
-    try {
-        const { year, month } = req.query;
-        const targetYear = parseInt(year) || new Date().getFullYear();
-        const targetMonth = parseInt(month) || new Date().getMonth() + 1;
-        const data = await GfgService.getMonthlyPotds(targetYear, targetMonth);
-        res.status(200).json(data);
-    } catch (error) {
-        res.status(error.statusCode || 500).json({ message: error.message || "Failed to fetch GFG monthly POTDs" });
-    }
-};
+const getMonthlyPotds = asyncHandler(async (req, res) => {
+    const { year, month } = req.query;
+    const data = await GfgService.getMonthlyPotds(year, month);
+    return res.status(200).json(data);
+});
 
 export {
     getUserInfo,

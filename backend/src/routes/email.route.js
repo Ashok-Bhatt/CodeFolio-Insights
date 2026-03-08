@@ -1,5 +1,5 @@
 import express from 'express';
-import { handleContactInquiry } from '../controllers/platforms/email.controller.js';
+import { handleContactInquiry } from '../controllers/email.controller.js';
 import { validate } from '../middlewares/validate.middleware.js';
 import { contactFormValidationSchema } from '../validators/email.validate.js';
 

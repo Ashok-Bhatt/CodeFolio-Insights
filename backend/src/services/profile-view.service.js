@@ -1,8 +1,6 @@
 import ProfileViewModel from "../models/profile-view.model.js";
 import { v4 as uuid } from "uuid";
-
-const PROFILE_VIEW_COOLDOWN_MS = 10 * 60 * 1000;
-
+import { PROFILE_VIEW_COOLDOWN_TIME } from "../constants/index.js"
 
 const addProfileView = async (vieweeId, viewerId, viewerDeviceToken) => {
     try {
@@ -27,7 +25,7 @@ const addProfileView = async (vieweeId, viewerId, viewerDeviceToken) => {
         const profileViewCount = await ProfileViewModel.findOne(query);
 
         if (profileViewCount) {
-            if (profileViewCount.lastSeenAt.getTime() + PROFILE_VIEW_COOLDOWN_MS < new Date().getTime()) {
+            if (profileViewCount.lastSeenAt.getTime() + PROFILE_VIEW_COOLDOWN_TIME < new Date().getTime()) {
                 profileViewCount.count += 1;
                 profileViewCount.lastSeenAt = new Date();
                 await profileViewCount.save();

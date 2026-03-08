@@ -1,5 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
-import { GEMINI_API_KEY } from "../config/env.config.js";
+import { GEMINI_API_KEY, GEMINI_LLM_MODEL } from "../config/env.config.js";
 import { profileAnalysisSchema, resumeAnalysisSchema } from "../schema/gemini.schema.js";
 import { VIDEOS } from "../constants/index.js";
 
@@ -8,7 +8,7 @@ const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 const getGithubProfileAnalysis = async (githubData) => {
     try {
         const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
+            model: GEMINI_LLM_MODEL,
             contents: `
             You are a senior software engineer and technical recruiter specializing in GitHub profile evaluations.
 

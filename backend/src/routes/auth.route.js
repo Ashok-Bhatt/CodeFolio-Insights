@@ -1,7 +1,7 @@
 import express from "express";
 import passport from "passport";
 import { signup, login, verifyOTP, logout, checkAuth } from "../controllers/auth.controller.js";
-import { signupValidationSchema, loginValidationSchema } from "../validators/auth.validate.js";
+import { signupValidationSchema, loginValidationSchema, otpValidationSchema } from "../validators/auth.validate.js";
 import { getAnalytics } from "../middlewares/analytics.middleware.js";
 import { protectRoute } from "../middlewares/auth.middleware.js";
 import { CORS_ORIGIN } from "../config/env.config.js"
@@ -29,6 +29,7 @@ router.post(
 router.post(
     '/verify-otp', 
     getAnalytics, 
+    validate(otpValidationSchema),
     verifyOTP
 );
 

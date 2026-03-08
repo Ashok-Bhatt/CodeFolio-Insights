@@ -9,7 +9,7 @@ import UserRouter from './routes/user.route.js';
 import ScoreRouter from './routes/score.route.js';
 import PlatformRouter from './routes/platform.route.js';
 import AnalyticsRouter from './routes/analytics.route.js';
-import ProjectRouter from './routes/project.route.js';
+import ApiProjectRouter from './routes/api-project.route.js';
 import EmailRouter from './routes/email.route.js';
 import { SESSION_SECRET, CORS_ORIGIN } from './config/env.config.js';
 import cookieParser from "cookie-parser";
@@ -52,7 +52,7 @@ app.use('/api/profile', ProfileRouter);
 app.use('/api/user', UserRouter);
 app.use('/api/score', ScoreRouter);
 app.use('/api/analytics', AnalyticsRouter);
-app.use('/api/project', ProjectRouter);
+app.use('/api/project', ApiProjectRouter);
 app.use('/api/email', EmailRouter);
 app.use('/api/platform', cors(publicRoutesConfiguration), verifyApiKey, publicApiRateLimiter, getAnalytics, PlatformRouter);
 
@@ -61,7 +61,7 @@ app.use((err, req, res, next) => {
     console.error(err.stack);
     const statusCode = err.statusCode || 500;
     const message = err.message || "Internal Server Error";
-    res.status(statusCode).json({ message });
+    return res.status(statusCode).json({ message });
 });
 
 export { app };

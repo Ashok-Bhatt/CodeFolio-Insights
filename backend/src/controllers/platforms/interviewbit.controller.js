@@ -1,38 +1,23 @@
 import * as InterviewBitService from "../../services/platforms/interviewbit.service.js";
+import asyncHandler from "../../utils/async-handler.util.js";
 
-const getUserInfo = async (req, res) => {
-    try {
-        const { user } = req.query;
-        if (!user) return res.status(400).json({ message: "Username is required" });
-        const data = await InterviewBitService.getUserInfo(user);
-        res.status(200).json(data);
-    } catch (error) {
-        res.status(error.statusCode || 500).json({ message: error.message || "Failed to fetch InterviewBit user info" });
-    }
-};
+const getUserInfo = asyncHandler(async (req, res) => {
+    const { username } = req.query;
+    const data = await InterviewBitService.getUserInfo(username);
+    return res.status(200).json(data);
+});
 
-const getUserSubmissions = async (req, res) => {
-    try {
-        const { user, year } = req.query;
-        if (!user) return res.status(400).json({ message: "Username is required" });
-        const targetYear = parseInt(year) || new Date().getFullYear();
-        const data = await InterviewBitService.getUserSubmissions(user, targetYear);
-        res.status(200).json(data);
-    } catch (error) {
-        res.status(error.statusCode || 500).json({ message: error.message || "Failed to fetch InterviewBit user submissions" });
-    }
-};
+const getUserSubmissions = asyncHandler(async (req, res) => {
+    const { username, year } = req.query;
+    const data = await InterviewBitService.getUserSubmissions(username, year);
+    return res.status(200).json(data);
+});
 
-const getUserBadges = async (req, res) => {
-    try {
-        const { user } = req.query;
-        if (!user) return res.status(400).json({ message: "Username is required" });
-        const data = await InterviewBitService.getUserBadges(user);
-        res.status(200).json(data);
-    } catch (error) {
-        res.status(error.statusCode || 500).json({ message: error.message || "Failed to fetch InterviewBit user badges" });
-    }
-};
+const getUserBadges = asyncHandler(async (req, res) => {
+    const { username } = req.query;
+    const data = await InterviewBitService.getUserBadges(username);
+    return res.status(200).json(data);
+});
 
 export {
     getUserInfo,

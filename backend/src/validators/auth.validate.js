@@ -15,7 +15,14 @@ const loginValidationSchema = z.object({
     })
 });
 
+const otpValidationSchema = z.object({
+    body: z.object({
+        otp: z.string().length(6, "Length of otp should be 6"),
+    })
+})
+
 export {
     signupValidationSchema,
-    loginValidationSchema
+    loginValidationSchema,
+    otpValidationSchema,
 }

@@ -1,4 +1,53 @@
+import * as platformsFetching from '../utils/fetching/platforms.fetch.util.js';
+
 export const LEETCODE_GRAPHQL_ENDPOINT = "https://leetcode.com/graphql";
+
+export const GITHUB_TOTAL_COMMITS_LIMIT = 25;
+
+export const GITHUB_REPO_DATA_PAGE_SIZE = 100;
+
+export const PLATFORMS = {
+    "gfg": { field: "gfgUsername", fetchFunction: platformsFetching.fetchGfgData },
+    "codechef": { field: "codechefUsername", fetchFunction: platformsFetching.fetchCodeChefData },
+    "interviewbit": { field: "interviewbitUsername", fetchFunction: platformsFetching.fetchInterviewbitData },
+    "leetcode": { field: "leetCodeUsername", fetchFunction: platformsFetching.fetchLeetCodeData },
+    "github": { field: "githubUsername", fetchFunction: platformsFetching.fetchGitHubData },
+    "code360": { field: "code360Username", fetchFunction: platformsFetching.fetchCode360Data },
+    "hackerrank": { field: "hackerrankUsername", fetchFunction: platformsFetching.fetchHackerRankData },
+}
+
+export const CODE360_HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+    'Referer': 'https://www.naukri.com/code360/',
+    'Accept': 'application/json, text/plain, */*',
+    'Accept-Language': 'en-US,en;q=0.9',
+};
+
+export const GFG_HEADERS = {
+    "Content-Type": "application/json",
+    "Referer": "https://practice.geeksforgeeks.org",
+    "User-Agent": "Mozilla/5.0",
+    "Accept": "application/json",
+};
+
+export const HACKERRANK_HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+    'Referer': 'https://www.hackerrank.com/',
+};
+
+export const INTERVIEWBIT_HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+    'Referer': 'https://www.interviewbit.com/',
+    'Accept': 'application/json, text/plain, */*',
+    'Accept-Language': 'en-US,en;q=0.9',
+};
+
+export const LEETCODE_HEADERS = {
+    "Content-Type": "application/json",
+    "Referer": "https://leetcode.com/",
+    "Origin": "https://leetcode.com/",
+    "User-Agent": "Mozilla/5.0",
+}
 
 export const LEETCODE_GRAPHQL_QUERIES = {
     userProfile: `
@@ -321,3 +370,97 @@ export const LEETCODE_GRAPHQL_QUERIES = {
         }
     `
 };
+
+export const GITHUB_API_QUERIES = {
+    GITHUB_TOTAL_PINNED_REPO_COUNT_QUERY: `
+        query($username: String!) {
+            user(login: $username) {
+                pinnedItems(first: 6, types: REPOSITORY) {
+                    totalCount
+                }
+            }
+        }
+    `,
+
+    GITHUB_PINNED_REPOS_QUERY: `
+        query($username: String!) {
+            user(login: $username) {
+                pinnedItems(first: 6, types: REPOSITORY) {
+                    nodes {
+                        ... on Repository {
+                            name
+                            description
+                            url
+                            repositoryTopics(first: 50) {
+                                nodes {
+                                    topic {
+                                        name
+                                    }
+                                }
+                            }
+                            readmeFile: object(expression: "HEAD:README.md") {
+                                ... on Blob { byteSize }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    `,
+
+    GITHUB_CONTRIBUTION_COUNT_QUERY: `
+        query($username: String!, $from: DateTime!, $to: DateTime!) { user(login: $username) { contributionsCollection(from: $from, to: $to) { pullRequestContributions(first: 1) { totalCount } issueContributions(first: 1) { totalCount } totalCommitContributions pullRequestReviewContributions(first: 1) { totalCount } repositoryContributions(first: 1) { totalCount } restrictedContributionsCount } } }
+    `,
+
+    GITHUB_LAST_YEAR_CONTRIBUTION_CALENDAR_QUERY: `
+        query($username: String!){
+            user(login: $username) {
+                contributionsCollection {
+                    contributionCalendar {
+                        weeks {
+                            contributionDays {
+                                contributionCount
+                                date
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    `,
+
+    GITHUB_YEARLY_CONTRIBUTION_CALENDAR_QUERY: `
+        query($username: String!, $from: DateTime!, $to: DateTime!) { user(login: $username) { contributionsCollection(from: $from, to: $to) { contributionCalendar { totalContributions weeks { contributionDays { date contributionCount } } } } } }
+    `,
+
+    GITHUB_LAST_YEAR_COMMITS_COUNT_QUERY: `
+        query($username: String!){
+            user(login: $username) {
+                contributionsCollection {
+                    contributionCalendar {
+                        totalContributions
+                    }
+                }
+            }
+        }
+    `,
+
+    GITHUB_REPO_TOTAL_COMMITS_COUNT_QUERY: `
+        query($username: String!, $reponame: String!) {
+            repository(owner: $username, name: $reponame) {
+                defaultBranchRef {
+                    target {
+                        ... on Commit {
+                            history {
+                                totalCount
+                            }
+                        }
+                    }
+            }
+        }
+    }`,
+
+    GITHUB_PROFILE_README_QUERY: `
+        query($username: String!) { user(login: $username) { profileReadmeRepo: repository(name: $username) { isPrivate readmeFile: object(expression: \"HEAD:README.md\") { ... on Blob { byteSize } } } } }
+    `,
+}
