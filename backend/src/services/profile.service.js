@@ -97,8 +97,12 @@ const refreshProfileData = async (userId, currentUser) => {
 
     if (!isAdmin && !isOwner && !isPublic) throw new Error("Profile visibility is set to private.");
 
-    const profileLinks = await ProfileModel.findOne({ userId });
-    if (!profileLinks) throw new Error("User profiles not configured.");
+    const profileLinks = await ProfileModel.findOneAndUpdate(
+        { userId },
+        { userId },
+        { new: true, upsert: true, setDefaultsOnInsert: true }
+    );
+    if (!profileLinks) throw new Error("Failed to configure user profiles.");
 
     const cachedData = await redisClient.get(`profileData:${userId}`) || {};
 

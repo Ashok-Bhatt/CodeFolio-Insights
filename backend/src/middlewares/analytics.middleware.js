@@ -1,4 +1,4 @@
-import ApiLogsModel from "../models/api-logs.js";
+import ApiLogsModel from "../models/api-logs.model.js";
 import asyncHandler from '../utils/async-handler.util.js';
 
 const getAnalytics = asyncHandler(async (req, res, next) => {

@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSignUp, useVerifyOTP } from '../hooks/useUsers.js';
 import conf from '../config/config.js';
-import toast from 'react-hot-toast';
 import useAuthStore from '../store/useAuthStore.js';
 import OTPInput from '../components/OTPInput.jsx';
 
@@ -11,8 +10,8 @@ const SignupPage = () => {
     const [otp, setOtp] = useState('');
     const [isOTPMode, setIsOTPMode] = useState(false);
 
-    const { mutateAsync: signup, isPending: isSigningUp } = useSignUp();
-    const { mutateAsync: verifyOTP, isPending: isVerifying } = useVerifyOTP();
+    const { mutate: signup, isPending: isSigningUp } = useSignUp();
+    const { mutate: verifyOTP, isPending: isVerifying } = useVerifyOTP();
     const navigate = useNavigate();
     const setUser = useAuthStore((state) => state.setUser);
     const setToken = useAuthStore((state) => state.setToken);
@@ -21,36 +20,26 @@ const SignupPage = () => {
 
     const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        try {
-            const data = await signup(formData);
-            if (data.requires2FA) {
-                setIsOTPMode(true);
-                toast.success(data.message);
-            } else {
-                // Should not happen for signups as per current logic, but just in case
-                setUser(data.user);
-                setToken(data.token);
-                toast.success("Signup successful");
-                navigate(`/dashboard/${data.user._id}`);
+        signup(formData, {
+            onSuccess: (data) => {
+                if (data.requires2FA) {
+                    setIsOTPMode(true);
+                } else {
+                    navigate(`/dashboard/${data.user._id}`);
+                }
             }
-        } catch (err) {
-            toast.error(err.response?.data?.message || "Signup failed");
-        }
+        });
     };
 
-    const handleVerifyOTP = async (e) => {
+    const handleVerifyOTP = (e) => {
         e.preventDefault();
-        try {
-            const data = await verifyOTP({ otp });
-            setUser(data.user);
-            setToken(data.token);
-            toast.success(data.message || "Signup successful");
-            navigate(`/dashboard/${data.user._id}`);
-        } catch (err) {
-            toast.error(err.response?.data?.message || "Verification failed");
-        }
+        verifyOTP({ otp }, {
+            onSuccess: (data) => {
+                navigate(`/dashboard/${data.user._id}`);
+            }
+        });
     };
 
     return (

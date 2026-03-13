@@ -1,6 +1,7 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import UserModel from '../models/user.model.js';
+import ProfileModel from '../models/profile.model.js';
 import ApiProjectModel from '../models/api-project.model.js';
 import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_CALLBACK_URL } from './env.config.js';
 import { generateApiKey } from '../utils/api-key.util.js';
@@ -44,13 +45,19 @@ passport.use(new GoogleStrategy({
 
             await newUser.save();
 
+            // Create initial profile document
+            const initialProfile = new ProfileModel({
+                userId: newUser._id
+            });
+            await initialProfile.save();
+
             // Create initial "Testing" project
             const initialProject = new ApiProjectModel({
                 name: "Testing",
                 userId: newUser._id,
                 apiKey: apiKey
             });
-            
+
             await initialProject.save();
 
             return done(null, newUser);

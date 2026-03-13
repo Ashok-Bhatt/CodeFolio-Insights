@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import conf from '../config/config.js';
 import { useLogin, useVerifyOTP } from '../hooks/useUsers.js';
-import toast from 'react-hot-toast';
 import useAuthStore from '../store/useAuthStore.js';
 import OTPInput from '../components/OTPInput.jsx';
 
@@ -11,8 +10,8 @@ const LoginPage = () => {
     const [otp, setOtp] = useState('');
     const [isOTPMode, setIsOTPMode] = useState(false);
 
-    const { mutateAsync: login, isPending: isLoggingIn } = useLogin();
-    const { mutateAsync: verifyOTP, isPending: isVerifying } = useVerifyOTP();
+    const { mutate: login, isPending: isLoggingIn } = useLogin();
+    const { mutate: verifyOTP, isPending: isVerifying } = useVerifyOTP();
     const navigate = useNavigate();
     const setUser = useAuthStore((state) => state.setUser);
     const setToken = useAuthStore((state) => state.setToken);
@@ -21,35 +20,26 @@ const LoginPage = () => {
 
     const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        try {
-            const data = await login(formData);
-            if (data.requires2FA) {
-                setIsOTPMode(true);
-                toast.success(data.message);
-            } else {
-                setUser(data.user);
-                setToken(data.token);
-                toast.success("Login successful");
-                navigate(`/dashboard/${data.user._id}`);
+        login(formData, {
+            onSuccess: (data) => {
+                if (data.requires2FA) {
+                    setIsOTPMode(true);
+                } else {
+                    navigate(`/dashboard/${data.user._id}`);
+                }
             }
-        } catch (err) {
-            toast.error(err.response?.data?.message || "Login failed");
-        }
+        });
     };
 
-    const handleVerifyOTP = async (e) => {
+    const handleVerifyOTP = (e) => {
         e.preventDefault();
-        try {
-            const data = await verifyOTP({ otp });
-            setUser(data.user);
-            setToken(data.token);
-            toast.success(data.message || "Login successful");
-            navigate(`/dashboard/${data.user._id}`);
-        } catch (err) {
-            toast.error(err.response?.data?.message || "Verification failed");
-        }
+        verifyOTP({ otp }, {
+            onSuccess: (data) => {
+                navigate(`/dashboard/${data.user._id}`);
+            }
+        });
     };
 
     return (

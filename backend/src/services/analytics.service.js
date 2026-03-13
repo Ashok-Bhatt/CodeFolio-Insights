@@ -1,6 +1,6 @@
 import ApiProjectModel from "../models/api-project.model.js";
 import ApiPointsModel from "../models/api-points.model.js";
-import ApiLogsModel from "../models/api-logs.js";
+import ApiLogsModel from "../models/api-logs.model.js";
 import { publicEndpointsRegex } from "../constants/regex.constants.js";
 
 const getDailyApiUsageData = async (apiKey, lastDays) => {

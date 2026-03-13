@@ -51,7 +51,15 @@ const useUpdateProfileLink = () => {
                 params: { platformName, platformUsername }
             });
             return response.data;
-        })
+        }),
+        onSuccess: (data, variables) => {
+            queryClient.invalidateQueries(['profileLinks']);
+            const platform = variables.platformName;
+            toast.success(`${platform.charAt(0).toUpperCase() + platform.slice(1)} link updated successfully!`);
+        },
+        onError: (error) => {
+            toast.error(error.response?.data?.message || "Couldn't update the link");
+        }
     });
 };
 

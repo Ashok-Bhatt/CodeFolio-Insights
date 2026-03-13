@@ -39,7 +39,7 @@ const Sidebar = () => {
         >
             <div className={`relative flex items-center h-20 border-b border-gray-50 transition-all duration-500 ${isSidebarCollapsed ? 'justify-center px-4' : 'justify-between px-6'}`}>
                 <div className="relative flex-shrink-0">
-                    <Terminal className="w-6 h-6 text-blue-600 relative z-10" />
+                    <img src="/public/Images/logo.png" alt="app logo" className="w-10 h-10" />
                 </div>
 
                 {/* Toggler to toggle the sidebar */}

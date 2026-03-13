@@ -5,3 +5,4 @@ export * from './useProjects';
 export * from './useScores';
 export * from './useHighlights';
 export * from './useResponsiveCount';
+export * from './usePublicApi';

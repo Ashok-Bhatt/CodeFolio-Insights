@@ -3,7 +3,7 @@ import { Mail, MessageSquare, User, Send, CheckCircle, Globe, Zap, ShieldCheck, 
 import { useContactUs } from '../hooks/useEmail.js';
 
 const ContactUs = () => {
-    const { mutateAsync: sendMessage, isPending: isLoading, reset } = useContactUs();
+    const { mutate: sendMessage, isPending: isLoading, reset } = useContactUs();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -16,14 +16,13 @@ const ContactUs = () => {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        try {
-            await sendMessage(formData);
-            setFormData({ name: '', email: '', subject: 'General Inquiry', message: '' });
-        } catch (error) {
-            // Error is handled by the hook (toast)
-        }
+        sendMessage(formData, {
+            onSuccess: () => {
+                setFormData({ name: '', email: '', subject: 'General Inquiry', message: '' });
+            }
+        });
     };
 
     return (

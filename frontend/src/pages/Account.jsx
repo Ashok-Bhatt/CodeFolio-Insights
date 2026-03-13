@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 
 const Account = () => {
     const user = useAuthStore((state) => state.user);
-    const { mutateAsync: changePassword, isPending: isLoading } = useChangePassword();
+    const { mutate: changePassword, isPending: isLoading } = useChangePassword();
     const { mutate: toggle2FA, isPending: isToggling2FA } = useToggle2FA();
     console.log(user);
 
@@ -22,7 +22,7 @@ const Account = () => {
 
     const [isEditingApiKey, setIsEditingApiKey] = useState(false);
 
-    const { mutateAsync: updateApiKey, isPending: isUpdatingApiKey } = useUpdateApiKey();
+    const { mutate: updateApiKey, isPending: isUpdatingApiKey } = useUpdateApiKey();
 
     const [showPasswords, setShowPasswords] = useState({
         old: false,
@@ -42,16 +42,19 @@ const Account = () => {
         setApiKeyForm({ [e.target.name]: e.target.value });
     };
 
-    const handleApiKeySubmit = async (e) => {
+    const handleApiKeySubmit = (e) => {
         e.preventDefault();
         if (!apiKeyForm.apiKey.trim()) {
             return toast.error("API Key cannot be empty!");
         }
-        await updateApiKey({ apiKey: apiKeyForm.apiKey.trim() });
-        setIsEditingApiKey(false);
+        updateApiKey({ apiKey: apiKeyForm.apiKey.trim() }, {
+            onSuccess: () => {
+                setIsEditingApiKey(false);
+            }
+        });
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
 
         if (!form.oldPassword || !form.newPassword || !form.confirmPassword) {
@@ -66,16 +69,14 @@ const Account = () => {
             return toast.error("Password must be at least 6 characters long!");
         }
 
-        try {
-            await changePassword({
-                oldPassword: form.oldPassword,
-                newPassword: form.newPassword
-            });
-            toast.success("Password updated successfully!");
-            setForm({ oldPassword: '', newPassword: '', confirmPassword: '' });
-        } catch (error) {
-            toast.error(error?.response?.data?.message || "Failed to update password!");
-        }
+        changePassword({
+            oldPassword: form.oldPassword,
+            newPassword: form.newPassword
+        }, {
+            onSuccess: () => {
+                setForm({ oldPassword: '', newPassword: '', confirmPassword: '' });
+            }
+        });
     };
 
     return (

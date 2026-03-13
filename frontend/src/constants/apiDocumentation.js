@@ -17,12 +17,12 @@ export const documentationData = [
                     url: SERVER_BASE_URL + "/api/platform/gfg/user/profile",
                 },
                 parameters: [
-                    { name: "user", type: "String", example: "ashokbhacjou", description: "GFG username", status: "required" },
+                    { name: "username", type: "String", example: "ashokbhacjou", description: "GFG username", status: "required" },
                     { name: "apiKey", type: "String", example: "your-api-key", description: "Your API Key.", status: "required" },
                 ],
                 example: {
                     text: "Try example (But use your api key first)",
-                    request: SERVER_BASE_URL + "/api/platform/gfg/user/profile?user=&apiKey=",
+                    request: SERVER_BASE_URL + "/api/platform/gfg/user/profile?username=&apiKey=",
                     response: {},
                 },
                 quotasInfo: "Calling this endpoint costs 1 API Point.",
@@ -36,13 +36,13 @@ export const documentationData = [
                     url: SERVER_BASE_URL + "/api/platform/gfg/user/submissions",
                 },
                 parameters: [
-                    { name: "user", type: "String", example: "ashokbhacjou", description: "GFG username", status: "required" },
+                    { name: "username", type: "String", example: "ashokbhacjou", description: "GFG username", status: "required" },
                     { name: "apiKey", type: "String", example: "your-api-key", description: "Your API Key.", status: "required" },
                     { name: "year", type: "Number", example: "2024", description: "Year", status: "optional" },
                 ],
                 example: {
                     text: "Try example (But use your api key first)",
-                    request: SERVER_BASE_URL + "/api/platform/gfg/user/submissions?user=&apiKey=&year=",
+                    request: SERVER_BASE_URL + "/api/platform/gfg/user/submissions?username=&apiKey=&year=",
                     response: {},
                 },
                 quotasInfo: "Calling this endpoint costs 1 API Point.",
@@ -56,12 +56,12 @@ export const documentationData = [
                     url: SERVER_BASE_URL + "/api/platform/gfg/user/problems",
                 },
                 parameters: [
-                    { name: "user", type: "String", example: "ashokbhacjou", description: "GFG username", status: "required" },
+                    { name: "username", type: "String", example: "ashokbhacjou", description: "GFG username", status: "required" },
                     { name: "apiKey", type: "String", example: "your-api-key", description: "Your API Key.", status: "required" },
                 ],
                 example: {
                     text: "Try example (But use your api key first)",
-                    request: SERVER_BASE_URL + "/api/platform/gfg/user/problems?user=&apiKey=",
+                    request: SERVER_BASE_URL + "/api/platform/gfg/user/problems?username=&apiKey=",
                     response: {},
                 },
                 quotasInfo: "Calling this endpoint costs 1 API Point.",
@@ -104,6 +104,44 @@ export const documentationData = [
                 },
                 quotasInfo: "Calling this endpoint costs 1 API Point.",
             },
+            // {
+            //     title: "Institution Info",
+            //     description: ["Fetches basic details about an institution/college on GeeksforGeeks."],
+            //     request: {
+            //         type: "GET",
+            //         colorClass: { text: "text-green-800", bg: "bg-green-100" },
+            //         url: SERVER_BASE_URL + "/api/platform/gfg/institution/info",
+            //     },
+            //     parameters: [
+            //         { name: "institution", type: "String", example: "Indian Institute of Technology IIT Varanasi", description: "Institution name slug", status: "required" },
+            //         { name: "apiKey", type: "String", example: "your-api-key", description: "Your API Key.", status: "required" },
+            //     ],
+            //     example: {
+            //         text: "Try example (But use your api key first)",
+            //         request: SERVER_BASE_URL + "/api/platform/gfg/institution/info?institution=&apiKey=",
+            //         response: {},
+            //     },
+            //     quotasInfo: "Calling this endpoint costs 1 API Point.",
+            // },
+            // {
+            //     title: "Institution Top Rankers",
+            //     description: ["Fetches top three ranked users of a specific institution/college on GeeksforGeeks."],
+            //     request: {
+            //         type: "GET",
+            //         colorClass: { text: "text-green-800", bg: "bg-green-100" },
+            //         url: SERVER_BASE_URL + "/api/platform/gfg/institution/top-rankers",
+            //     },
+            //     parameters: [
+            //         { name: "institution", type: "String", example: "Indian Institute of Technology IIT Varanasi", description: "Institution name slug", status: "required" },
+            //         { name: "apiKey", type: "String", example: "your-api-key", description: "Your API Key.", status: "required" },
+            //     ],
+            //     example: {
+            //         text: "Try example (But use your api key first)",
+            //         request: SERVER_BASE_URL + "/api/platform/gfg/institution/top-rankers?institution=&apiKey=",
+            //         response: {},
+            //     },
+            //     quotasInfo: "Calling this endpoint costs 1 API Point.",
+            // },
         ],
     },
     {
@@ -118,12 +156,12 @@ export const documentationData = [
                     url: SERVER_BASE_URL + "/api/platform/leetcode/user/profile",
                 },
                 parameters: [
-                    { name: "user", type: "String", example: "ashokbhatt2048", description: "LeetCode username", status: "required" },
+                    { name: "username", type: "String", example: "ashokbhatt2048", description: "LeetCode username", status: "required" },
                     { name: "apiKey", type: "String", example: "your-api-key", description: "Your API Key.", status: "required" },
                 ],
                 example: {
                     text: "Try example (But use your api key first)",
-                    request: SERVER_BASE_URL + "/api/platform/leetcode/user/profile?user=&apiKey=",
+                    request: SERVER_BASE_URL + "/api/platform/leetcode/user/profile?username=&apiKey=",
                     response: {},
                 },
                 quotasInfo: "Calling this endpoint costs 1 API Point.",
@@ -137,12 +175,12 @@ export const documentationData = [
                     url: SERVER_BASE_URL + "/api/platform/leetcode/user/language-stats",
                 },
                 parameters: [
-                    { name: "user", type: "String", example: "ashokbhatt2048", description: "LeetCode username", status: "required" },
+                    { name: "username", type: "String", example: "ashokbhatt2048", description: "LeetCode username", status: "required" },
                     { name: "apiKey", type: "String", example: "your-api-key", description: "Your API Key.", status: "required" },
                 ],
                 example: {
                     text: "Try example (But use your api key first)",
-                    request: SERVER_BASE_URL + "/api/platform/leetcode/user/language-stats?user=&apiKey=",
+                    request: SERVER_BASE_URL + "/api/platform/leetcode/user/language-stats?username=&apiKey=",
                     response: {},
                 },
                 quotasInfo: "Calling this endpoint costs 1 API Point.",
@@ -156,13 +194,13 @@ export const documentationData = [
                     url: SERVER_BASE_URL + "/api/platform/leetcode/user/calendar",
                 },
                 parameters: [
-                    { name: "user", type: "String", example: "ashokbhatt2048", description: "LeetCode username", status: "required" },
+                    { name: "username", type: "String", example: "ashokbhatt2048", description: "LeetCode username", status: "required" },
                     { name: "apiKey", type: "String", example: "your-api-key", description: "Your API Key.", status: "required" },
                     { name: "year", type: "Number", example: "2025", description: "The year for which heatmap is generated", status: "optional" },
                 ],
                 example: {
                     text: "Try example (But use your api key first)",
-                    request: SERVER_BASE_URL + "/api/platform/leetcode/user/calendar?user=&apiKey=&year=",
+                    request: SERVER_BASE_URL + "/api/platform/leetcode/user/calendar?username=&apiKey=&year=",
                     response: {},
                 },
                 quotasInfo: "Calling this endpoint costs 1 API Point.",
@@ -176,13 +214,13 @@ export const documentationData = [
                     url: SERVER_BASE_URL + "/api/platform/leetcode/user/recent-submissions",
                 },
                 parameters: [
-                    { name: "user", type: "String", example: "ashokbhatt2048", description: "LeetCode username", status: "required" },
+                    { name: "username", type: "String", example: "ashokbhatt2048", description: "LeetCode username", status: "required" },
                     { name: "apiKey", type: "String", example: "your-api-key", description: "Your API Key.", status: "required" },
                     { name: "limit", type: "Number", example: "10", description: "The number of submissions we want", status: "optional" },
                 ],
                 example: {
                     text: "Try example (But use your api key first)",
-                    request: SERVER_BASE_URL + "/api/platform/leetcode/user/recent-submissions?user=&apiKey=&limit=",
+                    request: SERVER_BASE_URL + "/api/platform/leetcode/user/recent-submissions?username=&apiKey=&limit=",
                     response: {},
                 },
                 quotasInfo: "Calling this endpoint costs 1 API Point.",
@@ -196,12 +234,12 @@ export const documentationData = [
                     url: SERVER_BASE_URL + "/api/platform/leetcode/user/badges",
                 },
                 parameters: [
-                    { name: "user", type: "String", example: "ashokbhatt2048", description: "LeetCode username", status: "required" },
+                    { name: "username", type: "String", example: "ashokbhatt2048", description: "LeetCode username", status: "required" },
                     { name: "apiKey", type: "String", example: "your-api-key", description: "Your API Key.", status: "required" },
                 ],
                 example: {
                     text: "Try example (But use your api key first)",
-                    request: SERVER_BASE_URL + "/api/platform/leetcode/user/badges?user=&apiKey=",
+                    request: SERVER_BASE_URL + "/api/platform/leetcode/user/badges?username=&apiKey=",
                     response: {},
                 },
                 quotasInfo: "Calling this endpoint costs 1 API Point.",
@@ -215,12 +253,12 @@ export const documentationData = [
                     url: SERVER_BASE_URL + "/api/platform/leetcode/user/contest-ranking",
                 },
                 parameters: [
-                    { name: "user", type: "String", example: "ashokbhatt2048", description: "LeetCode username", status: "required" },
+                    { name: "username", type: "String", example: "ashokbhatt2048", description: "LeetCode username", status: "required" },
                     { name: "apiKey", type: "String", example: "your-api-key", description: "Your API Key.", status: "required" },
                 ],
                 example: {
                     text: "Try example (But use your api key first)",
-                    request: SERVER_BASE_URL + "/api/platform/leetcode/user/contest-ranking?user=&apiKey=",
+                    request: SERVER_BASE_URL + "/api/platform/leetcode/user/contest-ranking?username=&apiKey=",
                     response: {},
                 },
                 quotasInfo: "Calling this endpoint costs 1 API Point.",
@@ -234,12 +272,12 @@ export const documentationData = [
                     url: SERVER_BASE_URL + "/api/platform/leetcode/user/skill-stats",
                 },
                 parameters: [
-                    { name: "user", type: "String", example: "ashokbhatt2048", description: "LeetCode username", status: "required" },
+                    { name: "username", type: "String", example: "ashokbhatt2048", description: "LeetCode username", status: "required" },
                     { name: "apiKey", type: "String", example: "your-api-key", description: "Your API Key.", status: "required" },
                 ],
                 example: {
                     text: "Try example (But use your api key first)",
-                    request: SERVER_BASE_URL + "/api/platform/leetcode/user/skill-stats?user=&apiKey=",
+                    request: SERVER_BASE_URL + "/api/platform/leetcode/user/skill-stats?username=&apiKey=",
                     response: {},
                 },
                 quotasInfo: "Calling this endpoint costs 1 API Point.",
@@ -253,12 +291,12 @@ export const documentationData = [
                     url: SERVER_BASE_URL + "/api/platform/leetcode/user/question-progress",
                 },
                 parameters: [
-                    { name: "user", type: "String", example: "ashokbhatt2048", description: "LeetCode username", status: "required" },
+                    { name: "username", type: "String", example: "ashokbhatt2048", description: "LeetCode username", status: "required" },
                     { name: "apiKey", type: "String", example: "your-api-key", description: "Your API Key.", status: "required" },
                 ],
                 example: {
                     text: "Try example (But use your api key first)",
-                    request: SERVER_BASE_URL + "/api/platform/leetcode/user/question-progress?user=&apiKey=",
+                    request: SERVER_BASE_URL + "/api/platform/leetcode/user/question-progress?username=&apiKey=",
                     response: {},
                 },
                 quotasInfo: "Calling this endpoint costs 1 API Point.",
@@ -272,12 +310,12 @@ export const documentationData = [
                     url: SERVER_BASE_URL + "/api/platform/leetcode/user/session-progress",
                 },
                 parameters: [
-                    { name: "user", type: "String", example: "ashokbhatt2048", description: "LeetCode username", status: "required" },
+                    { name: "username", type: "String", example: "ashokbhatt2048", description: "LeetCode username", status: "required" },
                     { name: "apiKey", type: "String", example: "your-api-key", description: "Your API Key.", status: "required" },
                 ],
                 example: {
                     text: "Try example (But use your api key first)",
-                    request: SERVER_BASE_URL + "/api/platform/leetcode/user/session-progress?user=&apiKey=",
+                    request: SERVER_BASE_URL + "/api/platform/leetcode/user/session-progress?username=&apiKey=",
                     response: {},
                 },
                 quotasInfo: "Calling this endpoint costs 1 API Point.",
@@ -347,12 +385,12 @@ export const documentationData = [
                     url: SERVER_BASE_URL + "/api/platform/leetcode/user/favorite-list",
                 },
                 parameters: [
-                    { name: "userSlug", type: "String", example: "ashokbhatt2048", description: "LeetCode user slug (username)", status: "required" },
+                    { name: "username", type: "String", example: "ashokbhatt2048", description: "LeetCode username", status: "required" },
                     { name: "apiKey", type: "String", example: "your-api-key", description: "Your API Key.", status: "required" },
                 ],
                 example: {
                     text: "Try example (But use your api key first)",
-                    request: SERVER_BASE_URL + "/api/platform/leetcode/user/favorite-list?userSlug=&apiKey=",
+                    request: SERVER_BASE_URL + "/api/platform/leetcode/user/favorite-list?username=&apiKey=",
                     response: {},
                 },
                 quotasInfo: "Calling this endpoint costs 1 API Point.",
@@ -408,17 +446,17 @@ export const documentationData = [
                     url: SERVER_BASE_URL + "/api/platform/codechef/user/profile",
                 },
                 parameters: [
-                    { name: "user", type: "String", example: "ashokbhatt", description: "CodeChef username", status: "required" },
+                    { name: "username", type: "String", example: "ashokbhatt", description: "CodeChef username", status: "required" },
                     { name: "apiKey", type: "String", example: "your-api-key", description: "Your API Key.", status: "required" },
                     { name: "includeContests", type: "Boolean", example: "true", description: "Include contest data.", status: "optional" },
                     { name: "includeAchievements", type: "Boolean", example: "true", description: "Include achievements data.", status: "optional" },
                 ],
                 example: {
                     text: "Try example (But use your api key first)",
-                    request: SERVER_BASE_URL + "/api/platform/codechef/user/profile?user=&apiKey=&includeContests=&includeAchievements=",
+                    request: SERVER_BASE_URL + "/api/platform/codechef/user/profile?username=&apiKey=&includeContests=&includeAchievements=",
                     response: {},
                 },
-                quotasInfo: "Calling this endpoint costs 1 API Point. If includeContests is set to true, it costs an additional 2 API Points. If includeAchievements is set to true, it costs an additional 1 API Point.",
+                quotasInfo: "Calling this endpoint costs 3 API Points. If includeContests is set to true, it costs an additional 1 API Points. If includeAchievements is set to true, it costs an additional 1 API Point.",
             },
             {
                 title: "Submission History",
@@ -429,13 +467,13 @@ export const documentationData = [
                     url: SERVER_BASE_URL + "/api/platform/codechef/user/submissions",
                 },
                 parameters: [
-                    { name: "user", type: "String", example: "ashokbhatt", description: "CodeChef username", status: "required" },
+                    { name: "username", type: "String", example: "ashokbhatt", description: "CodeChef username", status: "required" },
                     { name: "apiKey", type: "String", example: "your-api-key", description: "Your API Key.", status: "required" },
                     { name: "year", type: "Number", example: "2024", description: "Year", status: "optional" },
                 ],
                 example: {
                     text: "Try example (But use your api key first)",
-                    request: SERVER_BASE_URL + "/api/platform/codechef/user/submissions?user=&apiKey=&year=",
+                    request: SERVER_BASE_URL + "/api/platform/codechef/user/submissions?username=&apiKey=&year=",
                     response: {},
                 },
                 quotasInfo: "Calling this endpoint costs 3 API Points.",
@@ -454,16 +492,17 @@ export const documentationData = [
                     url: SERVER_BASE_URL + "/api/platform/code360/user/profile",
                 },
                 parameters: [
-                    { name: "user", type: "String", example: "AshokBhatt", description: "Code360 username", status: "required" },
+                    { name: "username", type: "String", example: "AshokBhatt", description: "Code360 UUID", status: "required" },
                     { name: "apiKey", type: "String", example: "your-api-key", description: "Your API Key.", status: "required" },
                     { name: "includeContests", type: "Boolean", example: "true", description: "Include contest data.", status: "optional" },
+                    { name: "includeAchievements", type: "Boolean", example: "true", description: "Include achievements data.", status: "optional" },
                 ],
                 example: {
                     text: "Try example (But use your api key first)",
-                    request: SERVER_BASE_URL + "/api/platform/code360/user/profile?user=&apiKey=&includeContests=true",
+                    request: SERVER_BASE_URL + "/api/platform/code360/user/profile?username=&apiKey=&includeContests=&includeAchievements=",
                     response: {},
                 },
-                quotasInfo: "Calling this endpoint costs 1 API Point. If includeContests is set to true, it costs an additional 0.5 API Points.",
+                quotasInfo: "Calling this endpoint costs 1 API Point. If includeContests is set to true, it costs an additional 0.5 API Points. If includeAchievements is set to true, it costs an additional 0.5 API Point.",
             },
             {
                 title: "User Submissions",
@@ -474,13 +513,13 @@ export const documentationData = [
                     url: SERVER_BASE_URL + "/api/platform/code360/user/submissions",
                 },
                 parameters: [
-                    { name: "user", type: "String", example: "AshokBhatt", description: "Code360 username", status: "required" },
+                    { name: "username", type: "String", example: "AshokBhatt", description: "Code360 UUID", status: "required" },
                     { name: "apiKey", type: "String", example: "your-api-key", description: "Your API Key.", status: "required" },
                     { name: "year", type: "Number", example: "2024", description: "Year", status: "optional" },
                 ],
                 example: {
                     text: "Try example (But use your api key first)",
-                    request: SERVER_BASE_URL + "/api/platform/code360/user/submissions?user=&apiKey=&year=",
+                    request: SERVER_BASE_URL + "/api/platform/code360/user/submissions?username=&apiKey=&year=",
                     response: {},
                 },
                 quotasInfo: "Calling this endpoint costs 1 API Point.",
@@ -499,12 +538,12 @@ export const documentationData = [
                     url: SERVER_BASE_URL + "/api/platform/hackerrank/user/profile",
                 },
                 parameters: [
-                    { name: "user", type: "String", example: "ashokbhatt2048", description: "Hackerrank username", status: "required" },
+                    { name: "username", type: "String", example: "ashokbhatt2048", description: "Hackerrank username", status: "required" },
                     { name: "apiKey", type: "String", example: "your-api-key", description: "Your API Key.", status: "required" },
                 ],
                 example: {
                     text: "Try example (But use your api key first)",
-                    request: SERVER_BASE_URL + "/api/platform/hackerrank/user/profile?user=&apiKey=",
+                    request: SERVER_BASE_URL + "/api/platform/hackerrank/user/profile?username=&apiKey=",
                     response: {},
                 },
                 quotasInfo: "Calling this endpoint costs 1 API Point.",
@@ -523,15 +562,17 @@ export const documentationData = [
                     url: SERVER_BASE_URL + "/api/platform/interviewbit/user/profile",
                 },
                 parameters: [
-                    { name: "user", type: "String", example: "ashok-bhatt", description: "InterviewBit username", status: "required" },
+                    { name: "username", type: "String", example: "ashok-bhatt", description: "InterviewBit username", status: "required" },
                     { name: "apiKey", type: "String", example: "your-api-key", description: "Your API Key.", status: "required" },
+                    { name: "includeSubmissionStats", type: "Boolean", example: "true", description: "Include submission statistics.", status: "optional" },
+                    { name: "includeBadges", type: "Boolean", example: "true", description: "Include earned badges.", status: "optional" },
                 ],
                 example: {
                     text: "Try example (But use your api key first)",
-                    request: SERVER_BASE_URL + "/api/platform/interviewbit/user/profile?user=&apiKey=",
+                    request: SERVER_BASE_URL + "/api/platform/interviewbit/user/profile?username=&apiKey=&includeSubmissionStats=&includeBadges=",
                     response: {},
                 },
-                quotasInfo: "Calling this endpoint costs 1 API Point.",
+                quotasInfo: "Calling this endpoint costs 1 API Point. If includeSubmissionStats is set to true, it costs an additional 0.5 API Points. If includeBadges is set to true, it costs an additional 0.5 API Point.",
             },
             {
                 title: "User Submissions",
@@ -542,13 +583,13 @@ export const documentationData = [
                     url: SERVER_BASE_URL + "/api/platform/interviewbit/user/submissions",
                 },
                 parameters: [
-                    { name: "user", type: "String", example: "ashok-bhatt", description: "InterviewBit username", status: "required" },
+                    { name: "username", type: "String", example: "ashok-bhatt", description: "InterviewBit username", status: "required" },
                     { name: "apiKey", type: "String", example: "your-api-key", description: "Your API Key.", status: "required" },
                     { name: "year", type: "Number", example: "2024", description: "Year", status: "optional" },
                 ],
                 example: {
                     text: "Try example (But use your api key first)",
-                    request: SERVER_BASE_URL + "/api/platform/interviewbit/user/submissions?user=&apiKey=&year=2024",
+                    request: SERVER_BASE_URL + "/api/platform/interviewbit/user/submissions?username=&apiKey=&year=",
                     response: {},
                 },
                 quotasInfo: "Calling this endpoint costs 1 API Point.",
@@ -562,12 +603,12 @@ export const documentationData = [
                     url: SERVER_BASE_URL + "/api/platform/interviewbit/user/badges",
                 },
                 parameters: [
-                    { name: "user", type: "String", example: "ashok-bhatt", description: "InterviewBit username", status: "required" },
+                    { name: "username", type: "String", example: "ashok-bhatt", description: "InterviewBit username", status: "required" },
                     { name: "apiKey", type: "String", example: "your-api-key", description: "Your API Key.", status: "required" },
                 ],
                 example: {
                     text: "Try example (But use your api key first)",
-                    request: SERVER_BASE_URL + "/api/platform/interviewbit/user/badges?user=&apiKey=",
+                    request: SERVER_BASE_URL + "/api/platform/interviewbit/user/badges?username=&apiKey=",
                     response: {},
                 },
                 quotasInfo: "Calling this endpoint costs 1 API Point.",
@@ -586,15 +627,15 @@ export const documentationData = [
                     url: SERVER_BASE_URL + "/api/platform/github/user/badges",
                 },
                 parameters: [
-                    { name: "user", type: "String", example: "Ashok-Bhatt", description: "GitHub username", status: "required" },
+                    { name: "username", type: "String", example: "Ashok-Bhatt", description: "GitHub username", status: "required" },
                     { name: "apiKey", type: "String", example: "your-api-key", description: "Your API Key.", status: "required" },
                 ],
                 example: {
                     text: "Try example (But use your api key first)",
-                    request: SERVER_BASE_URL + "/api/platform/github/user/badges?user=&apiKey=",
+                    request: SERVER_BASE_URL + "/api/platform/github/user/badges?username=&apiKey=",
                     response: [],
                 },
-                quotasInfo: "Calling this endpoint costs 1 API Point.",
+                quotasInfo: "Calling this endpoint costs 2 API Points.",
             },
         ],
     }

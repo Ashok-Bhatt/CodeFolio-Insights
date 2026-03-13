@@ -5,13 +5,11 @@ import { LinkCard } from '../components/card/export.js';
 import { useProfileLinks, useUpdateProfileLink } from '../hooks/useProfiles.js';
 import { PLATFORMS_CONFIG } from '../constants/index.js';
 
-import toast from 'react-hot-toast';
-
 const LinkPage = () => {
     const userId = useAuthStore((state) => state?.user?._id);
 
     const { data: profile, refetch: fetchLinks } = useProfileLinks(userId);
-    const { mutateAsync: updateProfileMutation, isPending, variables } = useUpdateProfileLink();
+    const { mutate: updateProfileMutation, isPending, variables } = useUpdateProfileLink();
 
     const iconMap = {
         leetcode: "/Images/Icons/leetcode.png",
@@ -27,21 +25,15 @@ const LinkPage = () => {
 
     const currentLinks = profile ? transformBackendToFrontend(profile, platforms) : [];
 
-    const handleUpdate = async (platformValue, newUsername) => {
+    const handleUpdate = (platformValue, newUsername) => {
         if (!newUsername.trim()) {
             return; // Backend validator requires min length 1
         }
 
-        try {
-            await updateProfileMutation({
-                platformName: platformValue,
-                platformUsername: newUsername
-            });
-            toast.success(`${platformValue.charAt(0).toUpperCase() + platformValue.slice(1)} link updated successfully!`);
-            fetchLinks();
-        } catch (error) {
-            toast.error("Couldn't update the link");
-        }
+        updateProfileMutation({
+            platformName: platformValue,
+            platformUsername: newUsername
+        });
     };
 
     return (

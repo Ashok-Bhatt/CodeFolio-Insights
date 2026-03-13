@@ -22,14 +22,14 @@ export const API_POINTS_COST = [
     },
     {
         baseUrl: "/platform/gfg/user/submissions",
-        cost: { base: 5 }
+        cost: { base: 1 }
     },
     {
         baseUrl: "/platform/gfg/user/problems",
         cost: { base: 1 }
     },
     {
-        baseUrl: "/platform/gfg/institution/top-3",
+        baseUrl: "/platform/gfg/institution/top-rankers",
         cost: { base: 1 }
     },
     {
@@ -49,10 +49,10 @@ export const API_POINTS_COST = [
     {
         baseUrl: "/platform/codechef/user/profile",
         cost: {
-            base: 1,
+            base: 3,
             additionalQueryCost: [
-                { query: "includeContests=true", cost: 0.5 },
-                { query: "includeAchievements=true", cost: 0.5 },
+                { query: "includeContests=true", cost: 1 },
+                { query: "includeAchievements=true", cost: 1 },
             ],
         },
     },
@@ -80,7 +80,7 @@ export const API_POINTS_COST = [
     },
     {
         baseUrl: "/platform/interviewbit/user/submissions",
-        cost: { base: 3 }
+        cost: { base: 1 }
     },
     {
         baseUrl: "/platform/interviewbit/user/badges",
@@ -90,7 +90,7 @@ export const API_POINTS_COST = [
     // Github Endpoints
     {
         baseUrl: "/platform/github/user/badges",
-        cost: { base: 1 }
+        cost: { base: 2 }
     },
 
     // LeetCode Endpoints

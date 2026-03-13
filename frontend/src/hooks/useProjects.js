@@ -24,7 +24,7 @@ const useCreateProject = () => {
             toast.success("Project created successfully!");
         },
         onError: (error) => {
-            toast.error(error.message || "Failed to create project");
+            toast.error(error.response?.data?.message || "Failed to create project");
         },
     });
 };
@@ -41,7 +41,7 @@ const useUpdateProject = () => {
             toast.success("Project updated successfully!");
         },
         onError: (error) => {
-            toast.error(error.message || "Failed to update project");
+            toast.error(error.response?.data?.message || "Failed to update project");
         },
     });
 };
@@ -58,7 +58,7 @@ const useDeleteProject = () => {
             toast.success("Project deleted successfully!");
         },
         onError: (error) => {
-            toast.error(error.message || "Failed to delete project");
+            toast.error(error.response?.data?.message || "Failed to delete project");
         },
     });
 };

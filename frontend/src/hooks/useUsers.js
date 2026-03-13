@@ -23,7 +23,18 @@ const useLogin = () => {
         mutationFn: asyncWrapper(async (formData) => {
             const response = await axiosInstance.post("/api/auth/login", formData);
             return response.data;
-        })
+        }),
+        onSuccess: (data) => {
+            if (!data.requires2FA) {
+                useAuthStore.setState({ user: data.user, token: data.token });
+                toast.success("Login successful");
+            } else {
+                toast.success(data.message);
+            }
+        },
+        onError: (error) => {
+            toast.error(error.response?.data?.message || "Login failed");
+        }
     })
 }
 
@@ -32,7 +43,18 @@ const useSignUp = () => {
         mutationFn: asyncWrapper(async (formData) => {
             const response = await axiosInstance.post("/api/auth/signup", formData);
             return response.data;
-        })
+        }),
+        onSuccess: (data) => {
+            if (!data.requires2FA) {
+                useAuthStore.setState({ user: data.user, token: data.token });
+                toast.success("Signup successful");
+            } else {
+                toast.success(data.message);
+            }
+        },
+        onError: (error) => {
+            toast.error(error.response?.data?.message || "Signup failed");
+        }
     })
 }
 
@@ -41,7 +63,14 @@ const useVerifyOTP = () => {
         mutationFn: asyncWrapper(async (otpData) => {
             const response = await axiosInstance.post("/api/auth/verify-otp", otpData);
             return response.data;
-        })
+        }),
+        onSuccess: (data) => {
+            useAuthStore.setState({ user: data.user, token: data.token });
+            toast.success(data.message || "Verification successful");
+        },
+        onError: (error) => {
+            toast.error(error.response?.data?.message || "Verification failed");
+        }
     })
 }
 
@@ -58,13 +87,22 @@ const useUser = (id) => {
 }
 
 const useUpdateUser = () => {
+    const queryClient = useQueryClient();
     return useMutation({
         mutationFn: asyncWrapper(async (formData) => {
             const response = await axiosInstance.patch("/api/user", formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             return response.data;
-        })
+        }),
+        onSuccess: (data) => {
+            queryClient.invalidateQueries(['checkAuth']);
+            useAuthStore.setState({ user: data });
+            toast.success("Profile updated successfully!");
+        },
+        onError: (error) => {
+            toast.error(error.response?.data?.message || "Failed to update profile");
+        }
     })
 }
 
@@ -73,7 +111,13 @@ const useChangePassword = () => {
         mutationFn: asyncWrapper(async (passwordData) => {
             const response = await axiosInstance.patch("/api/user/password", passwordData);
             return response.data;
-        })
+        }),
+        onSuccess: (data) => {
+            toast.success(data.message || "Password updated successfully!");
+        },
+        onError: (error) => {
+            toast.error(error.response?.data?.message || "Failed to update password");
+        }
     })
 }
 
@@ -89,7 +133,7 @@ const useToggle2FA = () => {
             toast.success(data.message);
         },
         onError: (error) => {
-            toast.error(error.message || "Failed to toggle 2FA");
+            toast.error(error.response?.data?.message || "Failed to toggle 2FA");
         }
     });
 };
@@ -125,7 +169,13 @@ const useToggleProfileVisibility = () => {
         mutationFn: asyncWrapper(async () => {
             const response = await axiosInstance.patch("/api/user/visibility", {});
             return response.data;
-        })
+        }),
+        onSuccess: (data) => {
+            toast.success(data.message || "Visibility updated!");
+        },
+        onError: (error) => {
+            toast.error(error.response?.data?.message || "Failed to update visibility");
+        }
     })
 }
 
@@ -142,7 +192,7 @@ const useUpdateApiKey = () => {
             toast.success(data.message || "API Key updated successfully!");
         },
         onError: (error) => {
-            toast.error(error.message || "Failed to update API Key");
+            toast.error(error.response?.data?.message || "Failed to update API Key");
         }
     });
 };
