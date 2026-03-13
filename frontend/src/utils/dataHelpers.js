@@ -145,7 +145,7 @@ const getContestAchievements = (data) => {
             currentRating: Math.round(leetcodeRating) || 0,
             maxRating: Math.round(data?.leetcode?.contest?.userContestRankingHistory?.reduce((max, contest) => Math.max(max, contest.rating), 0)) || 0,
             badgeUrl: data?.leetcode?.contest?.userContestRanking?.badge?.icon
-                ? `https://leetcode.com/${data?.leetcode?.contest?.userContestRanking?.badge?.icon}`
+                ? data?.leetcode?.contest?.userContestRanking?.badge?.icon
                 : "/Images/Leetcode Badges/knight.png",
             isDefaultBadge: !data?.leetcode?.contest?.userContestRanking?.badge?.icon,
             position: data?.leetcode?.contest?.userContestRanking?.badge?.name,

@@ -1,7 +1,7 @@
 import { getStreaksAndActiveDays } from "../utils/calendar.util.js";
 import * as githubScoring from "../utils/scoring/github.score.util.js";
 import * as githubFetching from "../utils/fetching/github.fetch.util.js"
-import * as scrapeSpideyFetch from "../utils/fetching/scrape-spidey.fetch.util.js"
+import * as leetcodeService from "./platforms/leetcode.service.js";
 import * as leetcodeScoring from "../utils/scoring/leetcode.score.util.js";
 import { getPdfContent } from "../utils/pdf.util.js";
 import redisClient from "../config/redis.config.js";
@@ -41,15 +41,27 @@ const getAnalysisGithubData = async (username) => {
 
 const getAnalysisLeetCodeData = async (username) => {
     try {
-        const problemsCount = await scrapeSpideyFetch.fetchLeetCodeProblemsCount(username);
-        const multiYearSubmissionCalendar = await scrapeSpideyFetch.fetchLeetCodeUserMultiYearSubmissionData(username);
-        const submissionCalendar = multiYearSubmissionCalendar[String(new Date().getFullYear())] || {};
-        const contestData = await scrapeSpideyFetch.fetchLeetCodeContestData(username);
-        const profileInfo = await scrapeSpideyFetch.fetchLeetCodeProfileData(username);
-        const badges = await scrapeSpideyFetch.fetchLeetCodeBadgesData(username);
-        const topicWiseProblems = await scrapeSpideyFetch.fetchLeetCodeTopicWiseProblemsData(username);
+        const problemsCount = await leetcodeService.getUserSessionProgress(username);
 
-        const acceptanceRate = (problemsCount?.matchedUser?.submitStats?.acSubmissionNum?.[0]?.submissions || 0) / (problemsCount?.matchedUser?.submitStats?.totalSubmissionNum?.[0]?.submissions || 1);
+        const currentYear = new Date().getFullYear();
+        const startYear = 2015;
+        const multiYearSubmissionCalendar = {};
+        for (let year = startYear; year <= currentYear; year++) {
+            try {
+                multiYearSubmissionCalendar[year] = await leetcodeService.getUserCalendar(username, year);
+            } catch (error) {
+                console.error(`Error fetching LeetCode calendar for year ${year}:`, error.message);
+                multiYearSubmissionCalendar[year] = null;
+            }
+        }
+
+        const submissionCalendar = multiYearSubmissionCalendar[String(currentYear)] || {};
+        const contestData = await leetcodeService.getContestRanking(username);
+        const profileInfo = await leetcodeService.getUserProfile(username);
+        const badges = await leetcodeService.getUserBadges(username);
+        const topicWiseProblems = await leetcodeService.getSkillStats(username);
+
+        const acceptanceRate = (problemsCount?.userStats?.acSubmissionNum?.[0]?.submissions || 0) / (problemsCount?.userStats?.totalSubmissionNum?.[0]?.submissions || 1);
 
         return { problemsCount, multiYearSubmissionCalendar, submissionCalendar, contestData, profileInfo, badges, topicWiseProblems, acceptanceRate };
     } catch (error) {
@@ -63,7 +75,7 @@ const getGithubScore = async (githubData) => {
     try {
         let score = 0;
 
-        const { userData, starsCount, forksCount, pinnedRepos, lastYearContributionStats, contributionCount, profileReadme, contributionBadges, languageStats, currentStreak, maxStreak, activeDays, totalContributions } = githubData;
+        const { userData, starsCount, forksCount, pinnedRepos, contributionCount, profileReadme, languageStats, maxStreak, currentStreak, activeDays } = githubData;
         const repoCountScore = githubScoring.getRepoCountScore(userData.public_repos);
         const languagesCountScore = githubScoring.getLanguagesCountScore(Object.entries(languageStats).length);
         const totalCommitsScore = githubScoring.getTotalCommitsScore(contributionCount.commitsCount);
@@ -102,9 +114,9 @@ const getLeetCodeScore = async (leetcodeData) => {
         const { acceptanceRate, badges, contestData, problemsCount, multiYearSubmissionCalendar } = leetcodeData;
 
         let acceptanceRateScore = leetcodeScoring.getAcceptanceRateScore(acceptanceRate);
-        let badgesScore = leetcodeScoring.getBadgesScore(badges?.matchedUser);
+        let badgesScore = leetcodeScoring.getBadgesScore(badges); // Wrapped badges removed
         let contestScore = leetcodeScoring.getContestPerformanceScore(contestData);
-        let problemsSolvedScore = leetcodeScoring.getProblemsSolvedCountScore(problemsCount?.matchedUser?.submitStats);
+        let problemsSolvedScore = leetcodeScoring.getProblemsSolvedCountScore(problemsCount?.userStats); // matchedUser.submitStats -> userStats
         let submissionConsistencyScore = leetcodeScoring.getSubmissionConsistencyScore(multiYearSubmissionCalendar);
 
         const contestLessScore = acceptanceRateScore * 0.05 + badgesScore * 0.05 + submissionConsistencyScore * 0.25 + contestScore * 0.15 + problemsSolvedScore * 0.5;

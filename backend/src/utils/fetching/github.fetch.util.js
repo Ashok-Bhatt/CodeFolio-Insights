@@ -1,5 +1,5 @@
-import { githubGraphQlQuery, githubRestApiQuery, scrapeSpideyAPI } from "../../api/axiosInstance.js";
-import { SCRAPE_SPIDEY_API_KEY } from "../../config/env.config.js";
+import { githubGraphQlQuery, githubRestApiQuery } from "../../api/axiosInstance.js";
+import { getGithubBadges } from "../../services/platforms/github.service.js";
 import { GITHUB_API_QUERIES, GITHUB_REPO_DATA_PAGE_SIZE } from "../../constants/index.js";
 import { getNormalizedGithubHeatmap } from "../calendar.util.js";
 
@@ -94,8 +94,8 @@ const getUserRepos = async (username, repoCount) => {
 
 const getGithubContributionBadges = async (username) => {
     try {
-        const githubBadgesResponse = await scrapeSpideyAPI.get(`/api/v1/github/user/badges?user=${username}&apiKey=${SCRAPE_SPIDEY_API_KEY}`);
-        return githubBadgesResponse.data;
+        const githubBadgesResponse = await getGithubBadges(username);
+        return githubBadgesResponse;
     } catch (error) {
         console.log("Error occurred while fetching github badges: ", error.message);
         console.log(error.stack);
