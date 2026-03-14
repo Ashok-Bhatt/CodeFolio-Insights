@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 
 const scoreSchema = new mongoose.Schema({
-    userId : {
+    userId: {
         type: mongoose.Types.ObjectId,
         ref: "users",
     },
-    username : {
+    username: {
         type: String,
     },
     score: {
@@ -19,8 +19,8 @@ const scoreSchema = new mongoose.Schema({
         required: true,
         enum: ["Leetcode", "Github", "Generic Resume", "Resume with JD"],
     },
-}, {timestamps: true});
+}, { timestamps: true });
 
-const scoreModel = mongoose.model("score", scoreSchema);
+const ScoreModel = mongoose.model("score", scoreSchema);
 
-export default scoreModel;
+export default ScoreModel;

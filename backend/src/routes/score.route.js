@@ -7,6 +7,12 @@ import { userScoreHistoryValidationSchema } from "../validators/score.validate.j
 
 const router = express.Router();
 
-router.get("/score-history", optionalAuth, getAnalytics, validate(userScoreHistoryValidationSchema), getUserScoreHistory);
+router.get(
+    "/score-history", 
+    getAnalytics, 
+    optionalAuth, 
+    validate(userScoreHistoryValidationSchema), 
+    getUserScoreHistory
+);
 
 export default router;

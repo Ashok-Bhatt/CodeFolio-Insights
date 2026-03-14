@@ -48,10 +48,10 @@ const LeetcodeAnalyse = () => {
 
     const getLeetCodeStats = (analysisData) => {
         return [
-            { title: "Total Solved", value: analysisData?.problemsCount?.matchedUser?.submitStats?.acSubmissionNum?.[0]?.count ?? 0, color: "green", Icon: CheckCircle },
+            { title: "Total Solved", value: analysisData?.problemsCount?.userStats?.acSubmissionNum?.[0]?.count ?? 0, color: "green", Icon: CheckCircle },
             { title: "Acceptance", value: `${((analysisData?.acceptanceRate || 0) * 100).toFixed(1)}%`, color: "blue", Icon: Target },
             { title: "Current Streak", value: currentStreak ?? 0, color: "amber", Icon: Zap },
-            { title: "Badges Earned", value: analysisData?.badges?.matchedUser?.badges?.length ?? 0, color: "purple", Icon: Award },
+            { title: "Badges Earned", value: analysisData?.badges?.badges?.length ?? 0, color: "purple", Icon: Award },
             ...(analysisData?.contestData?.userContestRanking ? [
                 { title: "Contest Rating", value: Math.round(analysisData?.contestData?.userContestRanking?.rating ?? 0), color: "purple", Icon: Award },
                 { title: "Global rank", value: analysisData?.contestData?.userContestRanking?.globalRanking ?? 0, color: "purple", Icon: Award },
@@ -184,13 +184,13 @@ const LeetcodeAnalyse = () => {
 
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
                         <BadgeCollection
-                            badges={analysisData?.badges?.matchedUser?.badges}
+                            badges={analysisData?.badges?.badges}
                             defaultBadgesCount={6}
                         />
 
                         <DistributionChart
                             title="Difficulty Breakdown"
-                            problemsData={getLeetcodeDifficultyData(analysisData?.problemsCount?.matchedUser?.submitStats?.acSubmissionNum)}
+                            problemsData={getLeetcodeDifficultyData(analysisData?.problemsCount?.userStats?.acSubmissionNum)}
                         />
                     </div>
 
@@ -200,7 +200,7 @@ const LeetcodeAnalyse = () => {
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         <TopicStats
-                            topicData={getLeetcodeTopicData(analysisData?.topicWiseProblems?.matchedUser?.tagProblemCounts)}
+                            topicData={getLeetcodeTopicData(analysisData?.topicWiseProblems)}
                         />
 
                         {analysisData?.profileAnalysis?.video && (

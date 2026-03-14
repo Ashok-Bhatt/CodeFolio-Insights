@@ -1,7 +1,7 @@
-import { JWT_SECRET } from '../config/config.js';
+import { JWT_SECRET } from '../config/env.config.js';
 import UserModel from '../models/user.model.js';
 import jwt from "jsonwebtoken";
-import asyncHandler from '../utils/asyncHandler.js';
+import asyncHandler from '../utils/async-handler.util.js';
 
 const protectRoute = asyncHandler(async (req, res, next) => {
     const token = req.cookies.token || req.header("Authorization")?.replace("Bearer ", "");

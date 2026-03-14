@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, LayoutDashboard, Terminal, LogOut, ChartLine, ChartArea, Settings } from 'lucide-react';
+import { ChevronLeft, ChevronRight, LayoutDashboard, Terminal, LogOut, ChartLine, ChartArea, Settings, Webhook, Contact } from 'lucide-react';
 import { useAuthStore, usePreferenceStore } from '../../store/export.js';
 import { useLogout } from '../../hooks/useUsers.js';
 
@@ -27,6 +27,8 @@ const Sidebar = () => {
     const sidebarItems = [
         { name: 'Dashboard', path: `/dashboard/${user?._id}`, Icon: LayoutDashboard },
         { name: 'Analyzers', path: '/analyzer', Icon: ChartArea },
+        { name: 'API Access', path: '/public-apis', Icon: Webhook },
+        { name: 'Contact Us', path: '/contact-us', Icon: Contact },
         { name: 'Settings', path: '/settings', Icon: Settings },
     ];
 
@@ -37,7 +39,7 @@ const Sidebar = () => {
         >
             <div className={`relative flex items-center h-20 border-b border-gray-50 transition-all duration-500 ${isSidebarCollapsed ? 'justify-center px-4' : 'justify-between px-6'}`}>
                 <div className="relative flex-shrink-0">
-                    <Terminal className="w-6 h-6 text-blue-600 relative z-10" />
+                    <img src="/public/Images/logo.png" alt="app logo" className="w-10 h-10" />
                 </div>
 
                 {/* Toggler to toggle the sidebar */}
@@ -66,6 +68,7 @@ const Sidebar = () => {
                                 ? location.pathname.startsWith('/analyzer')
                                 : location.pathname.startsWith(item.path);
                         const Icon = item.Icon;
+
                         return (
                             <li key={item.name} className="relative">
                                 <Link
@@ -96,12 +99,6 @@ const Sidebar = () => {
                                     {isSidebarCollapsed && hoveredItem === item.name && (
                                         <div className="absolute left-full ml-4 px-3 py-2 bg-gray-900 text-white text-[10px] font-black uppercase tracking-widest rounded-lg shadow-2xl z-[100] animate-slide-in-right whitespace-nowrap">
                                             {item.name}
-                                        </div>
-                                    )}
-
-                                    {!isSidebarCollapsed && isActive && item.name === 'Analyzers' && (
-                                        <div className="absolute right-4 animate-float opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <ChartLine size={14} className="text-blue-500" />
                                         </div>
                                     )}
                                 </Link>

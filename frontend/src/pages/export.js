@@ -7,3 +7,4 @@ export { default as LinkPage } from './LinkPage';
 export { default as CodingProfiles } from './CodingProfiles';
 export { default as Account } from './Account';
 export { default as PageNotFound } from './PageNotFound';
+export { default as ContactUs } from './ContactUs';

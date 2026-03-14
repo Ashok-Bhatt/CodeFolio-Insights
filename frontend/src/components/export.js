@@ -1,3 +1,4 @@
+export { default as TabNavigation } from './TabNavigation';
 export { default as BadgeCollection } from './BadgeCollection';
 export { default as Contest } from './Contest';
 export { default as ContestAchievements } from './ContestAchievements';

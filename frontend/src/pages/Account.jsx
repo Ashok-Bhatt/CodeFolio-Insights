@@ -1,19 +1,28 @@
-import { useState } from 'react';
-import { ShieldCheck, Eye, EyeOff, Save, Mail, Info } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ShieldCheck, Eye, EyeOff, Save, Mail, Info, Edit2, X } from 'lucide-react';
 import { useAuthStore } from '../store/export.js';
-import { useChangePassword, useToggle2FA } from '../hooks/useUsers';
+import { useChangePassword, useToggle2FA, useUpdateApiKey } from '../hooks/useUsers';
 import toast from 'react-hot-toast';
 
 const Account = () => {
     const user = useAuthStore((state) => state.user);
-    const { mutateAsync: changePassword, isPending: isLoading } = useChangePassword();
+    const { mutate: changePassword, isPending: isLoading } = useChangePassword();
     const { mutate: toggle2FA, isPending: isToggling2FA } = useToggle2FA();
+    console.log(user);
 
     const [form, setForm] = useState({
         oldPassword: '',
         newPassword: '',
         confirmPassword: ''
     });
+
+    const [apiKeyForm, setApiKeyForm] = useState({
+        apiKey: user?.apiKey || ''
+    });
+
+    const [isEditingApiKey, setIsEditingApiKey] = useState(false);
+
+    const { mutate: updateApiKey, isPending: isUpdatingApiKey } = useUpdateApiKey();
 
     const [showPasswords, setShowPasswords] = useState({
         old: false,
@@ -29,7 +38,23 @@ const Account = () => {
         setShowPasswords(prev => ({ ...prev, [field]: !prev[field] }));
     };
 
-    const handleSubmit = async (e) => {
+    const handleApiKeyChange = (e) => {
+        setApiKeyForm({ [e.target.name]: e.target.value });
+    };
+
+    const handleApiKeySubmit = (e) => {
+        e.preventDefault();
+        if (!apiKeyForm.apiKey.trim()) {
+            return toast.error("API Key cannot be empty!");
+        }
+        updateApiKey({ apiKey: apiKeyForm.apiKey.trim() }, {
+            onSuccess: () => {
+                setIsEditingApiKey(false);
+            }
+        });
+    };
+
+    const handleSubmit = (e) => {
         e.preventDefault();
 
         if (!form.oldPassword || !form.newPassword || !form.confirmPassword) {
@@ -44,16 +69,14 @@ const Account = () => {
             return toast.error("Password must be at least 6 characters long!");
         }
 
-        try {
-            await changePassword({
-                oldPassword: form.oldPassword,
-                newPassword: form.newPassword
-            });
-            toast.success("Password updated successfully!");
-            setForm({ oldPassword: '', newPassword: '', confirmPassword: '' });
-        } catch (error) {
-            toast.error(error?.response?.data?.message || "Failed to update password!");
-        }
+        changePassword({
+            oldPassword: form.oldPassword,
+            newPassword: form.newPassword
+        }, {
+            onSuccess: () => {
+                setForm({ oldPassword: '', newPassword: '', confirmPassword: '' });
+            }
+        });
     };
 
     return (
@@ -78,6 +101,77 @@ const Account = () => {
                     <span className="text-slate-700 font-semibold truncate">{user?.email}</span>
                 </div>
             </div>
+
+            {/* API Key Management Section */}
+            <form onSubmit={handleApiKeySubmit} className="space-y-6 pt-4 border-t border-slate-100">
+                <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-bold text-slate-700">API Key Management</h3>
+                    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                        <Info className="w-3 h-3" />
+                        Required for analytics
+                    </div>
+                </div>
+
+                <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-4 items-center">
+                        <label className="text-sm font-black text-slate-500 uppercase tracking-wider">Current API Key:</label>
+
+                        {!isEditingApiKey ? (
+                            <div className="flex items-center gap-4 p-3.5 bg-slate-50/50 rounded-xl border border-slate-200">
+                                <span className="font-mono text-slate-700 font-medium truncate flex-1">
+                                    {user?.apiKey || ""}
+                                </span>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setApiKeyForm({ apiKey: user?.apiKey || '' });
+                                        setIsEditingApiKey(true);
+                                    }}
+                                    className="flex items-center justify-center gap-2 bg-slate-100 text-slate-600 font-bold px-4 py-2 rounded-lg hover:bg-slate-200 transition-colors text-xs uppercase"
+                                >
+                                    <Edit2 className="w-3.5 h-3.5" />
+                                    Update
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="flex gap-2 relative group">
+                                <input
+                                    type="text"
+                                    name="apiKey"
+                                    value={apiKeyForm.apiKey}
+                                    onChange={handleApiKeyChange}
+                                    placeholder="Enter API Key from your Projects"
+                                    className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-sm group-hover:border-slate-300"
+                                    autoFocus
+                                />
+                                <div className="flex gap-2">
+                                    <button
+                                        type="submit"
+                                        disabled={isUpdatingApiKey || apiKeyForm.apiKey === user?.apiKey}
+                                        className="flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-black px-6 py-3.5 rounded-xl shadow hover:shadow-indigo-200 transition-all disabled:opacity-50 uppercase tracking-widest text-xs min-w-[100px]"
+                                    >
+                                        {isUpdatingApiKey ? (
+                                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                        ) : (
+                                            <Save className="w-4 h-4" />
+                                        )}
+                                        {isUpdatingApiKey ? "Saving..." : "Save"}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsEditingApiKey(false)}
+                                        className="flex items-center justify-center bg-slate-100 text-slate-600 p-3.5 rounded-xl hover:bg-slate-200 transition-colors"
+                                        title="Cancel"
+                                    >
+                                        <X className="w-5 h-5" />
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                    </div>
+                </div>
+            </form>
 
             {/* Update Password Section */}
             {(user?.provider === 'credential' || user?.provider === 'both') ? (

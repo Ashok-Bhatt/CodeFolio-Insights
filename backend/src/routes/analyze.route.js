@@ -9,8 +9,29 @@ import upload from "../middlewares/multer.middleware.js";
 
 const router = express.Router();
 
-router.get("/github", optionalAuth, getAnalytics, validate(usernameValidationSchema), analyzeGithub);
-router.get("/leetcode", optionalAuth, getAnalytics, validate(usernameValidationSchema), analyzeLeetCode);
-router.post("/resume", optionalAuth, getAnalytics, upload.single("resume"), validate(resumeAnalyzerValidationSchema), analyzeResume);
+router.get(
+    "/github",
+    getAnalytics,
+    optionalAuth,
+    validate(usernameValidationSchema),
+    analyzeGithub
+);
+
+router.get(
+    "/leetcode",
+    getAnalytics, 
+    optionalAuth,
+    validate(usernameValidationSchema), 
+    analyzeLeetCode
+);
+
+router.post(
+    "/resume", 
+    getAnalytics, 
+    optionalAuth, 
+    upload.single("resume"), 
+    validate(resumeAnalyzerValidationSchema), 
+    analyzeResume
+);
 
 export default router;
