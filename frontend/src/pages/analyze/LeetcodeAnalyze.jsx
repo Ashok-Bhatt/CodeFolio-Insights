@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Search, CheckCircle, Target, Zap, Award, MessageSquareQuote, Rocket, Brain, RefreshCw, BarChart3, TrendingUp, AlertCircle } from 'lucide-react';
+import { Search, CheckCircle, Target, Zap, Award, Rocket, Brain, RefreshCw, BarChart3, TrendingUp, AlertCircle } from 'lucide-react';
 import { getRandomHexColor } from '../../utils/colors.js';
 import { BadgeCollection, ScoreMeter, TopicStats, ErrorContainer, MemeContainer } from '../../components/export.js';
-import { StatCard, ProblemStatsCard, VideoSuggestionCard, AnalysisCard } from '../../components/card/export.js';
-import { SubmissionChart } from "../../components/charts/export.js"
+import { StatCard, VideoSuggestionCard, AnalysisCard } from '../../components/card/export.js';
+import { SubmissionHeatmap, DistributionChart } from "../../components/charts/export.js"
 import { useAuthStore } from '../../store/export.js';
 import { useLeetcodeAnalysis } from '../../hooks/useAnalyzer.js';
 import { useProfileLinks } from '../../hooks/useProfiles.js';
@@ -22,16 +22,6 @@ const LeetcodeAnalyse = () => {
     };
 
     const { currentStreak, maxStreak, activeDays, totalContributions } = getStreaksAndActiveDays(analysisData?.multiYearSubmissionCalendar || {});
-
-    const getLeetcodeSubmissionData = (submissionData) => {
-        if (!submissionData) return [];
-        return Object.entries(submissionData)
-            .sort((x, y) => new Date(x[0]) - new Date(y[0]))
-            .map((dailyData) => ({
-                name: dailyData[0],
-                submissions: dailyData[1],
-            }));
-    };
 
     const getLeetcodeDifficultyData = (difficultyData) => [
         { name: 'Easy', value: difficultyData?.[1]?.count, color: '#34D399' },
@@ -58,10 +48,10 @@ const LeetcodeAnalyse = () => {
 
     const getLeetCodeStats = (analysisData) => {
         return [
-            { title: "Total Solved", value: analysisData?.problemsCount?.matchedUser?.submitStats?.acSubmissionNum?.[0]?.count ?? 0, color: "green", Icon: CheckCircle },
+            { title: "Total Solved", value: analysisData?.problemsCount?.userStats?.acSubmissionNum?.[0]?.count ?? 0, color: "green", Icon: CheckCircle },
             { title: "Acceptance", value: `${((analysisData?.acceptanceRate || 0) * 100).toFixed(1)}%`, color: "blue", Icon: Target },
             { title: "Current Streak", value: currentStreak ?? 0, color: "amber", Icon: Zap },
-            { title: "Badges Earned", value: analysisData?.badges?.matchedUser?.badges?.length ?? 0, color: "purple", Icon: Award },
+            { title: "Badges Earned", value: analysisData?.badges?.badges?.length ?? 0, color: "purple", Icon: Award },
             ...(analysisData?.contestData?.userContestRanking ? [
                 { title: "Contest Rating", value: Math.round(analysisData?.contestData?.userContestRanking?.rating ?? 0), color: "purple", Icon: Award },
                 { title: "Global rank", value: analysisData?.contestData?.userContestRanking?.globalRanking ?? 0, color: "purple", Icon: Award },
@@ -115,25 +105,15 @@ const LeetcodeAnalyse = () => {
             {analysisData && (
                 <div className="space-y-8">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <div className="lg:col-span-1 bg-white/90 backdrop-blur-sm p-6 rounded-3xl shadow-xl border border-gray-100 animate-float-in">
-                            <ScoreMeter
-                                score={analysisData?.scoreData?.overall}
-                                scoreComparison={analysisData?.scoreComparison}
-                            />
-                        </div>
+                        <ScoreMeter
+                            score={analysisData?.scoreData?.overall}
+                            scoreComparison={analysisData?.scoreComparison}
+                        />
 
-                        <div className="lg:col-span-2 bg-white/90 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-gray-100 animate-float-in" style={{ animationDelay: '200ms' }}>
-                            <div className="flex items-center gap-3 mb-6">
-                                <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl shadow-lg">
-                                    <MessageSquareQuote className="h-6 w-6 text-white" />
-                                </div>
-                                <h3 className="text-2xl font-black text-gray-800">AI Performance Review</h3>
-                            </div>
-
-                            <MemeContainer
-                                score={analysisData?.scoreData?.overall ?? 0}
-                            />
-                        </div>
+                        <MemeContainer
+                            score={analysisData?.scoreData?.overall ?? 0}
+                            className="lg:col-span-2"
+                        />
 
                         {Object.keys(analysisData?.profileAnalysis || {}).length > 0 ? (
                             <div className="lg:col-span-3 animate-float-in" style={{ animationDelay: '300ms' }}>
@@ -202,26 +182,25 @@ const LeetcodeAnalyse = () => {
                         ))}
                     </div>
 
-                    <BadgeCollection
-                        badges={analysisData?.badges?.matchedUser?.badges}
-                        defaultBadgesCount={6}
-                    />
-
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-                        <SubmissionChart
-                            title="Submission Activity"
-                            submissionData={getLeetcodeSubmissionData(analysisData?.submissionCalendar)}
+                        <BadgeCollection
+                            badges={analysisData?.badges?.badges}
+                            defaultBadgesCount={6}
                         />
 
-                        <ProblemStatsCard
+                        <DistributionChart
                             title="Difficulty Breakdown"
-                            problemsData={getLeetcodeDifficultyData(analysisData?.problemsCount?.matchedUser?.submitStats?.acSubmissionNum)}
+                            problemsData={getLeetcodeDifficultyData(analysisData?.problemsCount?.userStats?.acSubmissionNum)}
                         />
                     </div>
 
+                    <SubmissionHeatmap
+                        calendar={analysisData?.multiYearSubmissionCalendar}
+                    />
+
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         <TopicStats
-                            topicData={getLeetcodeTopicData(analysisData?.topicWiseProblems?.matchedUser?.tagProblemCounts)}
+                            topicData={getLeetcodeTopicData(analysisData?.topicWiseProblems)}
                         />
 
                         {analysisData?.profileAnalysis?.video && (

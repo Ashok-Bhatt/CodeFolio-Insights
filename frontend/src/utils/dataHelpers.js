@@ -1,19 +1,19 @@
 const getBadges = (data) => {
-    return [
+    return {
         // Leetcode
-        ...(data?.leetcode?.badges?.badges?.map((badge) => ({ icon: badge.icon, name: badge.displayName, subTitle: null, subTitleIcon: null })) || []),
+        "Leetcode": (data?.leetcode?.badges?.badges?.map((badge) => ({ icon: badge.icon, name: badge.displayName, subTitle: null, subTitleIcon: null })) || []),
 
         // Codechef
-        ...(data?.codechef?.profile?.badges?.map((badge) => ({ icon: badge.badgeImage, name: badge.badgeTitle, subTitle: null, subTitleIcon: null })) || []),
+        "Codechef": (data?.codechef?.profile?.badges?.map((badge) => ({ icon: badge.badgeImage, name: badge.badgeTitle, subTitle: null, subTitleIcon: null })) || []),
 
         // Interviewbit
-        ...(data?.interviewbit?.profile?.badges?.map((badge) => ({ icon: badge.image, name: badge.title, subTitle: null, subTitleIcon: null })) || []),
+        "Interviewbit": (data?.interviewbit?.badges?.map((badge) => ({ icon: badge.image, name: badge.title, subTitle: null, subTitleIcon: null })) || []),
 
         // hackerrank
-        ...(data?.hackerrank?.profile?.badges?.filter((badge) => badge?.stars > 0)?.map((badge) => ({ stars: badge?.stars || 0, name: badge?.badge_name || "NA", subTitle: null, subTitleIcon: null, isHackerrankBadge: true })) || []),
+        "Hackerrank": (data?.hackerrank?.profile.badges?.filter((badge) => badge?.stars > 0)?.map((badge) => ({ stars: badge?.stars || 0, name: badge?.badge_name || "NA", subTitle: null, subTitleIcon: null, isHackerrankBadge: true })) || []),
 
         // Code360
-        ...(data?.code360?.profile?.dsa_domain_data?.badges_hash?.achiever?.gp?.map((badge) => ({ icon: "/Images/Code360 Badges/Guided Path/achiever.svg", name: badge, subTitle: "Achiever", subTitleIcon: null })) || []),
+        "Code360": [...(data?.code360?.profile?.dsa_domain_data?.badges_hash?.achiever?.gp?.map((badge) => ({ icon: "/Images/Code360 Badges/Guided Path/achiever.svg", name: badge, subTitle: "Achiever", subTitleIcon: null })) || []),
         ...(data?.code360?.profile?.dsa_domain_data?.badges_hash?.achiever?.ptm?.map((badge) => ({ icon: "/Images/Code360 Badges/Practice/achiever.svg", name: badge, subTitle: "Achiever", subTitleIcon: null })) || []),
         ...(data?.code360?.profile?.dsa_domain_data?.badges_hash?.achiever?.sgp?.map((badge) => ({ icon: "/Images/Code360 Badges/Special Guided Path/achiever.svg", name: badge, subTitle: "Achiever", subTitleIcon: null })) || []),
         ...(data?.code360?.profile?.dsa_domain_data?.badges_hash?.specialist?.gp?.map((badge) => ({ icon: "/Images/Code360 Badges/Guided Path/specialist.svg", name: badge, subTitle: "Specialist", subTitleIcon: null })) || []),
@@ -21,8 +21,8 @@ const getBadges = (data) => {
         ...(data?.code360?.profile?.dsa_domain_data?.badges_hash?.specialist?.sgp?.map((badge) => ({ icon: "/Images/Code360 Badges/Special Guided Path/specialist.svg", name: badge, subTitle: "Specialist", subTitleIcon: null })) || []),
         ...(data?.code360?.profile?.dsa_domain_data?.badges_hash?.master?.gp?.map((badge) => ({ icon: "/Images/Code360 Badges/Guided Path/master.svg", name: badge, subTitle: "Master", subTitleIcon: null })) || []),
         ...(data?.code360?.profile?.dsa_domain_data?.badges_hash?.master?.ptm?.map((badge) => ({ icon: "/Images/Code360 Badges/Practice/master.svg", name: badge, subTitle: "Master", subTitleIcon: null })) || []),
-        ...(data?.code360?.profile?.dsa_domain_data?.badges_hash?.master?.sgp?.map((badge) => ({ icon: "/Images/Code360 Badges/Special Guided Path/master.svg", name: badge, subTitle: "Master", subTitleIcon: null })) || []),
-    ];
+        ...(data?.code360?.profile?.dsa_domain_data?.badges_hash?.master?.sgp?.map((badge) => ({ icon: "/Images/Code360 Badges/Special Guided Path/master.svg", name: badge, subTitle: "Master", subTitleIcon: null })) || [])],
+    };
 };
 
 const getTotalProblems = (data) => {
@@ -32,22 +32,6 @@ const getTotalProblems = (data) => {
         + (data?.interviewbit?.profile?.problems?.total_problems_solved || 0)
         + (data?.code360?.profile?.dsa_domain_data?.problem_count_data?.total_count || 0)
         + (data?.hackerrank?.profile?.badges?.reduce((total, badge) => total + badge.solved, 0) || 0);
-};
-
-const getTotalActiveDays = (heatmap) => {
-    let activeDays = 0;
-    if (!heatmap) return 0;
-    for (const year in heatmap) {
-        if (Object.hasOwnProperty.call(heatmap, year)) {
-            const yearData = heatmap[year];
-            for (const date in yearData) {
-                if (Object.hasOwnProperty.call(yearData, date)) {
-                    if (yearData[date] > 0) activeDays++;
-                }
-            }
-        }
-    }
-    return activeDays.toLocaleString();
 };
 
 const getTopicAnalysis = (data) => {
@@ -70,28 +54,29 @@ const getTopicAnalysis = (data) => {
     return topicStats;
 };
 
-const getContestCount = (data) => {
-    return (data?.leetcode?.contest?.userContestRankingHistory?.filter((contest) => contest.attended === true)?.length || 0)
-        + (data?.code360?.profile?.contests?.user_rating_data?.length || 0);
-};
-
 const getContestData = (data) => {
-    return {
-        "LeetCode": data?.leetcode?.contest?.userContestRankingHistory
-            ?.filter((contest) => contest.attended === true)
-            ?.map((contest) => ({
-                title: contest.contest.title,
-                rating: contest.rating,
-                ranking: contest.ranking,
-                date: new Date(contest.contest.startTime * 1000).toISOString().split('T')[0]
-            })) || [],
-        "Code360": data?.code360?.profile?.contests?.user_rating_data?.map((contest) => ({
-            title: contest.name,
+    const contestData = {};
+
+    const leetcodeContests = data?.leetcode?.contest?.userContestRankingHistory
+        ?.filter((contest) => contest.attended === true)
+        ?.map((contest) => ({
+            title: contest.contest.title,
             rating: contest.rating,
-            ranking: contest.rank,
-            date: new Date(contest.date * 1000).toISOString().split('T')[0]
-        })) || []
-    };
+            ranking: contest.ranking,
+            date: new Date(contest.contest.startTime * 1000).toISOString().split('T')[0]
+        })) || [];
+
+    const code360Contests = data?.code360?.profile?.contests?.user_rating_data?.map((contest) => ({
+        title: contest.name,
+        rating: contest.rating,
+        ranking: contest.rank,
+        date: new Date(contest.date * 1000).toISOString().split('T')[0]
+    })) || [];
+
+    if (leetcodeContests.length > 0) contestData["LeetCode"] = leetcodeContests;
+    if (code360Contests.length > 0) contestData["Code360"] = code360Contests;
+
+    return contestData;
 };
 
 const getDsaProblemsData = (data) => {
@@ -123,38 +108,73 @@ const getDsaProblemsData = (data) => {
     ];
 };
 
-const getContestAchievements = (data) => {
+const getFundamentalProblemsData = (data) => {
     return [
         {
+            name: 'GeeksForGeeks',
+            value: (data.gfg?.profile?.problemsSolved?.School || 0) + (data.gfg?.profile?.problemsSolved?.Basic || 0),
+            color: '#10B981'
+        },
+        {
+            name: 'HackerRank',
+            value: data?.hackerrank?.profile?.badges?.reduce((total, badge) => total + badge.solved, 0) || 0,
+            color: '#FBBF24'
+        }
+    ];
+};
+
+const getCompetitiveProgrammingProblemsData = (data) => {
+    return [
+        {
+            name: 'Codechef',
+            value: data?.codechef?.profile?.problemsSolved || 0,
+            color: '#10B981'
+        }
+    ];
+};
+
+const getContestAchievements = (data) => {
+    const achievements = [];
+
+    const leetcodeRating = data?.leetcode?.contest?.userContestRanking?.rating;
+    const code360Rating = data?.code360?.profile?.contests?.current_user_rating;
+
+    if (leetcodeRating) {
+        achievements.push({
             platform: 'LeetCode',
-            currentRating: Math.round(data?.leetcode?.contest?.userContestRanking?.rating) || 0,
+            currentRating: Math.round(leetcodeRating) || 0,
             maxRating: Math.round(data?.leetcode?.contest?.userContestRankingHistory?.reduce((max, contest) => Math.max(max, contest.rating), 0)) || 0,
             badgeUrl: data?.leetcode?.contest?.userContestRanking?.badge?.icon
-                ? `https://leetcode.com/${data?.leetcode?.contest?.userContestRanking?.badge?.icon}`
+                ? data?.leetcode?.contest?.userContestRanking?.badge?.icon
                 : "/Images/Leetcode Badges/knight.png",
             isDefaultBadge: !data?.leetcode?.contest?.userContestRanking?.badge?.icon,
             position: data?.leetcode?.contest?.userContestRanking?.badge?.name,
-        },
-        {
+        });
+    }
+
+    if (code360Rating) {
+        achievements.push({
             platform: 'Code360',
-            currentRating: Math.round(data?.code360?.profile?.contests?.current_user_rating) || 0,
+            currentRating: Math.round(code360Rating) || 0,
             maxRating: Math.round(data?.code360?.profile?.contests?.user_rating_data?.reduce((max, contest) => Math.max(max, contest.rating), 0)) || 0,
             badgeUrl: data?.code360?.profile?.contests?.rating_group?.icon
                 ? `${data?.code360?.profile?.contests?.rating_group?.icon}`
                 : "/Images/Default/badge.png",
             isDefaultBadge: !data?.code360?.profile?.contests?.rating_group?.icon,
             position: data?.code360?.profile?.contests?.rating_group?.group,
-        }
-    ];
+        });
+    }
+
+    return achievements;
 };
 
 export {
     getBadges,
     getTotalProblems,
-    getTotalActiveDays,
     getTopicAnalysis,
-    getContestCount,
     getContestData,
     getDsaProblemsData,
+    getFundamentalProblemsData,
+    getCompetitiveProgrammingProblemsData,
     getContestAchievements,
 };

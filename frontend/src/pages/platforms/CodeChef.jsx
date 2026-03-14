@@ -1,6 +1,7 @@
 import React from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { getTotalActiveDays } from '../../utils/dataHelpers.js';
+import { useMemo } from 'react';
+import { getStreaksAndActiveDays } from '../../utils/calendar.js';
 import { StatCard } from '../../components/card/export.js';
 import { BadgeCollection } from '../../components/export.js';
 import { SubmissionHeatmap } from '../../components/charts/export.js';
@@ -8,15 +9,17 @@ import { SubmissionHeatmap } from '../../components/charts/export.js';
 const CodeChef = () => {
     const { data } = useOutletContext();
 
-
     const platformData = data.codechef;
 
-    const badges = platformData?.profile?.badges?.map((badge) => ({
+    const badges = useMemo(() => platformData?.profile?.badges?.map((badge) => ({
         icon: badge.badgeImage,
         name: badge.badgeTitle,
         subTitle: null,
         subTitleIcon: null
-    })) || [];
+    })) || [], [platformData]);
+
+    const { activeDays } = useMemo(() => getStreaksAndActiveDays(platformData?.submission || {}), [platformData]);
+    const problemsData = platformData?.profile?.problemsSolved || 0;
 
     return (
         <div className="space-y-8 animate-float-in">
@@ -24,14 +27,14 @@ const CodeChef = () => {
 
                 <StatCard
                     title="Total Problems"
-                    value={platformData?.profile?.problemsSolved || 0}
+                    value={problemsData}
                     color="blue"
                     index={0}
                 />
 
                 <StatCard
                     title="Active Days"
-                    value={getTotalActiveDays(platformData?.submission)}
+                    value={activeDays}
                     color="green"
                     index={1}
                 />

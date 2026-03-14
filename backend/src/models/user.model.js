@@ -49,6 +49,10 @@ const UserSchema = new mongoose.Schema({
         type: Boolean,
         default: true,
     },
+    apiKey: {
+        type: String,
+        required: true,
+    },
     lastRefresh: {
         type: Date,
         default: Date.now,

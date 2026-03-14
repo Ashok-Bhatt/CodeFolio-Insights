@@ -12,7 +12,7 @@ const SettingsProfile = () => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [profileImageViewUrl, setProfileImageViewUrl] = useState(user?.profile || "/Images/Default/user.png");
 
-    const { mutateAsync: updateUserMutation, isPending: isLoading } = useUpdateUser();
+    const { mutate: updateUserMutation, isPending: isLoading } = useUpdateUser();
 
     // Update profile image view when user changes (e.g. after successful update)
     useEffect(() => {
@@ -29,23 +29,18 @@ const SettingsProfile = () => {
         setProfileImageViewUrl(previewUrl);
     };
 
-    const updateImage = async () => {
+    const updateImage = () => {
         if (!selectedFile) return;
-        try {
-            const formData = new FormData();
-            formData.append('profileImage', selectedFile);
-            const data = await updateUserMutation(formData);
-            if (data) {
-                // Update local and global user state
+        const formData = new FormData();
+        formData.append('profileImage', selectedFile);
+        updateUserMutation(formData, {
+            onSuccess: (data) => {
                 const updatedUser = { ...user, profile: data.profile };
                 setUser(updatedUser);
                 setAuthUser(data);
                 setSelectedFile(null);
-                toast.success("Profile image updated!");
             }
-        } catch (error) {
-            toast.error("Failed to update profile image!");
-        }
+        });
     };
 
     useEffect(() => {
@@ -58,7 +53,7 @@ const SettingsProfile = () => {
         setUser({ ...user, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
 
         // Cross-field validation for phone and countryCode
@@ -67,32 +62,27 @@ const SettingsProfile = () => {
             return;
         }
 
-        try {
-            const formData = new FormData();
-            const fields = [
-                'name', 'jobTitle', 'headline', 'bio', 'location',
-                'countryCode', 'phone', 'linkedinUsername',
-                'twitterUsername', 'portfolioWebsiteLink', 'resumeLink'
-            ];
+        const formData = new FormData();
+        const fields = [
+            'name', 'jobTitle', 'headline', 'bio', 'location',
+            'countryCode', 'phone', 'linkedinUsername',
+            'twitterUsername', 'portfolioWebsiteLink', 'resumeLink'
+        ];
 
-            fields.forEach(field => {
-                let value = user[field] || '';
-                if ((field === 'countryCode' || field === 'phone') && value === '') return;
-                if (field === 'countryCode' && value.startsWith('+')) value = value.substring(1);
-                formData.append(field, value);
-            });
+        fields.forEach(field => {
+            let value = user[field] || '';
+            if ((field === 'countryCode' || field === 'phone') && value === '') return;
+            if (field === 'countryCode' && value.startsWith('+')) value = value.substring(1);
+            formData.append(field, value);
+        });
 
-            const data = await updateUserMutation(formData);
-
-            if (data) {
+        updateUserMutation(formData, {
+            onSuccess: (data) => {
                 setUser(data);
                 setAuthUser(data);
                 setIsEditing(false);
-                toast.success("Profile updated successfully!");
             }
-        } catch (error) {
-            toast.error("Failed to update profile!");
-        }
+        });
     };
 
     return (

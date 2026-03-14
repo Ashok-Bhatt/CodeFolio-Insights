@@ -10,7 +10,7 @@ const BadgeCollection = ({ badges, title = "Awards", className = "" }) => {
 
     // BadgeCard is w-40 (160px) + gap-4 (16px)
     const fitCount = useResponsiveCount(containerRef, 160, 16);
-    const displayedBadges = badges.slice(0, fitCount || 0);
+    const displayedBadges = badges?.slice(0, fitCount || 0) || [];
 
     const toggleModal = () => {
         setIsModalOpen(!isModalOpen);
@@ -29,14 +29,14 @@ const BadgeCollection = ({ badges, title = "Awards", className = "" }) => {
 
     return (
         <>
-            <div className={`bg-white p-6 rounded-xl shadow-lg border border-gray-200 font-sans text-gray-800 w-full animate-float-in ${className}`}>
+            <div className={`flex flex-col bg-white p-6 rounded-xl shadow-lg border border-gray-200 font-sans text-gray-800 w-full animate-float-in ${className}`}>
                 <div className="flex flex-col mb-6">
                     <h3 className="text-xl font-bold text-gray-800 mb-1">{title}</h3>
-                    <span className="text-gray-500 font-bold text-lg">{badges.length}</span>
+                    <span className="text-gray-500 font-bold text-lg">{badges?.length || 0}</span>
                 </div>
 
-                {badges.length > 0 ? (
-                    <div className="flex flex-col items-center w-full">
+                {badges?.length > 0 ? (
+                    <div className="flex flex-col items-center justify-center w-full flex-grow">
                         <div
                             ref={containerRef}
                             className="flex justify-center gap-4 mb-4 w-full overflow-hidden flex-nowrap"

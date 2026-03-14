@@ -1,14 +1,14 @@
-import apiLogs from "../models/apiLogs.model.js";
-import asyncHandler from '../utils/asyncHandler.js';
+import ApiLogsModel from "../models/api-logs.model.js";
+import asyncHandler from '../utils/async-handler.util.js';
 
 const getAnalytics = asyncHandler(async (req, res, next) => {
-    const startTime = Date.now(); 
+    const startTime = Date.now();
 
     res.on("finish", async () => {
         const userId = req.user?._id || null;
         const duration = Date.now() - startTime;
 
-        await apiLogs.create({
+        await ApiLogsModel.create({
             userId: userId,
             endpoint: req.originalUrl,
             method: req.method,

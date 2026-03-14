@@ -6,7 +6,7 @@ const useLeetcodeAnalysis = (username) => {
     return useQuery({
         queryKey: ["leetcodeData", username],
         queryFn: asyncWrapper(async () => {
-            const response = await axiosInstance.get(`/analyze/leetcode?username=${username}`);
+            const response = await axiosInstance.get(`/api/analyze/leetcode?username=${username}`);
             return response.data;
         }),
         enabled: false, // prevents auto-fetch until Analyze is clicked
@@ -19,7 +19,7 @@ const useGithubAnalysis = (username) => {
     return useQuery({
         queryKey: ["githubData", username],
         queryFn: asyncWrapper(async () => {
-            const response = await axiosInstance.get(`/analyze/github?username=${username}`);
+            const response = await axiosInstance.get(`/api/analyze/github?username=${username}`);
             return response.data;
         }),
         enabled: false, // Prevents auto-fetch until Analyze is clicked
@@ -31,7 +31,7 @@ const useGithubAnalysis = (username) => {
 const useResumeAnalysis = () => {
     return useMutation({
         mutationFn: asyncWrapper(async (formData) => {
-            const response = await axiosInstance.post("/analyze/resume", formData, {
+            const response = await axiosInstance.post("/api/analyze/resume", formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },

@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Edit3, ExternalLink, MapPin, Mail, Linkedin, Twitter, Globe, Github, ChevronDown, Plus, FileText, Phone } from 'lucide-react';
+import { ExternalLink, MapPin, Mail, Linkedin, Twitter, Globe, ChevronDown, Plus, FileText, Phone } from 'lucide-react';
 import { useAuthStore } from '../../store/export.js';
 import { useToggleProfileVisibility } from '../../hooks/useUsers.js';
 import { InfoTooltip } from '../export.js';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import toast from 'react-hot-toast';
 
 const DashboardSidebar = ({ userData }) => {
     const { userId } = useParams();
@@ -16,7 +15,7 @@ const DashboardSidebar = ({ userData }) => {
     const navigate = useNavigate();
 
     const setAuthUser = useAuthStore((state) => state.setUser);
-    const { mutateAsync: toggleProfileVisibilityMutation } = useToggleProfileVisibility();
+    const { mutate: toggleProfileVisibilityMutation } = useToggleProfileVisibility();
 
     useEffect(() => {
         if (userData) {
@@ -24,18 +23,14 @@ const DashboardSidebar = ({ userData }) => {
         }
     }, [userData]);
 
-    const handleToggleVisibility = async () => {
-        try {
-            const data = await toggleProfileVisibilityMutation();
-            if (data && user) {
+    const handleToggleVisibility = () => {
+        toggleProfileVisibilityMutation(undefined, {
+            onSuccess: (data) => {
                 const updatedUser = { ...user, profileVisibility: data.profileVisibility };
                 setAuthUser(updatedUser);
                 setProfileVisibility(data.profileVisibility);
-                toast.success(data.message);
             }
-        } catch (error) {
-            toast.error("Failed to update visibility");
-        }
+        });
     };
 
     const userLinks = [

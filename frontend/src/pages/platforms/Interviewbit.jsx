@@ -1,6 +1,7 @@
 import React from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { getTotalActiveDays } from '../../utils/dataHelpers.js';
+import { useMemo } from 'react';
+import { getStreaksAndActiveDays } from '../../utils/calendar.js';
 import { StatCard, ProblemsCard } from '../../components/card/export.js';
 import { BadgeCollection, TopicAnalysis } from '../../components/export.js';
 import { SubmissionHeatmap } from '../../components/charts/export.js';
@@ -10,7 +11,7 @@ const Interviewbit = () => {
 
     const platformData = data.interviewbit;
 
-    const platformProblemsData = [
+    const platformProblemsData = useMemo(() => [
         {
             name: 'Easy',
             value: (platformData?.profile?.problems?.difficulty_problems_solved?.find(d => d.difficulty_level === 'easy')?.solved_problems_count || 0),
@@ -26,19 +27,22 @@ const Interviewbit = () => {
             value: (platformData?.profile?.problems?.difficulty_problems_solved?.find(d => d.difficulty_level === 'hard')?.solved_problems_count || 0),
             color: '#FF4524'
         }
-    ];
+    ], [platformData]);
 
-    const topicStats = platformData?.profile?.problems?.topic_problems_solved?.reduce((acc, topic) => {
+    const topicStats = useMemo(() => platformData?.profile?.problems?.topic_problems_solved?.reduce((acc, topic) => {
         acc[topic.title] = topic.solved_problems_count;
         return acc;
-    }, {}) || {};
+    }, {}) || {}, [platformData]);
 
-    const badges = platformData?.profile?.badges?.map((badge) => ({
+    const badges = useMemo(() => platformData?.badges?.map((badge) => ({
         icon: badge.image,
         name: badge.title,
         subTitle: null,
         subTitleIcon: null
-    })) || [];
+    })) || [], [platformData]);
+
+    const { activeDays } = useMemo(() => getStreaksAndActiveDays(platformData?.submission || {}), [platformData]);
+    const totalProblems = useMemo(() => platformData?.profile?.problems?.total_problems_solved || 0, [platformData]);
 
     return (
         <div className="space-y-8 animate-float-in">
@@ -46,14 +50,14 @@ const Interviewbit = () => {
 
                 <StatCard
                     title="Total Problems"
-                    value={platformData?.profile?.problems?.total_problems_solved || 0}
+                    value={totalProblems}
                     color="blue"
                     index={0}
                 />
 
                 <StatCard
                     title="Active Days"
-                    value={getTotalActiveDays(platformData?.submission)}
+                    value={activeDays}
                     color="green"
                     index={1}
                 />

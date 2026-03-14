@@ -1,12 +1,12 @@
 import { getMemeForScore } from "../utils/meme.js";
 import { Quote, Star, Zap } from "lucide-react";
 
-const MemeContainer = ({ score }) => {
+const MemeContainer = ({ score, className = "" }) => {
     const review = getMemeForScore(score);
     const roundedScore = Math.round(score);
 
     return (
-        <div className={`animate-bounce-in relative rounded-3xl p-6 border-3 ${review.border} bg-gradient-to-br ${review.bg} shadow-2xl transform transition-all duration-500 hover:scale-[1.02] hover:shadow-3xl group overflow-hidden`}>
+        <div className={`animate-bounce-in relative rounded-3xl p-6 border-3 ${review.border} bg-gradient-to-br ${review.bg} shadow-2xl transform transition-all duration-500 hover:scale-[1.02] hover:shadow-3xl group overflow-hidden ${className}`}>
             <div className="absolute inset-0 opacity-5">
                 <div className="animate-pulse-glow absolute top-10 left-10 w-20 h-20 bg-current rounded-full"></div>
                 <div className="animate-pulse-glow absolute bottom-10 right-10 w-16 h-16 bg-current rounded-full" style={{ animationDelay: '1s' }}></div>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { getTotalActiveDays } from '../../utils/dataHelpers.js';
+import { useMemo } from 'react';
+import { getStreaksAndActiveDays } from '../../utils/calendar.js';
 import { StatCard, ProblemsCard } from '../../components/card/export.js';
 import { BadgeCollection, TopicAnalysis, ContestAchievements } from '../../components/export.js';
 import { SubmissionHeatmap, ContestGraph } from '../../components/charts/export.js';
@@ -11,7 +12,7 @@ const LeetCode = () => {
 
     const platformData = data.leetcode;
 
-    const platformProblemsData = [
+    const platformProblemsData = useMemo(() => [
         {
             name: 'Easy',
             value: (platformData?.problems?.acSubmissionNum[1]?.count || 0),
@@ -27,12 +28,19 @@ const LeetCode = () => {
             value: (platformData?.problems?.acSubmissionNum[3]?.count || 0),
             color: '#FF4524'
         }
-    ];
+    ], [platformData]);
 
-    const topicStats = (Object.values(platformData?.topicStats || []))?.flat()?.reduce((acc, { tagSlug, problemsSolved }) => {
+    const topicStats = useMemo(() => (Object.values(platformData?.topicStats || []))?.flat()?.reduce((acc, { tagSlug, problemsSolved }) => {
         acc[tagSlug] = problemsSolved;
         return acc;
-    }, {});
+    }, {}), [platformData]);
+
+    const { activeDays } = useMemo(() => getStreaksAndActiveDays(platformData?.submission || {}), [platformData]);
+    const totalProblems = useMemo(() => platformData?.problems?.acSubmissionNum?.[0]?.count || 0, [platformData]);
+    const totalContests = useMemo(() => platformData?.contest?.userContestRanking?.attendedContestsCount || 0, [platformData]);
+    const contestData = useMemo(() => (getContestData(data)?.LeetCode) || [], [data]);
+    const achievements = useMemo(() => getContestAchievements(data).filter((achievement) => achievement.platform === "LeetCode"), [data]);
+    const badges = useMemo(() => platformData?.badges?.badges);
 
     return (
         <div className="space-y-8 animate-float-in">
@@ -40,21 +48,21 @@ const LeetCode = () => {
 
                 <StatCard
                     title="Total Problems"
-                    value={platformData?.problems?.acSubmissionNum?.[0]?.count || 0}
+                    value={totalProblems}
                     color="blue"
                     index={0}
                 />
 
                 <StatCard
                     title="Active Days"
-                    value={getTotalActiveDays(platformData?.submission)}
+                    value={activeDays}
                     color="green"
                     index={1}
                 />
 
                 <BadgeCollection
                     title="Badges"
-                    badges={platformData?.badges?.badges || []}
+                    badges={badges}
                 />
 
                 <ProblemsCard
@@ -62,15 +70,15 @@ const LeetCode = () => {
                     problemsData={platformProblemsData}
                 />
 
-                {platformData?.contest?.userContestRanking?.attendedContestsCount > 0 && (
+                {totalContests > 0 && (
                     <>
                         <ContestGraph
-                            contestData={(getContestData(data)?.LeetCode) || []}
+                            contestData={contestData}
                             className="col-span-1"
                         />
 
                         <ContestAchievements
-                            achievements={getContestAchievements(data).filter((achievement) => achievement.platform === "LeetCode")}
+                            achievements={achievements}
                             className="col-span-1"
                         />
                     </>

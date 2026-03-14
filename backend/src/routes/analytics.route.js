@@ -1,12 +1,26 @@
-import express from "express"
-import { getAnalytics } from "../controllers/analytics.controller.js";
-import { checkAdmin } from "../middlewares/admin.middleware.js"
-import { protectRoute } from "../middlewares/auth.middleware.js";
-import validate from "../middlewares/validate.middleware.js";
-import { analyticsValidationSchemas } from "../validators/analytics.validate.js";
+import express from 'express';
+import { getDailyApiUsageData, getPublicApiRequestsData } from '../controllers/analytics.controller.js';
+import { protectRoute } from '../middlewares/auth.middleware.js';
+import { getAnalytics } from '../middlewares/analytics.middleware.js';
+import { validate } from '../middlewares/validate.middleware.js';
+import { apiKeyDailyUsageValidationSchema, apiKeyRequestsDataValidationSchema } from '../validators/analytics.validate.js';
 
 const router = express.Router();
 
-router.get("/", protectRoute, checkAdmin, validate(analyticsValidationSchemas), getAnalytics);
+router.get(
+    "/daily-usage",
+    getAnalytics,
+    protectRoute,
+    validate(apiKeyDailyUsageValidationSchema),
+    getDailyApiUsageData
+);
+
+router.get(
+    "/api-requests-data",
+    getAnalytics,
+    protectRoute,
+    validate(apiKeyRequestsDataValidationSchema),
+    getPublicApiRequestsData
+);
 
 export default router;

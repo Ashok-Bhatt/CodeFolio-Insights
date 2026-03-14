@@ -1,6 +1,5 @@
 import z from "zod";
-
-const objectIdRegex = /^[0-9a-fA-F]{24}$/;
+import { objectIdRegex } from "../constants/index.js";
 
 const usersQueryValidationSchema = z.object({
     query: z.object({
@@ -44,7 +43,7 @@ const userIdValidationSchema = z.object({
 const usernameValidationSchema = z.object({
     query: z.object({
         username: z.string({ message: "Username is required!" }).min(1, "Username cannot be empty")
-    })
+    }).passthrough()
 });
 
 export {

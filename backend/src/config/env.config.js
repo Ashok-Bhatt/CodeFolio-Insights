@@ -1,0 +1,60 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
+const PORT = process.env.PORT || 8080;
+const ENV = process.env.PORT ? "production" : "development";
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+const MONGO_CONN = process.env.MONGO_CONN;
+const DB_NAME = process.env.DB_NAME;
+const JWT_SECRET = process.env.JWT_SECRET;
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const GEMINI_LLM_MODEL = process.env.GEMINI_LLM_MODEL;
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+const GOOGLE_CALLBACK_URL = process.env.GOOGLE_CALLBACK_URL;
+const SESSION_SECRET = process.env.SESSION_SECRET;
+const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY;
+const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET;
+const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME;
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+const CORS_ORIGIN = process.env.CORS_ORIGIN;
+const UPSTASH_REDIS_REST_URL = process.env.UPSTASH_REDIS_REST_URL;
+const UPSTASH_REDIS_REST_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
+const SMTP_HOST = process.env.SMTP_HOST;
+const SMTP_PORT = process.env.SMTP_PORT || 587;
+const SMTP_USER = process.env.SMTP_USER;
+const SMTP_PASS = process.env.SMTP_PASS;
+const EMAIL_FROM = process.env.EMAIL_FROM;
+const PUPPETEER_EXECUTABLE_PATH = process.env.PUPPETEER_EXECUTABLE_PATH;
+
+export {
+    PORT,
+    ENV,
+    GITHUB_TOKEN,
+    MONGO_CONN,
+    DB_NAME,
+    JWT_SECRET,
+    GEMINI_API_KEY,
+    GEMINI_LLM_MODEL,
+    GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECRET,
+    GOOGLE_CALLBACK_URL,
+    SESSION_SECRET,
+    CLOUDINARY_API_KEY,
+    CLOUDINARY_API_SECRET,
+    CLOUDINARY_CLOUD_NAME,
+    ADMIN_USERNAME,
+    ADMIN_EMAIL,
+    ADMIN_PASSWORD,
+    CORS_ORIGIN,
+    UPSTASH_REDIS_REST_URL,
+    UPSTASH_REDIS_REST_TOKEN,
+    SMTP_HOST,
+    SMTP_PORT,
+    SMTP_USER,
+    SMTP_PASS,
+    EMAIL_FROM,
+    PUPPETEER_EXECUTABLE_PATH,
+}
