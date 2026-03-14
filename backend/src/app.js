@@ -45,6 +45,17 @@ app.use(
 // Passport middleware
 app.use(passport.initialize());
 
+// Health Check
+app.get('/health', (req, res) => {
+    return res.status(200).json({
+        status: "UP",
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
+        environment: process.env.NODE_ENV || "development",
+        message: "Service is healthy"
+    });
+});
+
 // Routes
 app.use('/api/auth', AuthRouter);
 app.use('/api/analyze', AnalyzeRouter);
