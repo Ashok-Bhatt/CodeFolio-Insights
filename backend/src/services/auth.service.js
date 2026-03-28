@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import UserModel from "../models/user.model.js";
 import VerificationModel from "../models/verification.model.js";
 import ApiProjectModel from '../models/api-project.model.js';
-import { sendOtpEmail } from '../utils/nodemailer.util.js';
+import { sendOtpEmail } from '../utils/mailjet.util.js';
 import { generateApiKey } from '../utils/api-key.util.js';
 import { generateOTP } from '../utils/otp.util.js';
 import { OTP_EXPIRY_TIME } from '../constants/index.js'
