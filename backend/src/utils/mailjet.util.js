@@ -1,17 +1,17 @@
-import mailjet from "node-mailjet";
-import { MAILJET_API_KEY, MAILJET_API_SECRET, EMAIL_FROM, NAME_FROM } from "../config/env.config";
+import Mailjet from "node-mailjet";
+import { MAILJET_API_KEY, MAILJET_API_SECRET, EMAIL_FROM, NAME_FROM } from "../config/env.config.js";
 
-const mailjet = mailjet.connect(MAILJET_API_KEY, MAILJET_API_SECRET);
+const mailjetClient = Mailjet.apiConnect(MAILJET_API_KEY, MAILJET_API_SECRET);
 
 export const sendContactEmail = async (name, email, subject, message) => {
     try {
-        const request = mailjet
+        await mailjetClient
             .post("send", { 'version': 'v3.1' })
             .request({
                 "Messages": [
                     {
                         "From": {
-                            "Email": `contact@${EMAIL_FROM}`,
+                            "Email": EMAIL_FROM,
                             "Name": NAME_FROM,
                         },
                         "To": [
@@ -56,17 +56,17 @@ export const sendContactEmail = async (name, email, subject, message) => {
                     }
                 ]
             })
-        await request;
         return true;
     } catch (error) {
         console.error("Error sending email:", error);
+        console.log(error?.response?.data ? JSON.stringify(error?.response?.data, null, 2) : error);
         return false;
     }
 }
 
 export const sendOtpEmail = async (email, otp) => {
     try {
-        const request = mailjet
+        await mailjetClient
             .post("send", { 'version': 'v3.1' })
             .request({
                 "Messages": [
@@ -83,7 +83,7 @@ export const sendOtpEmail = async (email, otp) => {
                         ],
                         "Subject": 'Your Verification Code - CodeFolio Insights',
                         "HTMLPart": `
-                            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; rounded: 10px;">
+                            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
                                 <h2 style="color: #4f46e5; text-align: center;">CodeFolio Insights</h2>
                                 <p>Hello,</p>
                                 <p>Use the following code to complete your verification. This code is valid for 10 minutes.</p>
@@ -93,6 +93,9 @@ export const sendOtpEmail = async (email, otp) => {
                                     </span>
                                 </div>
                                 <p>If you didn't request this, please ignore this email.</p>
+                                <p style="font-size: 11px; color: #94a3b8; text-align: center; font-style: italic;">
+                                    Tip: If you found this in spam, please mark it as 'Not Spam' to ensure you receive future emails in your inbox.
+                                </p>
                                 <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 20px 0;">
                                 <p style="font-size: 12px; color: #6b7280; text-align: center;">
                                     &copy; 2026 CodeFolio Insights. All rights reserved.
@@ -102,10 +105,10 @@ export const sendOtpEmail = async (email, otp) => {
                     }
                 ]
             })
-        await request;
         return true;
     } catch (error) {
         console.error("Error sending email:", error);
+        console.log(error?.response?.data ? JSON.stringify(error?.response?.data, null, 2) : error);
         return false;
     }
 }
