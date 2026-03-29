@@ -1,4 +1,4 @@
-import { sendContactEmail } from '../utils/mailjet.util.js';
+import { sendContactEmail } from '../utils/sendgrid.util.js';
 import asyncHandler from '../utils/async-handler.util.js';
 
 const handleContactInquiry = asyncHandler(async (req, res) => {
