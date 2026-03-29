@@ -116,6 +116,9 @@ const SignupPage = () => {
                         <div>
                             <label className="block text-sm font-bold text-slate-700 mb-2 text-center">Verification Code</label>
                             <OTPInput value={otp} onChange={(val) => setOtp(val)} />
+                            <p className="mt-4 text-xs text-center text-slate-400 italic">
+                                * Check your spam folder if you don't see the email.
+                            </p>
                         </div>
 
                         <button

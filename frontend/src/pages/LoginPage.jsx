@@ -116,6 +116,9 @@ const LoginPage = () => {
                         <div>
                             <label className="block text-sm font-bold text-slate-700 mb-2 text-center">Verification Code</label>
                             <OTPInput value={otp} onChange={(val) => setOtp(val)} />
+                            <p className="mt-4 text-xs text-center text-slate-400 italic text-slate-400 font-medium">
+                                * Don't forget to check your spam folder!
+                            </p>
                         </div>
 
                         <button
