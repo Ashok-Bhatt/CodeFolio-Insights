@@ -1,14 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { ShieldCheck, Eye, EyeOff, Save, Mail, Info, Edit2, X } from 'lucide-react';
-import { useAuthStore } from '../store/export.js';
-import { useChangePassword, useToggle2FA, useUpdateApiKey } from '../hooks/useUsers';
+import { useAuthStore } from '../../store/export.js';
+import { useChangePassword, useToggle2FA, useUpdateApiKey } from '../../hooks/useUsers.js';
 import toast from 'react-hot-toast';
 
-const Account = () => {
+const AccountSettings = () => {
     const user = useAuthStore((state) => state.user);
     const { mutate: changePassword, isPending: isLoading } = useChangePassword();
     const { mutate: toggle2FA, isPending: isToggling2FA } = useToggle2FA();
-    console.log(user);
 
     const [form, setForm] = useState({
         oldPassword: '',
@@ -310,4 +309,4 @@ const Account = () => {
     );
 };
 
-export default Account;
+export default AccountSettings;

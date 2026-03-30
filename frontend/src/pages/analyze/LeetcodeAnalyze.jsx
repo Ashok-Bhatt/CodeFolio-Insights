@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Search, CheckCircle, Target, Zap, Award, Rocket, Brain, RefreshCw, BarChart3, TrendingUp, AlertCircle } from 'lucide-react';
+import { CheckCircle, Target, Zap, Award, Rocket, BarChart3, TrendingUp, AlertCircle } from 'lucide-react';
 import { getRandomHexColor } from '../../utils/colors.js';
-import { BadgeCollection, ScoreMeter, TopicStats, ErrorContainer, MemeContainer } from '../../components/export.js';
+import { BadgeCollection, ScoreMeter, TopicStats, ErrorContainer, MemeContainer, UsernameInput } from '../../components/export.js';
 import { StatCard, VideoSuggestionCard, AnalysisCard } from '../../components/card/export.js';
 import { SubmissionHeatmap, DistributionChart } from "../../components/charts/export.js"
 import { useAuthStore } from '../../store/export.js';
@@ -62,7 +62,7 @@ const LeetcodeAnalyse = () => {
     }
 
     return (
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 space-y-8">
+        <div className="flex-1 animate-float-in space-y-8">
             <div className="text-center space-y-4 animate-float-in">
                 <h1 className="text-4xl md:text-6xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent leading-tight h-20">
                     LeetCode Analytics
@@ -72,35 +72,16 @@ const LeetcodeAnalyse = () => {
                 </p>
             </div>
 
-            <div className="bg-white/90 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-gray-100 animate-float-in hover:shadow-2xl transition-all" style={{ animationDelay: '100ms' }}>
-                <div className="flex items-center gap-4 mb-8">
-                    <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg">
-                        <Rocket className="h-6 w-6 text-white" />
-                    </div>
-                    <div>
-                        <h3 className="text-2xl font-black text-gray-800">Analyze Your Profile</h3>
-                        <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">Enter LeetCode username</p>
-                    </div>
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-4">
-                    <div className="flex-1 relative">
-                        <input
-                            type="text" value={userId} onChange={(e) => setUserId(e.target.value)}
-                            placeholder="Enter your LeetCode UserID..."
-                            className="w-full p-4 pl-12 text-lg border-2 border-gray-100 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all bg-gray-50/50 font-bold"
-                        />
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                    </div>
-                    <button
-                        onClick={handleAnalyze} disabled={isFetching}
-                        className="flex items-center justify-center gap-3 bg-blue-600 text-white font-black px-8 py-4 rounded-2xl shadow-xl hover:shadow-blue-200 transition-all transform hover:-translate-y-1 disabled:opacity-50 uppercase tracking-widest text-sm"
-                    >
-                        {isFetching ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Brain className="w-5 h-5" />}
-                        <span>{isFetching ? 'Analyzing...' : 'Deep Analysis'}</span>
-                    </button>
-                </div>
-            </div>
+            <UsernameInput
+                value={userId}
+                onChange={setUserId}
+                onAnalyze={handleAnalyze}
+                isFetching={isFetching}
+                placeholder="Enter your LeetCode UserID..."
+                title="Analyze Your Profile"
+                subtitle="Enter LeetCode username"
+                Icon={Rocket}
+            />
 
             {analysisData && (
                 <div className="space-y-8">
@@ -218,7 +199,7 @@ const LeetcodeAnalyse = () => {
                     errorAdditionalHelp={["Check if username is correct", "Ensure profile is public", "Try again in a few minutes"]}
                 />
             )}
-        </main>
+        </div>
     );
 };
 

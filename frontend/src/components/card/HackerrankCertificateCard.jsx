@@ -1,4 +1,4 @@
-import { ExternalLink, Award, Calendar, CheckCircle2 } from 'lucide-react';
+import { ExternalLink, Calendar, CheckCircle2 } from 'lucide-react';
 
 const HackerrankCertificateCard = ({ data, className = "", isExpanded = false }) => {
     if (!data) return null;

@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSignUp, useVerifyOTP } from '../hooks/useUsers.js';
 import conf from '../config/config.js';
-import useAuthStore from '../store/useAuthStore.js';
-import OTPInput from '../components/OTPInput.jsx';
+import { useAuthStore } from '../store/export.js';
+import { OtpInput } from '../components/export.js';
 
 const SignupPage = () => {
     const [formData, setFormData] = useState({ name: '', email: '', password: '' });
@@ -115,7 +115,7 @@ const SignupPage = () => {
                     <form className="space-y-6" onSubmit={handleVerifyOTP}>
                         <div>
                             <label className="block text-sm font-bold text-slate-700 mb-2 text-center">Verification Code</label>
-                            <OTPInput value={otp} onChange={(val) => setOtp(val)} />
+                            <OtpInput value={otp} onChange={(val) => setOtp(val)} />
                             <p className="mt-4 text-xs text-center text-slate-400 italic">
                                 * Check your spam folder if you don't see the email.
                             </p>

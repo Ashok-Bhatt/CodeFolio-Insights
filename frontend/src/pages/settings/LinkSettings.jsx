@@ -1,11 +1,11 @@
-import { useAuthStore } from '../store/export.js';
+import { useAuthStore } from '../../store/export.js';
 import { Link as LinkIcon } from 'lucide-react';
-import { transformBackendToFrontend } from '../utils/linkHelpers.js';
-import { LinkCard } from '../components/card/export.js';
-import { useProfileLinks, useUpdateProfileLink } from '../hooks/useProfiles.js';
-import { PLATFORMS_CONFIG } from '../constants/index.js';
+import { transformBackendToFrontend } from '../../utils/linkHelpers.js';
+import { LinkCard } from '../../components/card/export.js';
+import { useProfileLinks, useUpdateProfileLink } from '../../hooks/useProfiles.js';
+import { PLATFORMS_CONFIG } from '../../constants/index.js';
 
-const LinkPage = () => {
+const LinkSettings = () => {
     const userId = useAuthStore((state) => state?.user?._id);
 
     const { data: profile, refetch: fetchLinks } = useProfileLinks(userId);
@@ -65,4 +65,4 @@ const LinkPage = () => {
     );
 };
 
-export default LinkPage;
+export default LinkSettings;

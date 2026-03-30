@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams, Outlet } from 'react-router-dom';
-import DashboardSidebar from '../components/sidebars/DashboardSidebar.jsx';
+import { DashboardSidebar } from '../components/sidebars/export.js';
 import { useProfileCache, useProfileRefresh } from '../hooks/useProfiles.js';
-import { useUser } from '../hooks/export.js';
+import { useUser } from '../hooks/useUsers.js';
 import { Loader } from '../components/loaders/export.js';
 import { DashboardSkeleton } from '../components/skeletons/export.js';
 import { CircleAlert, Plus } from 'lucide-react';

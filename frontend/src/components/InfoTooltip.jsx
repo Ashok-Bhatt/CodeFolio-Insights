@@ -17,7 +17,7 @@ const InfoTooltip = ({ text, direction = 'right' }) => {
 
     return (
         <div className="group relative flex items-center">
-            <Info className="w-4 h-4 text-slate-400 cursor-help" />
+            <Info className="w-4 h-4 text-slate-400" />
             <div className={`absolute ${directions[direction]} px-3 py-1.5 bg-slate-800 text-white text-xs rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 whitespace-nowrap shadow-lg`}>
                 {text}
                 <div className={`absolute w-2 h-2 bg-slate-800 ${arrows[direction]}`}></div>

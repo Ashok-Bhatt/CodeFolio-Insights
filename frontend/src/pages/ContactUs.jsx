@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Mail, MessageSquare, User, Send, CheckCircle, Globe, Zap, ShieldCheck, Lightbulb } from 'lucide-react';
+import { useState } from 'react';
+import { Mail, User, Send, Zap, ShieldCheck, Lightbulb } from 'lucide-react';
 import { useContactUs } from '../hooks/useEmail.js';
 
 const ContactUs = () => {

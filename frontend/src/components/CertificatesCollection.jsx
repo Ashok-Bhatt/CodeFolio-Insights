@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { X } from "lucide-react";
 import { HackerrankCertificateCard } from "./card/export.js";
-import { useResponsiveCount } from '../hooks/export.js';
+import { useResponsiveCount } from '../hooks/useResponsiveCount.js';
 
 const CertificatesCollection = ({ certificates = [], title = "Certificates", className = "" }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);

@@ -5,7 +5,7 @@ import { DEFAULT_USERS, LANDING_FEATURES } from "../constants/index.js";
 import { Animated } from "../layouts/export.js";
 import { DashboardPreview, LandingNavbar } from "../components/export.js";
 import { FeatureCard } from "../components/card/export.js";
-import useHighlights from "../hooks/useHighlights.js";
+import { useHighlights } from "../hooks/useHighlights.js";
 import { useAuthStore } from "../store/export.js";
 
 export default function App() {

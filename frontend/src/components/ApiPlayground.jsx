@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Play, Copy, RefreshCcw, Loader2, Info, Shield } from "lucide-react";
 import toast from 'react-hot-toast';
-import { usePublicApiPlayground } from "../hooks/export.js";
-import useAuthStore from "../store/useAuthStore.js";
+import { usePublicApiPlayground } from "../hooks/usePublicApi.js";
+import { useAuthStore } from "../store/export.js";
 
 const ApiPlayground = ({ currentEndpoint }) => {
     const { user } = useAuthStore();

@@ -2,12 +2,12 @@ import { useAuthStore } from './store/export.js';
 import { useCheckAuth } from './hooks/useUsers.js';
 import { useEffect } from 'react';
 import { Route, Routes, Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { Landing, LoginPage, SignupPage, CodingProfiles, SettingsPage, SettingsProfile, LinkPage, PageNotFound, Account, ContactUs } from './pages/export.js';
-import { HomeLayout, DashboardLayout, AnalyzerLayout, PublicApisLayout } from "./layouts/export.js";
+import { Landing, LoginPage, SignupPage, CodingProfiles, PageNotFound, ContactUs } from './pages/export.js';
+import { HomeLayout, DashboardLayout, AnalyzerLayout, PublicApisLayout, ProtectedLayout, SettingsLayout } from "./layouts/export.js";
 import { LeetCode, GFG, Code360, Interviewbit, CodeChef, HackerRank, Github } from './pages/platforms/export.js';
 import { LeetcodeAnalyze, GithubAnalyze, ResumeAnalyze } from './pages/analyze/export.js';
 import { ApiDocumentation, ApiProjects, ApiFaq } from './pages/public-apis/export.js';
-import { ProtectedRoute, AppearanceSettings } from './components/export.js';
+import { AppearanceSettings, ProfileSettings, LinkSettings, AccountSettings } from './pages/settings/export.js';
 
 const App = () => {
     const { data, isSuccess } = useCheckAuth();
@@ -61,15 +61,15 @@ const App = () => {
                 </Route>
                 <Route path="/contact-us" element={<ContactUs />} />
                 <Route path="settings" element={
-                    <ProtectedRoute requiresAuthentication={true}>
-                        <SettingsPage />
-                    </ProtectedRoute>
+                    <ProtectedLayout requiresAuthentication={true}>
+                        <SettingsLayout />
+                    </ProtectedLayout>
                 }>
                     <Route index element={<Navigate to="profile" replace />} />
-                    <Route path="profile" element={<SettingsProfile />} />
+                    <Route path="profile" element={<ProfileSettings />} />
                     <Route path="appearance" element={<AppearanceSettings />} />
-                    <Route path="account" element={<Account />} />
-                    <Route path="links" element={<LinkPage />} />
+                    <Route path="account" element={<AccountSettings />} />
+                    <Route path="links" element={<LinkSettings />} />
                 </Route>
             </Route>
             <Route path="/home" element={<Navigate to="/" replace />} />

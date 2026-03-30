@@ -1,6 +1,6 @@
 import { axiosInstance, asyncWrapper } from "../api/export.js";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import useAuthStore from "../store/useAuthStore.js";
+import { useAuthStore } from "../store/export.js";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 

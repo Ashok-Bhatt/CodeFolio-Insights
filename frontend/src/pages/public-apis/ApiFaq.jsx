@@ -13,7 +13,7 @@ const ApiFaq = () => {
     };
 
     return (
-        <div className="h-full overflow-y-auto custom-scrollbar pr-4 animate-float-in">
+        <div className="h-fit animate-float-in">
             <div className="mx-auto py-10 px-6">
                 <div className="flex items-center gap-3 mb-2">
                     <div className="p-2 bg-blue-100 text-blue-600 rounded-xl">

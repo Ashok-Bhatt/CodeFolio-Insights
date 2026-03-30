@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { X } from "lucide-react";
 import { BadgeCard } from "./card/export.js";
-import { useResponsiveCount } from '../hooks/export.js';
+import { useResponsiveCount } from '../hooks/useResponsiveCount.js';
 
 const BadgeCollection = ({ badges, title = "Awards", className = "" }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);

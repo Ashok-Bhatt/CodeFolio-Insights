@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { BarChart2, LayoutDashboard, LogOut } from "lucide-react";
-import useAuthStore from "../store/useAuthStore.js";
+import { useAuthStore } from "../store/export.js";
 import { useLogout } from "../hooks/useUsers.js";
 
 const LandingNavbar = () => {
