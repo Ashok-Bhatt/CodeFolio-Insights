@@ -6,6 +6,7 @@ import { StatCard } from '../../components/card/export.js';
 import { BadgeCollection, ContestAchievements } from '../../components/export.js';
 import { SubmissionHeatmap, ContestGraph } from '../../components/charts/export.js';
 import { getContestData, getContestAchievements } from '../../utils/dataHelpers.js';
+import InfoLayout from '../../layouts/InfoLayout.jsx';
 
 const CodeChef = () => {
     const { data } = useOutletContext();
@@ -26,7 +27,7 @@ const CodeChef = () => {
     const achievements = useMemo(() => getContestAchievements(data).filter((achievement) => achievement.platform === "Codechef"), [data]);
 
     return (
-        <div className="space-y-8 animate-float-in">
+        <div className="space-y-8 animate-float-in overflow-x-hidden">
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
 
                 <StatCard
@@ -36,19 +37,24 @@ const CodeChef = () => {
                     index={0}
                 />
 
-                <StatCard
-                    title="Active Days"
-                    value={activeDays}
-                    color="green"
-                    index={1}
-                />
-
-                <div className="xl:col-span-2">
-                    <BadgeCollection
-                        title="Badges"
-                        badges={badges}
+                <InfoLayout
+                    text={`Data is mostly available from ${new Date().getFullYear() - 1}`}
+                    direction="left"
+                    placement="top-right"
+                >
+                    <StatCard
+                        title="Active Days"
+                        value={activeDays}
+                        color="green"
+                        index={1}
                     />
-                </div>
+                </InfoLayout>
+
+                <BadgeCollection
+                    title="Badges"
+                    badges={badges}
+                    className="xl:col-span-2"
+                />
 
                 {totalContests > 0 && (
                     <>
@@ -64,12 +70,16 @@ const CodeChef = () => {
                     </>
                 )}
 
-                <div className="xl:col-span-2">
+                <InfoLayout
+                    text={`Data is mostly available from ${new Date().getFullYear() - 1}`}
+                    direction="left"
+                    placement="top-right"
+                    className='xl:col-span-2'
+                >
                     <SubmissionHeatmap
                         calendar={platformData?.submission}
-                        className="w-full"
                     />
-                </div>
+                </InfoLayout>
             </div>
         </div>
     );

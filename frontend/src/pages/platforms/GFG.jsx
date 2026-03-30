@@ -72,12 +72,10 @@ const GFG = () => {
                     problemsData={platformDsaProblemsData}
                 />
 
-                <div className="xl:col-span-2">
-                    <SubmissionHeatmap
-                        calendar={platformData?.submission}
-                        className="w-full"
-                    />
-                </div>
+                <SubmissionHeatmap
+                    calendar={platformData?.submission}
+                    className="xl:col-span-2"
+                />
             </div>
         </div>
     );
