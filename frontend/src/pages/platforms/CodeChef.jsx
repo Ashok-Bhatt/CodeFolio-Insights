@@ -3,8 +3,9 @@ import { useOutletContext } from 'react-router-dom';
 import { useMemo } from 'react';
 import { getStreaksAndActiveDays } from '../../utils/calendar.js';
 import { StatCard } from '../../components/card/export.js';
-import { BadgeCollection } from '../../components/export.js';
-import { SubmissionHeatmap } from '../../components/charts/export.js';
+import { BadgeCollection, ContestAchievements } from '../../components/export.js';
+import { SubmissionHeatmap, ContestGraph } from '../../components/charts/export.js';
+import { getContestData, getContestAchievements } from '../../utils/dataHelpers.js';
 
 const CodeChef = () => {
     const { data } = useOutletContext();
@@ -20,6 +21,9 @@ const CodeChef = () => {
 
     const { activeDays } = useMemo(() => getStreaksAndActiveDays(platformData?.submission || {}), [platformData]);
     const problemsData = platformData?.profile?.problemsSolved || 0;
+    const totalContests = useMemo(() => platformData?.profile?.contests?.history?.length || 0, [platformData]);
+    const contestData = useMemo(() => (getContestData(data)?.Codechef) || [], [data]);
+    const achievements = useMemo(() => getContestAchievements(data).filter((achievement) => achievement.platform === "Codechef"), [data]);
 
     return (
         <div className="space-y-8 animate-float-in">
@@ -45,6 +49,20 @@ const CodeChef = () => {
                         badges={badges}
                     />
                 </div>
+
+                {totalContests > 0 && (
+                    <>
+                        <ContestGraph
+                            contestData={contestData}
+                            className="col-span-1"
+                        />
+
+                        <ContestAchievements
+                            achievements={achievements}
+                            className="col-span-1"
+                        />
+                    </>
+                )}
 
                 <div className="xl:col-span-2">
                     <SubmissionHeatmap

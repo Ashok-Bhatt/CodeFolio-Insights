@@ -31,7 +31,7 @@ const fetchGfgData = async (username, year = null) => {
 
 const fetchCodeChefData = async (username) => {
     return {
-        profile: await codeChefService.getUserInfo(username, true),
+        profile: await codeChefService.getUserInfo(username, true, true),
         submission: await codeChefService.getUserSubmissions(username),
     }
 }

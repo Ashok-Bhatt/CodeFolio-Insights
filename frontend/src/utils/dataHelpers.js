@@ -73,8 +73,16 @@ const getContestData = (data) => {
         date: new Date(contest.date * 1000).toISOString().split('T')[0]
     })) || [];
 
+    const codechefContests = data?.codechef?.profile?.contests?.history?.map((contest) => ({
+        title: contest.name,
+        rating: contest.rating,
+        ranking: contest.rank,
+        date: contest?.endDate?.split(" ")?.[0] || "",
+    })) || [];
+
     if (leetcodeContests.length > 0) contestData["LeetCode"] = leetcodeContests;
     if (code360Contests.length > 0) contestData["Code360"] = code360Contests;
+    if (codechefContests.length > 0) contestData["Codechef"] = codechefContests;
 
     return contestData;
 };
@@ -138,17 +146,21 @@ const getContestAchievements = (data) => {
 
     const leetcodeRating = data?.leetcode?.contest?.userContestRanking?.rating;
     const code360Rating = data?.code360?.profile?.contests?.current_user_rating;
+    const codechefRating = data?.codechef?.profile?.contests?.currentRating;
 
     if (leetcodeRating) {
         achievements.push({
             platform: 'LeetCode',
             currentRating: Math.round(leetcodeRating) || 0,
             maxRating: Math.round(data?.leetcode?.contest?.userContestRankingHistory?.reduce((max, contest) => Math.max(max, contest.rating), 0)) || 0,
-            badgeUrl: data?.leetcode?.contest?.userContestRanking?.badge?.icon
-                ? data?.leetcode?.contest?.userContestRanking?.badge?.icon
-                : "/Images/Leetcode Badges/knight.png",
-            isDefaultBadge: !data?.leetcode?.contest?.userContestRanking?.badge?.icon,
-            position: data?.leetcode?.contest?.userContestRanking?.badge?.name,
+            achievement: {
+                type: "badge",
+                badgeUrl: data?.leetcode?.contest?.userContestRanking?.badge?.icon
+                    ? data?.leetcode?.contest?.userContestRanking?.badge?.icon
+                    : "/Images/Leetcode Badges/knight.png",
+                isDefaultBadge: !data?.leetcode?.contest?.userContestRanking?.badge?.icon,
+                position: data?.leetcode?.contest?.userContestRanking?.badge?.name,
+            },
         });
     }
 
@@ -157,11 +169,26 @@ const getContestAchievements = (data) => {
             platform: 'Code360',
             currentRating: Math.round(code360Rating) || 0,
             maxRating: Math.round(data?.code360?.profile?.contests?.user_rating_data?.reduce((max, contest) => Math.max(max, contest.rating), 0)) || 0,
-            badgeUrl: data?.code360?.profile?.contests?.rating_group?.icon
-                ? `${data?.code360?.profile?.contests?.rating_group?.icon}`
-                : "/Images/Default/badge.png",
-            isDefaultBadge: !data?.code360?.profile?.contests?.rating_group?.icon,
-            position: data?.code360?.profile?.contests?.rating_group?.group,
+            achievement: {
+                type: "badge",
+                badgeUrl: data?.code360?.profile?.contests?.rating_group?.icon
+                    ? `${data?.code360?.profile?.contests?.rating_group?.icon}`
+                    : "/Images/Default/badge.png",
+                isDefaultBadge: !data?.code360?.profile?.contests?.rating_group?.icon,
+                position: data?.code360?.profile?.contests?.rating_group?.group,
+            },
+        });
+    }
+
+    if (codechefRating) {
+        achievements.push({
+            platform: 'Codechef',
+            currentRating: Math.round(codechefRating) || 0,
+            maxRating: Math.round(data?.codechef?.profile?.contests?.highestRating) || 0,
+            achievement: {
+                type: "stars",
+                stars: data?.codechef?.profile?.contests?.stars || 0,
+            },
         });
     }
 

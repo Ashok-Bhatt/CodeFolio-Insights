@@ -51,7 +51,7 @@ const MainSidebar = () => {
 
                 <button
                     onClick={toggleSidebar}
-                    className={`rounded-full bg-gray-50 hover:bg-gray-100 transition-all relative border translate-x-1/2 z-50 text-blue-600`}
+                    className={`rounded-full transition-all relative border translate-x-1/2 z-50 text-blue-600 bg-blue-100`}
                 >
                     {isSidebarCollapsed ? <ChevronRight size={35} /> : <ChevronLeft size={35} />}
                 </button>

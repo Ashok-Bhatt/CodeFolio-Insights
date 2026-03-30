@@ -1,14 +1,14 @@
 import { configBrowserPage } from "../../utils/scrapper.util.js";
 import { getNormalizedCodeChefHeatmap } from "../../utils/calendar.util.js";
 
-const getUserInfo = async (username, includeAchievements) => {
+const getUserInfo = async (username, includeAchievements, includeContests) => {
     const url = `https://www.codechef.com/users/${username}`;
     let page;
 
     try {
         page = await configBrowserPage(url, 'networkidle0', '.user-details-container.plr10', 30000, 30000);
 
-        const data = await page.evaluate(async (username, includeAchievements) => {
+        const data = await page.evaluate(async (username, includeAchievements, includeContests) => {
 
             const getText = (element) => element?.textContent || "NA";
 
@@ -34,9 +34,7 @@ const getUserInfo = async (username, includeAchievements) => {
 
                 // Skill Tests
                 const skillTests = skillTestElement ? skillTestElement.map((skillTestElement) => {
-
                     const percentageScore = getText(skillTestElement.querySelector(".score__percentage"));
-
                     return {
                         percentageScore: parseInt(percentageScore.slice(0, percentageScore.length - 1)),
                         title: getText(skillTestElement.querySelector(".skill-tests__title")),
@@ -45,7 +43,7 @@ const getUserInfo = async (username, includeAchievements) => {
                     };
                 }) : [];
 
-                // // Badges
+                // Badges
                 const badges = badgesElement.map((badge) => {
                     return {
                         badgeImage: badge.querySelector("img").getAttribute("src"),
@@ -59,8 +57,42 @@ const getUserInfo = async (username, includeAchievements) => {
                 codechefData.skillTests = skillTests;
             }
 
+            if (includeContests) {
+                // Rating and rank info from the sidebar widget
+                const ratingNumberElement = document.querySelector(".rating-number");
+                const highestRatingElement = document.querySelector(".rating-header small");
+                const globalRankElement = document.querySelector(".rating-ranks li:nth-child(1) strong");
+                const countryRankElement = document.querySelector(".rating-ranks li:nth-child(2) strong");
+                const contestCountElement = document.querySelector(".contest-participated-count b");
+                const starsElement = document.querySelector(".rating-star");
+
+                // Per-contest history from the inline Drupal.settings JS variable
+                const allRatings = (typeof Drupal !== "undefined" && Drupal.settings?.date_versus_rating?.all)
+                    ? Drupal.settings.date_versus_rating.all
+                    : [];
+
+                const contests = allRatings.map((contest) => ({
+                    code: contest.code,
+                    name: contest.name,
+                    endDate: contest.end_date,
+                    rating: parseInt(contest.rating),
+                    rank: parseInt(contest.rank),
+                    color: contest.color,
+                }));
+
+                codechefData.contests = {
+                    totalContestsParticipated: contestCountElement ? parseInt(getText(contestCountElement)) : contests.length,
+                    currentRating: ratingNumberElement ? parseInt(getText(ratingNumberElement)) : 0,
+                    highestRating: highestRatingElement ? parseInt(getText(highestRatingElement).replace(/\D/g, "")) : 0,
+                    stars: starsElement ? starsElement.querySelectorAll("span").length : 0,
+                    globalRank: globalRankElement ? parseInt(getText(globalRankElement).replace(/,/g, "")) : 0,
+                    countryRank: countryRankElement ? parseInt(getText(countryRankElement).replace(/,/g, "")) : 0,
+                    history: contests,
+                };
+            }
+
             return codechefData;
-        }, username, includeAchievements);
+        }, username, includeAchievements, includeContests);
 
         return data;
     } finally {

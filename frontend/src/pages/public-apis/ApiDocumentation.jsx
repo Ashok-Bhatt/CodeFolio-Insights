@@ -43,7 +43,7 @@ const ApiDocumentation = () => {
     if (!currentEndpoint) return null;
 
     return (
-        <div className="flex flex-1 w-full gap-6 animate-float-in">
+        <div className="flex-1 flex gap-6 p-8 overflow-hidden h-full animate-float-in">
             {/* Sidebar Component */}
             <ApiDocumentationSidebar
                 documentationData={documentationData}

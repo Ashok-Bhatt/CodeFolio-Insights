@@ -39,12 +39,19 @@ const ContestGraph = ({ contestData }) => {
     }, [latestContest]);
 
     const handleMouseMove = useCallback((state) => {
-        const contestIndex = parseInt(state.activeTooltipIndex);
-        if (state && state.isTooltipActive) {
-            const contest = {date: sortedData[contestIndex].date, ranking: sortedData[contestIndex].ranking, rating: sortedData[contestIndex].rating, title: sortedData[contestIndex].title };
-            setHoveredContest(contest);
+        if (state && state.activeTooltipIndex !== undefined && state.isTooltipActive) {
+            const contestIndex = parseInt(state.activeTooltipIndex);
+            if (sortedData[contestIndex]) {
+                const contest = {
+                    date: sortedData[contestIndex].date,
+                    ranking: sortedData[contestIndex].ranking,
+                    rating: sortedData[contestIndex].rating,
+                    title: sortedData[contestIndex].title
+                };
+                setHoveredContest(contest);
+            }
         }
-    }, []);
+    }, [sortedData]);
 
     const handleMouseLeave = useCallback(() => {
         setHoveredContest(latestContest);

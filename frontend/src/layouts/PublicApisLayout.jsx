@@ -17,12 +17,10 @@ const PublicApisLayout = () => {
     return (
         <div className={`flex-1 flex ${pageView["Public APIs"] === "tab" ? "flex-col" : "flex-row"} min-w-0 bg-white overflow-hidden h-screen`}>
 
-            {pageView["Public APIs"] === "tab" ? <TabNavigation tabs={navTabs} /> : <Sidebar title="CodeFolio" items={navTabs} />}
+            {pageView["Public APIs"] === "tab" ? <TabNavigation tabs={navTabs} /> : <Sidebar title='Public APIs' items={navTabs} />}
 
-            <main className="flex-1 overflow-y-auto p-8 custom-scrollbar bg-slate-50/50">
-                <div className="max-w-7xl mx-auto">
-                    <Outlet />
-                </div>
+            <main className="flex-1 flex flex-col bg-slate-50/50 overflow-hidden">
+                <Outlet />
             </main>
         </div>
     );

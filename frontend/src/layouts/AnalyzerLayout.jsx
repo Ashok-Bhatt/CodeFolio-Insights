@@ -17,7 +17,7 @@ const AnalyzerLayout = () => {
     return (
         <div className={`flex-1 flex ${pageView["Analyzers"] === "tab" ? "flex-col" : "flex-row"} min-w-0 bg-white overflow-hidden h-screen`}>
             
-            {pageView["Analyzers"] === "tab" ? <TabNavigation tabs={navItems} /> : <Sidebar title="CodeFolio" items={navItems} />}
+            {pageView["Analyzers"] === "tab" ? <TabNavigation tabs={navItems} /> : <Sidebar title='Analyzers' items={navItems} />}
 
             <main className="flex-1 overflow-y-auto p-8 custom-scrollbar bg-slate-50/50">
                 <div className="max-w-7xl mx-auto">
