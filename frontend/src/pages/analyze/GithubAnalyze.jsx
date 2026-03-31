@@ -151,14 +151,14 @@ const GithubAnalyse = () => {
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
                         <DistributionChart
                             title="Language Distribution"
-                            problemsData={languageData}
+                            data={languageData}
                             className="col-span-1"
                             includeLabels={true}
                         />
 
                         <DistributionChart
                             title="Repo Type Distribution"
-                            problemsData={repoTypeData}
+                            data={repoTypeData}
                             className="col-span-1"
                             includeLabels={true}
                         />

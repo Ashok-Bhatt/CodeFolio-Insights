@@ -171,7 +171,7 @@ const LeetcodeAnalyse = () => {
 
                         <DistributionChart
                             title="Difficulty Breakdown"
-                            problemsData={getLeetcodeDifficultyData(analysisData?.problemsCount?.userStats?.acSubmissionNum)}
+                            data={getLeetcodeDifficultyData(analysisData?.problemsCount?.userStats?.acSubmissionNum)}
                         />
                     </div>
 

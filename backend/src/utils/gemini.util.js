@@ -26,6 +26,13 @@ const getGithubProfileAnalysis = async (githubData) => {
             - ❌ Do NOT suggest improvements unrelated to the observed GitHub activity
             - ❌ Do NOT hallucinate repositories, skills, contributions, or achievements
 
+            ### LANGUAGE & TERMINOLOGY RULES
+            - ❌ Do NOT use raw JSON keys (e.g., 'starCount', 'maxStreak') in the analysis text.
+            - ✅ Use human-readable, professional terminology (e.g., 'Star count', 'Longest streak', 'Pull request reviews').
+            - Translate technical data points into narrative insights. 
+            - Instead of "User has a pullRequestReviewCount of 5," 
+            - Use "The user has actively participated in 5 code reviews, signaling collaboration."
+
             If the data is weak, sparse, or inconsistent:
             - State that clearly and analytically
             - Avoid sugar-coating
@@ -155,6 +162,13 @@ const getLeetCodeProfileAnalysis = async (leetCodeData) => {
             - ❌ Do NOT praise unless the metrics clearly justify it
             - ❌ Do NOT hallucinate contest participation, ranks, or topics
             - ❌ Do NOT reference external standards (FAANG, top coders, etc.)
+
+            ### LANGUAGE & TERMINOLOGY RULES
+            - ❌ Do NOT use raw JSON keys (e.g., 'starCount', 'maxStreak') in the analysis text.
+            - ✅ Use human-readable, professional terminology (e.g., 'Star count', 'Longest streak', 'Pull request reviews').
+            - Translate technical data points into narrative insights. 
+            - Instead of "User has a pullRequestReviewCount of 5," 
+            - Use "The user has actively participated in 5 code reviews, signaling collaboration."
 
             If the data is sparse or weak:
             - State this explicitly
@@ -348,6 +362,7 @@ const getResumeAnalysis = async (resumeData) => {
 
             Experience:
             - Company, role, dates required
+            - Volunteering Experience or Virtual Internships would not be prioritized as experience, they will score less
             - 3–5 bullets per role ideal
             - Impact-driven bullets score highest
 
