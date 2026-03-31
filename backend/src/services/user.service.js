@@ -31,10 +31,11 @@ const getSortQuery = (searchField, searchOrder) => {
 
 
 
-const getUser = async (userId, currentUser, viewerDeviceToken, viewerSignedDeviceToken) => {
-    const user = await UserModel.findById(userId);
+const getUser = async (displayName, currentUser, viewerDeviceToken, viewerSignedDeviceToken) => {
+    const user = await UserModel.findOne({ displayName });
     if (!user) throw new Error("User not found.");
 
+    const userId = user._id;
     const isAdmin = !!currentUser && currentUser.isAdmin;
     const isOwner = !!currentUser && currentUser._id.equals(userId);
     const isPublic = user.profileVisibility === true;
@@ -107,7 +108,7 @@ const getUsers = async (params) => {
 };
 
 const updateUserInfo = async (userId, updatedFields, file) => {
-    const queriedUser = await UserModel.findById(userId).select("-googleId -password");
+    const queriedUser = await UserModel.findById(userId);
     if (!queriedUser) throw new Error("Invalid user id!");
 
     const updatedUser = await UserModel.findByIdAndUpdate(
@@ -135,6 +136,23 @@ const updateUserInfo = async (userId, updatedFields, file) => {
     }
 
     return updatedUser;
+};
+
+const updateDisplayName = async (userId, displayName) => {
+    const queriedUser = await UserModel.findById(userId);
+    if (!queriedUser) throw new Error("Invalid user id!");
+
+    const existingUser = await UserModel.findOne({ 
+        displayName, 
+        _id: { $ne: userId } 
+    });
+    
+    if (existingUser) throw new Error("Display name already taken!");
+
+    queriedUser.displayName = displayName;
+    await queriedUser.save();
+
+    return queriedUser;
 };
 
 const changePassword = async (userId, oldPassword, newPassword) => {
@@ -209,6 +227,7 @@ export {
     getUser,
     getUsers,
     updateUserInfo,
+    updateDisplayName,
     changePassword,
     toggleProfileVisibility,
     getUserHighlights,

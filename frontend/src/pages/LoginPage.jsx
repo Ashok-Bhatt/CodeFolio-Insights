@@ -13,8 +13,6 @@ const LoginPage = () => {
     const { mutate: login, isPending: isLoggingIn } = useLogin();
     const { mutate: verifyOTP, isPending: isVerifying } = useVerifyOTP();
     const navigate = useNavigate();
-    const setUser = useAuthStore((state) => state.setUser);
-    const setToken = useAuthStore((state) => state.setToken);
 
     const { email, password } = formData;
 
@@ -27,7 +25,7 @@ const LoginPage = () => {
                 if (data.requires2FA) {
                     setIsOTPMode(true);
                 } else {
-                    navigate(`/dashboard/${data.user._id}`);
+                    navigate(`/dashboard/${data.user.displayName}`);
                 }
             }
         });
@@ -37,7 +35,7 @@ const LoginPage = () => {
         e.preventDefault();
         verifyOTP({ otp }, {
             onSuccess: (data) => {
-                navigate(`/dashboard/${data.user._id}`);
+                navigate(`/dashboard/${data.user.displayName}`);
             }
         });
     };

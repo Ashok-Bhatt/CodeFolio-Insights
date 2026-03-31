@@ -6,7 +6,7 @@ import { InfoTooltip } from '../export.js';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 
 const DashboardSidebar = ({ userData }) => {
-    const { userId } = useParams();
+    const { displayName } = useParams();
     const location = useLocation();
     const user = useAuthStore((state) => state.user);
     const [profileVisibility, setProfileVisibility] = useState(userData?.profileVisibility);
@@ -42,12 +42,12 @@ const DashboardSidebar = ({ userData }) => {
     ];
 
     const problemPlatforms = [
-        { name: 'LeetCode', icon: '/Images/Icons/leetcode.png', url: `https://leetcode.com/u/${userData?.profileLinks?.leetCodeUsername}`, path: `/dashboard/${userId}/coding-profiles/leetcode`, isConnected: !!userData?.profileLinks?.leetCodeUsername },
-        { name: 'CodeStudio', icon: '/Images/Icons/code360.png', url: `https://www.naukri.com/code360/profile/${userData?.profileLinks?.code360Username}`, path: `/dashboard/${userId}/coding-profiles/code360`, isConnected: !!userData?.profileLinks?.code360Username },
-        { name: 'GeeksForGeeks', icon: '/Images/Icons/gfg.png', url: `https://geeksforgeeks.org/profile/${userData?.profileLinks?.gfgUsername}?tab=activity`, path: `/dashboard/${userId}/coding-profiles/gfg`, isConnected: !!userData?.profileLinks?.gfgUsername },
-        { name: 'InterviewBit', icon: '/Images/Icons/interviewbit.png', url: `https://www.interviewbit.com/profile/${userData?.profileLinks?.interviewbitUsername}`, path: `/dashboard/${userId}/coding-profiles/interviewbit`, isConnected: !!userData?.profileLinks?.interviewbitUsername },
-        { name: 'CodeChef', icon: '/Images/Icons/codechef.png', url: `https://www.codechef.com/users/${userData?.profileLinks?.codechefUsername}`, path: `/dashboard/${userId}/coding-profiles/codechef`, isConnected: !!userData?.profileLinks?.codechefUsername },
-        { name: 'HackerRank', icon: '/Images/Icons/hackerrank.png', url: `https://www.hackerrank.com/profile/${userData?.profileLinks?.hackerrankUsername}`, path: `/dashboard/${userId}/coding-profiles/hackerrank`, isConnected: !!userData?.profileLinks?.hackerrankUsername },
+        { name: 'LeetCode', icon: '/Images/Icons/leetcode.png', url: `https://leetcode.com/u/${userData?.profileLinks?.leetCodeUsername}`, path: `/dashboard/${displayName}/coding-profiles/leetcode`, isConnected: !!userData?.profileLinks?.leetCodeUsername },
+        { name: 'CodeStudio', icon: '/Images/Icons/code360.png', url: `https://www.naukri.com/code360/profile/${userData?.profileLinks?.code360Username}`, path: `/dashboard/${displayName}/coding-profiles/code360`, isConnected: !!userData?.profileLinks?.code360Username },
+        { name: 'GeeksForGeeks', icon: '/Images/Icons/gfg.png', url: `https://geeksforgeeks.org/profile/${userData?.profileLinks?.gfgUsername}?tab=activity`, path: `/dashboard/${displayName}/coding-profiles/gfg`, isConnected: !!userData?.profileLinks?.gfgUsername },
+        { name: 'InterviewBit', icon: '/Images/Icons/interviewbit.png', url: `https://www.interviewbit.com/profile/${userData?.profileLinks?.interviewbitUsername}`, path: `/dashboard/${displayName}/coding-profiles/interviewbit`, isConnected: !!userData?.profileLinks?.interviewbitUsername },
+        { name: 'CodeChef', icon: '/Images/Icons/codechef.png', url: `https://www.codechef.com/users/${userData?.profileLinks?.codechefUsername}`, path: `/dashboard/${displayName}/coding-profiles/codechef`, isConnected: !!userData?.profileLinks?.codechefUsername },
+        { name: 'HackerRank', icon: '/Images/Icons/hackerrank.png', url: `https://www.hackerrank.com/profile/${userData?.profileLinks?.hackerrankUsername}`, path: `/dashboard/${displayName}/coding-profiles/hackerrank`, isConnected: !!userData?.profileLinks?.hackerrankUsername },
     ].filter(platform => platform.isConnected);
 
     const stats = [
@@ -111,7 +111,7 @@ const DashboardSidebar = ({ userData }) => {
                         <div className="space-y-2">
                             <div className="w-full flex items-center justify-between p-4 bg-slate-50/80 rounded-2xl group transition-all">
                                 <span
-                                    onClick={() => navigate(`/dashboard/${userId}/coding-profiles/`)}
+                                    onClick={() => navigate(`/dashboard/${displayName}/coding-profiles/`)}
                                     className="text-xs font-black text-slate-600 uppercase tracking-widest cursor-pointer hover:text-blue-600 transition-colors"
                                 >
                                     Problem Solving
@@ -154,7 +154,7 @@ const DashboardSidebar = ({ userData }) => {
                         <div className="space-y-2">
                             <div className="w-full flex items-center justify-between p-4 bg-slate-50/80 rounded-2xl group transition-all">
                                 <span
-                                    onClick={() => navigate(`/dashboard/${userId}/github`)}
+                                    onClick={() => navigate(`/dashboard/${displayName}/github`)}
                                     className="text-xs font-black text-slate-600 uppercase tracking-widest cursor-pointer hover:text-blue-600 transition-colors"
                                 >
                                     Development
@@ -173,14 +173,14 @@ const DashboardSidebar = ({ userData }) => {
                             {isDevStatsOpen && (
                                 <div className="space-y-1 py-2">
                                     <div
-                                        className={`flex items-center justify-between p-3.5 rounded-2xl transition-all group cursor-pointer ${location.pathname === `/dashboard/${userId}/github` ? 'bg-blue-50 border border-blue-100' : 'hover:bg-slate-50'}`}
-                                        onClick={() => navigate(`/dashboard/${userId}/github`)}
+                                        className={`flex items-center justify-between p-3.5 rounded-2xl transition-all group cursor-pointer ${location.pathname === `/dashboard/${displayName}/github` ? 'bg-blue-50 border border-blue-100' : 'hover:bg-slate-50'}`}
+                                        onClick={() => navigate(`/dashboard/${displayName}/github`)}
                                     >
                                         <div className="flex items-center gap-3">
                                             <img src="/Images/Icons/github.png" alt="Github" className="w-8 h-8 object-contain transition-all" />
-                                            <span className={`text-sm font-bold ${location.pathname === `/dashboard/${userId}/github` ? 'text-blue-700' : 'text-slate-700'}`}>GitHub</span>
+                                            <span className={`text-sm font-bold ${location.pathname === `/dashboard/${displayName}/github` ? 'text-blue-700' : 'text-slate-700'}`}>GitHub</span>
                                         </div>
-                                        <ExternalLink className={`w-5 h-5 transition-colors ${location.pathname === `/dashboard/${userId}/github` ? 'text-blue-500' : 'text-slate-300 group-hover:text-blue-500'}`} onClick={(e) => { e.stopPropagation(); window.open(`https://github.com/${userData?.profileLinks?.githubUsername}`, '_blank'); }} />
+                                        <ExternalLink className={`w-5 h-5 transition-colors ${location.pathname === `/dashboard/${displayName}/github` ? 'text-blue-500' : 'text-slate-300 group-hover:text-blue-500'}`} onClick={(e) => { e.stopPropagation(); window.open(`https://github.com/${userData?.profileLinks?.githubUsername}`, '_blank'); }} />
                                     </div>
                                 </div>
                             )}

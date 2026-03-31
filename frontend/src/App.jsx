@@ -23,7 +23,7 @@ const App = () => {
 
     useEffect(() => {
         if (user && ['/login', '/signup'].includes(location.pathname)) {
-            navigate(`/dashboard/${user._id}`);
+            navigate(`/dashboard/${user.displayName}`);
         }
     }, [user, location.pathname, navigate]);
 
@@ -34,7 +34,7 @@ const App = () => {
             <Route path="/signup" element={<SignupPage />} />
 
             <Route path="/" element={<HomeLayout />}>
-                <Route path="dashboard/:userId" element={<DashboardLayout />}>
+                <Route path="dashboard/:displayName" element={<DashboardLayout />}>
                     <Route index element={<Navigate to="coding-profiles" replace />} />
                     <Route path="coding-profiles">
                         <Route index element={<CodingProfiles />} />

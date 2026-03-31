@@ -38,7 +38,7 @@ const LandingNavbar = () => {
                         </>
                     ) : (
                         <>
-                            <Link to={`/dashboard/${user._id}`}>
+                            <Link to={`/dashboard/${user.displayName}`}>
                                 <button className="flex items-center space-x-2 px-6 py-2 rounded-full border-2 border-indigo-100 font-bold text-sm hover:bg-indigo-50 transition-all transform hover:scale-105 text-indigo-600">
                                     <LayoutDashboard className="w-4 h-4" />
                                     <span>Dashboard</span>

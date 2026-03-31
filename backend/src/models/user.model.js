@@ -1,7 +1,14 @@
 import mongoose from "mongoose";
 import { getCountries, getCountryCallingCode } from 'libphonenumber-js';
+import { v4 as uuid } from 'uuid';
 
 const UserSchema = new mongoose.Schema({
+    displayName: {
+        type: String,
+        required: true,
+        unique: true,
+        default: () => uuid(),
+    },
     googleId: {
         type: String,
     },

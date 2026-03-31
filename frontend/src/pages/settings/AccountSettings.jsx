@@ -1,13 +1,14 @@
 import { useState } from 'react';
-import { ShieldCheck, Eye, EyeOff, Save, Mail, Info, Edit2, X } from 'lucide-react';
+import { ShieldCheck, Eye, EyeOff, Save, Mail, Info, Edit2, X, User as UserIcon } from 'lucide-react';
 import { useAuthStore } from '../../store/export.js';
-import { useChangePassword, useToggle2FA, useUpdateApiKey } from '../../hooks/useUsers.js';
+import { useChangePassword, useToggle2FA, useUpdateApiKey, useUpdateUser } from '../../hooks/useUsers.js';
 import toast from 'react-hot-toast';
 
 const AccountSettings = () => {
     const user = useAuthStore((state) => state.user);
     const { mutate: changePassword, isPending: isLoading } = useChangePassword();
     const { mutate: toggle2FA, isPending: isToggling2FA } = useToggle2FA();
+    const { mutate: updateUser, isPending: isUpdatingUser } = useUpdateUser();
 
     const [form, setForm] = useState({
         oldPassword: '',
@@ -19,7 +20,12 @@ const AccountSettings = () => {
         apiKey: user?.apiKey || ''
     });
 
+    const [displayNameForm, setDisplayNameForm] = useState({
+        displayName: user?.displayName || ''
+    });
+
     const [isEditingApiKey, setIsEditingApiKey] = useState(false);
+    const [isEditingDisplayName, setIsEditingDisplayName] = useState(false);
 
     const { mutate: updateApiKey, isPending: isUpdatingApiKey } = useUpdateApiKey();
 
@@ -41,6 +47,10 @@ const AccountSettings = () => {
         setApiKeyForm({ [e.target.name]: e.target.value });
     };
 
+    const handleDisplayNameChange = (e) => {
+        setDisplayNameForm({ [e.target.name]: e.target.value });
+    };
+
     const handleApiKeySubmit = (e) => {
         e.preventDefault();
         if (!apiKeyForm.apiKey.trim()) {
@@ -49,6 +59,22 @@ const AccountSettings = () => {
         updateApiKey({ apiKey: apiKeyForm.apiKey.trim() }, {
             onSuccess: () => {
                 setIsEditingApiKey(false);
+            }
+        });
+    };
+
+    const handleDisplayNameSubmit = (e) => {
+        e.preventDefault();
+        const newDisplayName = displayNameForm.displayName.trim();
+        if (!newDisplayName || newDisplayName.length < 3) {
+            return toast.error("Display name must be at least 3 characters long!");
+        }
+        if (!/^[a-zA-Z0-9_-]+$/.test(newDisplayName)) {
+            return toast.error("Display name can only contain letters, numbers, underscores and hyphens!");
+        }
+        updateUser({ displayName: newDisplayName }, {
+            onSuccess: () => {
+                setIsEditingDisplayName(false);
             }
         });
     };
@@ -100,6 +126,79 @@ const AccountSettings = () => {
                     <span className="text-slate-700 font-semibold truncate">{user?.email}</span>
                 </div>
             </div>
+
+            {/* Display Name Management Section */}
+            <form onSubmit={handleDisplayNameSubmit} className="space-y-6 pt-4 border-t border-slate-100">
+                <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-bold text-slate-700">Display Name</h3>
+                    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                        <Info className="w-3 h-3" />
+                        Unique URL identifier
+                    </div>
+                </div>
+
+                <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-4 items-center">
+                        <label className="text-sm font-black text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                            <UserIcon className="w-4 h-4 text-blue-500" />
+                            Display Name:
+                        </label>
+
+                        {!isEditingDisplayName ? (
+                            <div className="flex items-center gap-4 p-3.5 bg-slate-50/50 rounded-xl border border-slate-200 group-hover:border-slate-300 transition-all">
+                                <span className="font-semibold text-slate-700 text-lg flex-1">
+                                    {user?.displayName || "Not set"}
+                                </span>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setDisplayNameForm({ displayName: user?.displayName || '' });
+                                        setIsEditingDisplayName(true);
+                                    }}
+                                    className="flex items-center justify-center gap-2 bg-slate-100 text-slate-600 font-bold px-4 py-2 rounded-lg hover:bg-slate-200 transition-colors text-xs uppercase"
+                                >
+                                    <Edit2 className="w-3.5 h-3.5" />
+                                    Update
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="flex gap-2 relative group">
+                                <input
+                                    type="text"
+                                    name="displayName"
+                                    value={displayNameForm.displayName}
+                                    onChange={handleDisplayNameChange}
+                                    placeholder="Enter your unique display name"
+                                    className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-sm group-hover:border-slate-300 font-medium"
+                                    autoFocus
+                                />
+                                <div className="flex gap-2">
+                                    <button
+                                        type="submit"
+                                        disabled={isUpdatingUser || displayNameForm.displayName === user?.displayName}
+                                        className="flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-black px-6 py-3.5 rounded-xl shadow hover:shadow-indigo-200 transition-all disabled:opacity-50 uppercase tracking-widest text-xs min-w-[100px]"
+                                    >
+                                        {isUpdatingUser ? (
+                                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                        ) : (
+                                            <Save className="w-4 h-4" />
+                                        )}
+                                        {isUpdatingUser ? "Saving..." : "Save"}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsEditingDisplayName(false)}
+                                        className="flex items-center justify-center bg-slate-100 text-slate-600 p-3.5 rounded-xl hover:bg-slate-200 transition-colors"
+                                        title="Cancel"
+                                    >
+                                        <X className="w-5 h-5" />
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </form>
 
             {/* API Key Management Section */}
             <form onSubmit={handleApiKeySubmit} className="space-y-6 pt-4 border-t border-slate-100">

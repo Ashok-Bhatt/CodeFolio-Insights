@@ -25,7 +25,7 @@ const MainSidebar = () => {
     };
 
     const sidebarItems = [
-        { name: 'Dashboard', path: `/dashboard/${user?._id}`, Icon: LayoutDashboard },
+        { name: 'Dashboard', path: `/dashboard/${user?.displayName}`, Icon: LayoutDashboard },
         { name: 'Analyzers', path: '/analyzer', Icon: ChartArea },
         { name: 'API Access', path: '/public-apis', Icon: Webhook },
         { name: 'Contact Us', path: '/contact-us', Icon: Contact },
@@ -61,7 +61,7 @@ const MainSidebar = () => {
                 <ul className="space-y-2">
                     {sidebarItems.map((item, index) => {
                         const isActive = item.name === 'Dashboard'
-                            ? location.pathname.startsWith(`/dashboard/${user?._id}`)
+                            ? location.pathname.startsWith(`/dashboard/${user?.displayName}`)
                             : item.name === 'Analyzers'
                                 ? location.pathname.startsWith('/analyzer')
                                 : location.pathname.startsWith(item.path);

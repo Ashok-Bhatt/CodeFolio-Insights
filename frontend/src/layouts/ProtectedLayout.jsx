@@ -8,7 +8,7 @@ const ProtectedLayout = ({ children, requiresAuthentication = true }) => {
     if (requiresAuthentication && !user) {
         return <Navigate to="/login" replace />;
     } else if (!requiresAuthentication && user) {
-        return <Navigate to={`/dashboard/${user._id}`} replace />;
+        return <Navigate to={`/dashboard/${user.displayName}`} replace />;
     } else {
         return children;
     }

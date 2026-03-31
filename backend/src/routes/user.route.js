@@ -1,11 +1,11 @@
 import express from "express"
-import { getUser, getUserHighlights, changePassword, updateUserInfo, getUsers, toggleProfileVisibility, toggle2FA, updateUserApiKey } from "../controllers/user.controller.js";
+import { getUser, getUserHighlights, changePassword, updateUserInfo, updateDisplayName, getUsers, toggleProfileVisibility, toggle2FA, updateUserApiKey } from "../controllers/user.controller.js";
 import { optionalAuth, protectRoute } from "../middlewares/auth.middleware.js";
 import { getAnalytics } from "../middlewares/analytics.middleware.js";
 import upload from "../middlewares/multer.middleware.js";
 import { checkAdmin } from "../middlewares/admin.middleware.js";
 import validate from "../middlewares/validate.middleware.js";
-import { usersQueryValidationSchema, userInfoUpdateValidationSchema, changePasswordValidationSchema, userIdValidationSchema } from "../validators/user.validate.js";
+import { usersQueryValidationSchema, userInfoUpdateValidationSchema, changePasswordValidationSchema, displayNameValidationSchema, displayNameUpdateValidationSchema } from "../validators/user.validate.js";
 import { apiKeyBodyValidationSchema } from "../validators/common.validate.js"
 
 const router = express.Router();
@@ -26,10 +26,10 @@ router.get(
 );
 
 router.get(
-    "/:userId", 
+    "/:displayName", 
     getAnalytics, 
     optionalAuth, 
-    validate(userIdValidationSchema), 
+    validate(displayNameValidationSchema), 
     getUser
 );
 
@@ -40,6 +40,14 @@ router.patch(
     upload.single("profileImage"), 
     validate(userInfoUpdateValidationSchema), 
     updateUserInfo
+);
+
+router.patch(
+    "/display-name", 
+    getAnalytics, 
+    protectRoute, 
+    validate(displayNameUpdateValidationSchema), 
+    updateDisplayName
 );
 
 router.patch(

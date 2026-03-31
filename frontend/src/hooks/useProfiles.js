@@ -3,25 +3,25 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import toast from "react-hot-toast";
 
 // Hook for Cache
-const useProfileCache = (userId) => {
+const useProfileCache = (displayName) => {
     return useQuery({
-        queryKey: ["profileCache", userId],
+        queryKey: ["profileCache", displayName],
         queryFn: asyncWrapper(async () => {
-            const response = await axiosInstance.get(`/api/profile/cache/${userId}`);
+            const response = await axiosInstance.get(`/api/profile/cache/${displayName}`);
             return response.data;
         }),
-        enabled: !!userId,
+        enabled: !!displayName,
         retry: false,
         staleTime: 0,
     });
 }
 
 // Hook for Refresh
-const useProfileRefresh = (userId) => {
+const useProfileRefresh = (displayName) => {
     return useQuery({
-        queryKey: ["profileRefresh", userId],
+        queryKey: ["profileRefresh", displayName],
         queryFn: asyncWrapper(async () => {
-            const response = await axiosInstance.get(`/api/profile/fetch/${userId}`);
+            const response = await axiosInstance.get(`/api/profile/fetch/${displayName}`);
             return response.data;
         }),
         enabled: false,
@@ -30,14 +30,14 @@ const useProfileRefresh = (userId) => {
 }
 
 // Hook for general profile data
-const useProfileLinks = (userId) => {
+const useProfileLinks = (displayName) => {
     return useQuery({
-        queryKey: ["profileLinks", userId],
+        queryKey: ["profileLinks", displayName],
         queryFn: asyncWrapper(async () => {
-            const response = await axiosInstance.get(`/api/profile/${userId}`);
+            const response = await axiosInstance.get(`/api/profile/${displayName}`);
             return response.data;
         }),
-        enabled: !!userId,
+        enabled: !!displayName,
         retry: false,
     });
 };

@@ -5,10 +5,11 @@ import { PLATFORMS } from '../constants/index.js';
 import * as platformsFetching from '../utils/fetching/platforms.fetch.util.js';
 import mongoose from 'mongoose';
 
-const getProfiles = async (userId, currentUser) => {
-    const user = await UserModel.findById(userId);
+const getProfiles = async (displayName, currentUser) => {
+    const user = await UserModel.findOne({ displayName });
     if (!user) throw new Error("User not found.");
 
+    const userId = user._id;
     const isAdmin = !!currentUser && currentUser.isAdmin;
     const isOwner = !!currentUser && currentUser._id.equals(userId);
     const isPublic = user.profileVisibility === true;
@@ -73,10 +74,11 @@ const updateProfile = async (userId, platformName, platformUsername) => {
     }
 };
 
-const getProfileCache = async (userId, currentUser) => {
-    const user = await UserModel.findById(userId);
+const getProfileCache = async (displayName, currentUser) => {
+    const user = await UserModel.findOne({ displayName });
     if (!user) throw new Error("User not found.");
 
+    const userId = user._id;
     const isAdmin = !!currentUser && currentUser.isAdmin;
     const isOwner = !!currentUser && currentUser._id.equals(userId);
     const isPublic = user.profileVisibility === true;
@@ -87,10 +89,11 @@ const getProfileCache = async (userId, currentUser) => {
     return cachedDataParams || null;
 };
 
-const refreshProfileData = async (userId, currentUser) => {
-    const user = await UserModel.findById(userId);
+const refreshProfileData = async (displayName, currentUser) => {
+    const user = await UserModel.findOne({ displayName });
     if (!user) throw new Error("User not found.");
 
+    const userId = user._id;
     const isAdmin = currentUser && currentUser.isAdmin;
     const isOwner = currentUser && currentUser._id.equals(userId);
     const isPublic = user.profileVisibility === true;

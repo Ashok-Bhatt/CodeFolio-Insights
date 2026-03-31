@@ -74,15 +74,15 @@ const useVerifyOTP = () => {
     })
 }
 
-const useUser = (id) => {
+const useUser = (displayName) => {
     return useQuery({
-        queryKey: ["user", id],
+        queryKey: ["user", displayName],
         retry: 3,
         queryFn: asyncWrapper(async () => {
-            const response = await axiosInstance.get(`/api/user/${id}`);
+            const response = await axiosInstance.get(`/api/user/${displayName}`);
             return response.data;
         }),
-        enabled: !!id,
+        enabled: !!displayName,
     })
 }
 

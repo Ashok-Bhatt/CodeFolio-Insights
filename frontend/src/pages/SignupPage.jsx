@@ -13,8 +13,6 @@ const SignupPage = () => {
     const { mutate: signup, isPending: isSigningUp } = useSignUp();
     const { mutate: verifyOTP, isPending: isVerifying } = useVerifyOTP();
     const navigate = useNavigate();
-    const setUser = useAuthStore((state) => state.setUser);
-    const setToken = useAuthStore((state) => state.setToken);
 
     const { name, email, password } = formData;
 
@@ -27,7 +25,7 @@ const SignupPage = () => {
                 if (data.requires2FA) {
                     setIsOTPMode(true);
                 } else {
-                    navigate(`/dashboard/${data.user._id}`);
+                    navigate(`/dashboard/${data.user.displayName}`);
                 }
             }
         });
@@ -37,7 +35,7 @@ const SignupPage = () => {
         e.preventDefault();
         verifyOTP({ otp }, {
             onSuccess: (data) => {
-                navigate(`/dashboard/${data.user._id}`);
+                navigate(`/dashboard/${data.user.displayName}`);
             }
         });
     };
