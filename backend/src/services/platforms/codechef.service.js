@@ -95,6 +95,8 @@ const getUserInfo = async (username, includeAchievements, includeContests) => {
         }, username, includeAchievements, includeContests);
 
         return data;
+    } catch (error) {
+        throw new Error("Something went wrong while fetching CodeChef user info!");
     } finally {
         if (page) await page.close();
     }
@@ -140,6 +142,8 @@ const getUserSubmissions = async (username) => {
 
         return getNormalizedCodeChefHeatmap(heatmapData);
 
+    } catch (error) {
+        throw new Error("Something went wrong while fetching CodeChef user submissions!");
     } finally {
         if (page) await page.close();
     }

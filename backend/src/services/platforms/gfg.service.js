@@ -71,6 +71,8 @@ const getUserInfo = async (username) => {
         });
 
         return { ...userProfileData, ...userCodingData };
+    } catch (error) {
+        throw new Error("Something went wrong while fetching GFG user info!");
     } finally {
         if (page) await page.close();
     }
@@ -124,6 +126,8 @@ const getInstitutionTopThreeRankedUsers = async (institution) => {
             });
         });
         return { institution, users: data };
+    } catch (error) {
+        throw new Error("Something went wrong while fetching GFG institution top three ranked users!");
     } finally {
         if (page) await page.close();
     }
@@ -145,6 +149,8 @@ const getInstitutionInfo = async (institution) => {
             };
         });
         return { institution, data };
+    } catch (error) {
+        throw new Error("Something went wrong while fetching GFG institution info!");
     } finally {
         if (page) await page.close();
     }

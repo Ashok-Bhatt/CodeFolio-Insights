@@ -29,6 +29,8 @@ const getGithubBadges = async (username) => {
         });
 
         return data;
+    } catch (error) {
+        throw new Error("Something went wrong while fetching Github badges!");
     } finally {
         if (page) await page.close();
     }

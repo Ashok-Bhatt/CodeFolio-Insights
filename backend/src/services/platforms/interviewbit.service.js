@@ -51,6 +51,8 @@ const getUserBadges = async (username) => {
         });
 
         return data;
+    } catch (error) {
+        throw new Error("Something went wrong while fetching InterviewBit badges!");
     } finally {
         if (page) await page.close();
     }
