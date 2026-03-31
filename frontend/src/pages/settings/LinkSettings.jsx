@@ -6,9 +6,9 @@ import { useProfileLinks, useUpdateProfileLink } from '../../hooks/useProfiles.j
 import { PLATFORMS_CONFIG } from '../../constants/index.js';
 
 const LinkSettings = () => {
-    const userId = useAuthStore((state) => state?.user?._id);
+    const displayName = useAuthStore((state) => state?.user?.displayName);
 
-    const { data: profile, refetch: fetchLinks } = useProfileLinks(userId);
+    const { data: profile } = useProfileLinks(displayName);
     const { mutate: updateProfileMutation, isPending, variables } = useUpdateProfileLink();
 
     const iconMap = {
@@ -27,7 +27,7 @@ const LinkSettings = () => {
 
     const handleUpdate = (platformValue, newUsername) => {
         if (!newUsername.trim()) {
-            return; // Backend validator requires min length 1
+            return;
         }
 
         updateProfileMutation({

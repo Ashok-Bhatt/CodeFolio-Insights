@@ -25,12 +25,12 @@ const LandingNavbar = () => {
                 <div className="flex items-center space-x-4">
                     {!user ? (
                         <>
-                            <Link to="/login">
+                            <Link to="/auth/login">
                                 <button className="px-6 py-2 rounded-full border-2 border-indigo-100 font-bold text-sm hover:bg-indigo-50 transition-all transform hover:scale-105 text-indigo-600">
                                     Login
                                 </button>
                             </Link>
-                            <Link to="/signup">
+                            <Link to="/auth/signup">
                                 <button className="px-6 py-2 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold text-sm hover:from-indigo-700 hover:to-purple-700 transition-all transform hover:scale-105 shadow-lg shadow-indigo-200">
                                     Sign Up
                                 </button>

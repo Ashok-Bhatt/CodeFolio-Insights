@@ -29,13 +29,13 @@ const SettingsLayout = () => {
     `;
 
     return (
-        <div className={`flex ${pageView["Settings"]=="tab" ? "flex-col" : "flex-row"} h-full w-full bg-gradient-to-br from-blue-50/30 via-white to-purple-50/30 font-sans overflow-hidden`}>
+        <div className={`flex ${pageView["Settings"]=="tab" ? "flex-col" : "flex-row"} h-full w-full bg-gradient-to-br fromblue-50/30 via-white to-purple-50/30 font-sans overflow-hidden`}>
             <style>{animationStyles}</style>
 
             {pageView["Settings"]=="tab" ? <TabNavigation tabs={navItems} /> : <Sidebar title='Settings' items={navItems} />}
 
             <div className="flex-1 overflow-y-auto custom-scrollbar p-8">
-                <div className="w-full animate-float-in">
+                <div className="w-full h-full animate-float-in">
                     <Outlet context={{ user, setUser }} />
                 </div>
             </div>

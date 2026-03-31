@@ -60,16 +60,13 @@ const MainSidebar = () => {
             <nav className={`flex-1 ${isSidebarCollapsed ? 'overflow-visible' : 'overflow-y-auto'} py-6 px-4 custom-scrollbar`}>
                 <ul className="space-y-2">
                     {sidebarItems.map((item, index) => {
-                        const isActive = item.name === 'Dashboard'
-                            ? location.pathname.startsWith(`/dashboard/${user?.displayName}`)
-                            : item.name === 'Analyzers'
-                                ? location.pathname.startsWith('/analyzer')
-                                : location.pathname.startsWith(item.path);
-
+                        const isAvailable = item.name !== 'Dashboard' || !!user;
+                        const isActive = item.name === 'Dashboard' ? location.pathname.startsWith(`/dashboard/${user?.displayName}`)
+                            : item.name === 'Analyzers' ? location.pathname.startsWith('/analyzer') : location.pathname.startsWith(item.path);
                         const Icon = item.Icon;
 
-                        return (
-                            <li key={item.name} className="relative">
+                        if (isAvailable){
+                            return (<li key={item.name} className="relative">
                                 <Link
                                     to={item.path}
                                     onMouseEnter={() => setHoveredItem(item.name)}
@@ -101,8 +98,10 @@ const MainSidebar = () => {
                                         </div>
                                     )}
                                 </Link>
-                            </li>
-                        );
+                            </li>)
+                        } else {
+                            return null;
+                        }
                     })}
                 </ul>
                 
@@ -126,7 +125,7 @@ const MainSidebar = () => {
                             </div>
                         )}
                     </summary>
-                    {!isSidebarCollapsed && (
+                    {!isSidebarCollapsed && user && (
                         <div className="mt-2 space-y-1 p-2 bg-gray-50 rounded-2xl border border-gray-100 animate-slide-in-up">
                             <button
                                 onClick={handleLogout}

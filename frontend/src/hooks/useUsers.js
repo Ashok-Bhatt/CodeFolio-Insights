@@ -148,7 +148,7 @@ const useLogout = () => {
         onSuccess: () => {
             useAuthStore.setState({ user: null, token: null });
             localStorage.removeItem("preference-storage");
-            navigate('/login');
+            navigate('/auth/login');
         }
     })
 }
