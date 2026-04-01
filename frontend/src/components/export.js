@@ -16,5 +16,5 @@ export { default as ProfileInfoForm } from './ProfileInfoForm';
 export { default as CertificatesCollection } from './CertificatesCollection';
 export { default as DashboardPreview } from './DashboardPreview';
 export { default as LandingNavbar } from './LandingNavbar';
-export { default as OtpInput } from './OtpInput';
+export { default as OTPInput } from './OTPInput';
 export { default as UsernameInput } from './UsernameInput';
