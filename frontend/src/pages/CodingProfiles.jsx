@@ -3,6 +3,7 @@ import { useOutletContext } from 'react-router-dom';
 import { BadgeCollection, TopicAnalysis, Contest, ContestAchievements } from '../components/export.js';
 import { StatCard, ProblemsCard } from '../components/card/export.js';
 import { SubmissionHeatmap } from '../components/charts/export.js';
+import { InfoLayout } from '../layouts/export.js';
 import { getTotalProblems, getBadges, getTopicAnalysis, getContestData, getDsaProblemsData, getContestAchievements, getFundamentalProblemsData, getCompetitiveProgrammingProblemsData } from '../utils/dataHelpers.js';
 import { getCombinedHeatmap } from '../utils/export.js';
 import { getStreaksAndActiveDays } from "../utils/calendar.js"
@@ -30,22 +31,35 @@ const CodingProfiles = () => {
     const contestCount = useMemo(() => Object.entries(contestData).reduce((total, [key, value]) => total + value.length, 0), [contestData]);
 
     return (
-        <div className="space-y-8 animate-float-in">
+        <div className="space-y-8 animate-float-in overflow-x-hidden">
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
                 <div className="xl:col-span-1 space-y-8">
                     <div className="grid grid-cols-2 gap-4">
-                        <StatCard
-                            title="Total Problems"
-                            value={totalProblems}
-                            color="blue"
-                            index={0}
+                        <InfoLayout
+                            text="Total problems solved across all platforms combined"
+                            direction="down"
+                            placement="top-right"
+                        >
+                            <StatCard
+                                title="Total Problems"
+                                value={totalProblems}
+                                color="blue"
+                                index={0}
                         />
-                        <StatCard
-                            title="Active Days"
-                            value={activeDays}
-                            color="green"
-                            index={1}
+                        </InfoLayout>
+
+                        <InfoLayout
+                            text={`Total no of active days on atleast one platform. Note: Data for CodeChef is mostly from ${new Date().getFullYear() - 1} and data for HackerRank is not available.`}
+                            direction="down"
+                            placement="top-right"
+                        >
+                            <StatCard
+                                title="Active Days"
+                                value={activeDays}
+                                color="green"
+                                index={1}
                         />
+                        </InfoLayout>
                     </div>
 
                     <BadgeCollection
@@ -53,10 +67,16 @@ const CodingProfiles = () => {
                         badges={badges}
                     />
 
-                    <TopicAnalysis
-                        title="DSA Topic Analysis"
-                        data={topicAnalysis}
-                    />
+                    <InfoLayout
+                        text="Topic data is from Leetcode and Interviewbit only"
+                        direction="right"
+                        placement="top-right"
+                    >
+                        <TopicAnalysis
+                            title="DSA Topic Analysis"
+                            data={topicAnalysis}
+                        />
+                    </InfoLayout>
 
                     {contestCount > 0 && <Contest
                         data={contestData}
@@ -64,30 +84,56 @@ const CodingProfiles = () => {
                 </div>
 
                 <div className="xl:col-span-1 space-y-8">
-                    <ProblemsCard
-                        title="Fundamentals"
-                        problemsData={fundamentalProblemsData}
-                    />
+                    <InfoLayout
+                        text="This includes all problems from HackerRank and all School and Basic problems from GeeksforGeeks"
+                        direction="bottomLeft"
+                        placement="top-right"
+                    >
+                        <ProblemsCard
+                            title="Fundamentals"
+                            problemsData={fundamentalProblemsData}
+                        />
+                    </InfoLayout>
 
-                    <ProblemsCard
-                        title="DSA"
-                        problemsData={dsaProblemsData}
-                    />
+                    <InfoLayout
+                        text="This includes all problems solved on different platforms except Codechef and HackerRank. It also excludes School and Basic problems from GeeksforGeeks."
+                        direction="left"
+                        placement="top-right"
+                    >
+                        <ProblemsCard
+                            title="DSA"
+                            problemsData={dsaProblemsData}
+                        />
+                    </InfoLayout>
 
-                    <ProblemsCard
-                        title="Competitive Programming"
-                        problemsData={competitiveProgrammingProblemsData}
-                    />
+                    <InfoLayout
+                        text="This includes all problems solved on Codechef"
+                        direction="left"
+                        placement="top-right"
+                    >
+                        <ProblemsCard
+                            title="Competitive Programming"
+                            problemsData={competitiveProgrammingProblemsData}
+                        />
+                    </InfoLayout>   
 
-                    {contestCount > 0 && <ContestAchievements
-                        achievements={contestAchievements}
-                    />}
+                    {contestCount > 0 && 
+                        <ContestAchievements
+                            achievements={contestAchievements}
+                        />
+                    }
                 </div>
 
-                <SubmissionHeatmap
-                    calendar={combinedHeatmapData}
+                <InfoLayout
+                    text={`It includes submission counts from each platform. Note: Data for CodeChef is mostly from ${new Date().getFullYear() - 1} and data for HackerRank is not available.`}
+                    direction="left"
+                    placement="top-right"
                     className="col-span-1 lg:col-span-2"
-                />
+                >
+                    <SubmissionHeatmap
+                        calendar={combinedHeatmapData}
+                    />
+                </InfoLayout>
             </div>
         </div>
     );

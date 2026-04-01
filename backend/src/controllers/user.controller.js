@@ -3,11 +3,11 @@ import { ENV } from "../config/env.config.js";
 import * as UserService from "../services/user.service.js";
 
 const getUser = asyncHandler(async (req, res) => {
-    const userId = req.params.userId;
+    const displayName = req.params.displayName;
     const viewerDeviceToken = req.cookies.deviceToken;
     const viewerSignedDeviceToken = req.signedCookies.deviceToken;
 
-    const { user, newDeviceToken } = await UserService.getUser(userId, req.user, viewerDeviceToken, viewerSignedDeviceToken);
+    const { user, newDeviceToken } = await UserService.getUser(displayName, req.user, viewerDeviceToken, viewerSignedDeviceToken);
 
     if (newDeviceToken) {
         res.cookie("deviceToken", newDeviceToken, {
@@ -39,6 +39,12 @@ const getUsers = asyncHandler(async (req, res) => {
 
 const updateUserInfo = asyncHandler(async (req, res) => {
     const updatedUser = await UserService.updateUserInfo(req.user._id, req.body, req.file);
+    return res.status(200).json(updatedUser);
+});
+
+const updateDisplayName = asyncHandler(async (req, res) => {
+    const { displayName } = req.body;
+    const updatedUser = await UserService.updateDisplayName(req.user._id, displayName);
     return res.status(200).json(updatedUser);
 });
 
@@ -75,6 +81,7 @@ export {
     getUserHighlights,
     getUsers,
     updateUserInfo,
+    updateDisplayName,
     changePassword,
     toggleProfileVisibility,
     toggle2FA,

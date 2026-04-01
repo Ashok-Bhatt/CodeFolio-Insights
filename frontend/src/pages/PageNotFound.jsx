@@ -36,7 +36,7 @@ const PageNotFound = () => {
                     {/* Actions */}
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
                         <Link
-                            to={user ? `/dashboard/${user._id}` : "/"}
+                            to={user ? `/dashboard/${user.displayName}` : "/"}
                             className="group flex items-center gap-3 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-2xl shadow-xl shadow-blue-500/10 transition-all duration-300 transform hover:-translate-y-1 active:scale-95"
                         >
                             <Home size={20} />

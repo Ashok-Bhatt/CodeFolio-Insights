@@ -1,7 +1,7 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 const generateApiKey = () => {
-    return uuidv4().replace(/-/g, '');
+    return uuid().replace(/-/g, '');
 }
 
 export {

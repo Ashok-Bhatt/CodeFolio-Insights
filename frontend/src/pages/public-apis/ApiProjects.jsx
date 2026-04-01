@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Plus, LayoutGrid, AlertCircle, Loader2 } from "lucide-react";
-import { useProjects, useCreateProject, useDeleteProject, useUpdateProject } from "../../hooks/export.js";
+import { Plus, LayoutGrid, AlertCircle } from "lucide-react";
+import { useProjects, useCreateProject, useDeleteProject, useUpdateProject } from "../../hooks/useApiProjects.js";
 import { ProjectCard } from "../../components/card/export.js";
 import { CreateApiProjectModal, DeleteApiProjectModal, EditApiProjectModal } from "../../components/modals/export.js";
 import { ApiProjectSkeleton } from "../../components/skeletons/export.js";
@@ -63,7 +63,7 @@ const ApiProjects = () => {
     }
 
     return (
-        <div className="h-full overflow-y-auto custom-scrollbar pr-4 flex-grow space-y-8 pb-20 animate-float-in">
+        <div className="flex-1 overflow-y-auto p-8 custom-scrollbar pb-20 animate-float-in">
             <div className="max-w-7xl mx-auto space-y-8">
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">

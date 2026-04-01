@@ -1,15 +1,30 @@
 const Loader = ({ text = "Loading ...", showLoading = false }) => {
     if (!showLoading) return null;
 
+    const animationStyle = `
+        @keyframes slide-progress {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(400%); }
+        }
+        .animate-progress-slide {
+            animation: slide-progress 2s infinite ease-in-out;
+        }
+    `;
+
     return (
-        <div className="fixed top-6 right-6 z-50 flex items-center p-3.5 bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl border border-blue-100 animate-float-in-subtle">
-            <div className="relative flex items-center justify-center mr-3">
-                <div className="absolute w-6 h-6 rounded-full border-2 border-blue-400 opacity-75 animate-pulse-ring" />
-                <div className="relative w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center shadow-md animate-pulse-dot" />
-            </div>
-            <p className="text-gray-700 text-xs font-black uppercase tracking-widest italic">
+        <div className="fixed top-6 right-6 z-50 flex items-center py-2.5 px-5 bg-white/90 backdrop-blur-md rounded-lg shadow-2xl border border-gray-200 overflow-hidden">
+            {/* Standard Style Tag */}
+            <style>{animationStyle}</style>
+
+            {/* Text Section */}
+            <p className="text-gray-700 text-[15px] font-black uppercase tracking-[0.2em] italic pr-2">
                 {text}
             </p>
+
+            {/* Sliding Green Bar Container */}
+            <div className="absolute bottom-0 left-0 w-full h-[3px] bg-gray-100/30">
+                <div className="animate-progress-slide h-full w-1/4 bg-green-500 rounded-full shadow-[0_0_8px_#22c55e]" />
+            </div>
         </div>
     );
 };

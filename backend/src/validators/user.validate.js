@@ -1,5 +1,5 @@
 import z from "zod";
-import { objectIdRegex } from "../constants/index.js";
+import { objectIdRegex , nameRegex } from "../constants/index.js";
 
 const usersQueryValidationSchema = z.object({
     query: z.object({
@@ -40,10 +40,22 @@ const userIdValidationSchema = z.object({
     })
 });
 
+const displayNameValidationSchema = z.object({
+    params: z.object({
+        displayName: z.string({ message: "Display name is required!" }).min(3, "Display name must be at least 3 characters long").regex(nameRegex, "Display name can only contain letters, numbers, underscores and hyphens")
+    })
+});
+
 const usernameValidationSchema = z.object({
     query: z.object({
         username: z.string({ message: "Username is required!" }).min(1, "Username cannot be empty")
     }).passthrough()
+});
+
+const displayNameUpdateValidationSchema = z.object({
+    body: z.object({
+        displayName: z.string({ message: "Display name is required!" }).min(3, "Display name must be at least 3 characters long").regex(nameRegex, "Display name can only contain letters, numbers, underscores and hyphens")
+    })
 });
 
 export {
@@ -51,5 +63,7 @@ export {
     userInfoUpdateValidationSchema,
     changePasswordValidationSchema,
     userIdValidationSchema,
-    usernameValidationSchema
+    displayNameValidationSchema,
+    usernameValidationSchema,
+    displayNameUpdateValidationSchema
 }

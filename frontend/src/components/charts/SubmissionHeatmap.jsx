@@ -1,91 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-
-const normalizeDayOfWeek = (date) => {
-  const day = date.getDay();
-  return day === 0 ? 6 : day - 1;
-};
-
-const generateFullYearData = (year, calendarData) => {
-  if (!year) return [];
-  const start = new Date(year, 0, 1);
-  const end = new Date(year, 11, 31);
-  const days = [];
-
-  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const dayOfMonth = String(d.getDate()).padStart(2, '0');
-    const key = `${y}-${m}-${dayOfMonth}`;
-
-    days.push({
-      date: new Date(d),
-      count: calendarData[key] || 0,
-      dateString: key
-    });
-  }
-  return days;
-};
-
-const generateLast365DaysData = (calendarData) => {
-  const days = [];
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const start = new Date(today);
-  start.setDate(start.getDate() - 364);
-
-  for (let d = new Date(start); d <= today; d.setDate(d.getDate() + 1)) {
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const dayOfMonth = String(d.getDate()).padStart(2, '0');
-    const key = `${y}-${m}-${dayOfMonth}`;
-
-    days.push({
-      date: new Date(d),
-      count: calendarData[key] || 0,
-      dateString: key
-    });
-  }
-  return days;
-};
-
-const groupDataByMonth = (days) => {
-  const months = [];
-  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  const daysByMonth = {};
-
-  days.forEach(day => {
-    const year = day.date.getFullYear();
-    const mIndex = day.date.getMonth();
-    const key = `${year}-${String(mIndex).padStart(2, '0')}`;
-    if (!daysByMonth[key]) daysByMonth[key] = { mIndex, days: [] };
-    daysByMonth[key].days.push(day);
-  });
-
-  Object.keys(daysByMonth).sort().forEach(key => {
-    const { mIndex, days: monthDays } = daysByMonth[key];
-    if (monthDays.length === 0) return;
-
-    const weeks = [];
-    let currentWeek = Array(7).fill(null);
-
-    monthDays.forEach(dayObj => {
-      const dayOfWeek = normalizeDayOfWeek(dayObj.date);
-      currentWeek[dayOfWeek] = dayObj;
-
-      if (dayOfWeek === 6) {
-        weeks.push(currentWeek);
-        currentWeek = Array(7).fill(null);
-      }
-    });
-
-    if (currentWeek.some(d => d !== null)) weeks.push(currentWeek);
-
-    months.push({ name: monthNames[mIndex], weeks });
-  });
-
-  return months;
-};
+import { getStreaksAndActiveDays, groupDataByMonth, generateCalendarData, getFirstActiveYear, getEnrichedCalendar } from '../../utils/calendar';
 
 const getGreenHeatColor = (count) => {
   if (count <= 0) return 'white';
@@ -96,124 +10,30 @@ const getGreenHeatColor = (count) => {
   return 'white';
 };
 
-const getYearWithZeros = (year) => {
-  const data = {};
-  const yearNum = parseInt(year);
-  if (isNaN(yearNum)) return {};
+const StatCard = ({ label, value }) => (
+    <div className="flex flex-col">
+        <span className="text-gray-400 text-[10px] uppercase tracking-wider font-bold">{label}</span>
+        <span className="text-gray-900 text-lg font-bold">{value}</span>
+    </div>
+);
 
-  const start = new Date(yearNum, 0, 1);
-  const end = new Date(yearNum, 11, 31);
-
-  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const dayOfMonth = String(d.getDate()).padStart(2, '0');
-    data[`${y}-${m}-${dayOfMonth}`] = 0;
-  }
-  return data;
+const HeatSquare = ({ day }) => {
+    const heatColor = day ? getGreenHeatColor(day.count) : 0;
+    return (
+        <div
+            style={{ backgroundColor: day ? heatColor : 'transparent' }}
+            className={`w-3 h-3 rounded-[2px] transition-all duration-300 border ${day ? (day.count > 0 ? 'border border-green-400/10' : 'border border-gray-200') : ''}`}
+            title={day ? `${day.count} submissions on ${day.dateString}` : ''}
+        />
+    );
 };
 
-const calculateOverallStats = (calendar) => {
-  if (!calendar) return { totalSubmissions: 0, maxStreak: 0, currentStreak: 0 };
-
-  let totalSubmissions = 0;
-  const allDates = [];
-  const allDataMap = {};
-
-  Object.entries(calendar).forEach(([year, yearData]) => {
-    const data = yearData === null ? getYearWithZeros(year) : yearData;
-    Object.entries(data).forEach(([dateStr, count]) => {
-      if (count > 0) {
-        totalSubmissions += count;
-        allDataMap[dateStr] = count;
-        allDates.push(new Date(dateStr));
-      }
-    });
-  });
-
-  allDates.sort((a, b) => a - b);
-
-  let maxStreak = 0;
-  let currentRun = 0;
-  let prevDate = null;
-
-  for (const date of allDates) {
-    if (!prevDate) {
-      currentRun = 1;
-    } else {
-      const diffTime = Math.abs(date - prevDate);
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      if (diffDays === 1) currentRun += 1;
-      else if (diffDays > 1) currentRun = 1;
-    }
-    if (currentRun > maxStreak) maxStreak = currentRun;
-    prevDate = date;
-  }
-
-  let currentStreak = 0;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const formatDateKey = (d) => {
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${y}-${m}-${day}`;
-  };
-
-  let checkDate = new Date(today);
-  if (allDataMap[formatDateKey(checkDate)]) {
-    currentStreak++;
-  }
-
-  if (currentStreak === 0) {
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-    if (allDataMap[formatDateKey(yesterday)]) {
-      checkDate = yesterday;
-      currentStreak = 1;
-    }
-  }
-
-  if (currentStreak > 0) {
-    while (true) {
-      checkDate.setDate(checkDate.getDate() - 1);
-      if (allDataMap[formatDateKey(checkDate)]) currentStreak++;
-      else break;
-    }
-  }
-
-  return { totalSubmissions, maxStreak, currentStreak };
-};
-
-const SubmissionHeatmap = ({ calendar, className, title }) => {
+const SubmissionHeatmap = ({ calendar, className }) => {
+  
   const [selectedYear, setSelectedYear] = useState(null);
-
-  const enrichedCalendar = useMemo(() => {
-    if (!calendar) return calendar;
-    const currentYear = String(new Date().getFullYear());
-    const previousYear = String(Number(currentYear) - 1);
-
-    if (calendar[currentYear] && calendar[previousYear]) {
-      const merged = { ...calendar[previousYear], ...calendar[currentYear] };
-
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const cutoff = new Date(today);
-      cutoff.setDate(cutoff.getDate() - 364);
-
-      const currentData = {};
-      Object.entries(merged).forEach(([dateStr, count]) => {
-        const d = new Date(dateStr);
-        if (d >= cutoff && d <= today) {
-          currentData[dateStr] = count;
-        }
-      });
-
-      return { current: currentData, ...calendar };
-    }
-    return calendar;
-  }, [calendar]);
+  const { totalContributions, maxStreak, currentStreak } = useMemo(() => getStreaksAndActiveDays(calendar), [calendar]);
+  const enrichedCalendar = useMemo(() => getEnrichedCalendar(calendar), [calendar]);
+  const firstActiveYear = useMemo(() => getFirstActiveYear(enrichedCalendar), [enrichedCalendar]);
 
   const years = useMemo(() => {
     if (!enrichedCalendar) return [];
@@ -221,16 +41,14 @@ const SubmissionHeatmap = ({ calendar, className, title }) => {
       if (a === 'current') return -1;
       if (b === 'current') return 1;
       return b - a;
-    });
-  }, [enrichedCalendar]);
+    }).filter(year => year >= firstActiveYear);
+  }, [enrichedCalendar, firstActiveYear]);
 
   useEffect(() => {
     if (years.length > 0 && !selectedYear) {
       setSelectedYear(years[0]);
     }
   }, [years, selectedYear]);
-
-  const globalStats = useMemo(() => calculateOverallStats(calendar), [calendar]);
 
   const currentYearData = useMemo(() => {
     if (!enrichedCalendar || !selectedYear) return {};
@@ -239,11 +57,12 @@ const SubmissionHeatmap = ({ calendar, className, title }) => {
 
   const monthlyGroups = useMemo(() => {
     if (selectedYear === 'current') {
-      const fullData = generateLast365DaysData(currentYearData);
+      const fullData = generateCalendarData(currentYearData, new Date()-364, new Date());
       return groupDataByMonth(fullData);
+    } else {
+      const fullYearData = generateCalendarData(currentYearData, new Date(selectedYear, 0, 1), new Date(selectedYear, 11, 31));
+      return groupDataByMonth(fullYearData);
     }
-    const fullYearData = generateFullYearData(selectedYear, currentYearData);
-    return groupDataByMonth(fullYearData);
   }, [selectedYear, currentYearData]);
 
   const currentYearTotal = useMemo(() => {
@@ -262,22 +81,10 @@ const SubmissionHeatmap = ({ calendar, className, title }) => {
     <div className={`flex flex-col bg-white p-6 rounded-2xl shadow-xl border border-gray-100 font-sans text-gray-800 w-full ${className}`}>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b pb-4 border-gray-100 gap-4">
         <div className="flex flex-wrap gap-8 text-sm font-bold">
-          <div className="flex flex-col">
-            <span className="text-gray-400 text-[10px] uppercase tracking-wider">Total</span>
-            <span className="text-gray-900 text-lg">{globalStats.totalSubmissions}</span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-gray-400 text-[10px] uppercase tracking-wider">{selectedYear}</span>
-            <span className="text-gray-900 text-lg">{currentYearTotal}</span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-gray-400 text-[10px] uppercase tracking-wider">Max Streak</span>
-            <span className="text-gray-900 text-lg">{globalStats.maxStreak}</span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-gray-400 text-[10px] uppercase tracking-wider">Current Streak</span>
-            <span className="text-gray-900 text-lg">{globalStats.currentStreak}</span>
-          </div>
+          <StatCard label="Total" value={totalContributions} />
+          <StatCard label={selectedYear} value={currentYearTotal} />
+          <StatCard label="Max Streak" value={maxStreak} />
+          <StatCard label="Current Streak" value={currentStreak} />
         </div>
 
         <div className="flex items-center">
@@ -305,12 +112,7 @@ const SubmissionHeatmap = ({ calendar, className, title }) => {
                 {month.weeks.map((week, wIndex) => (
                   <div key={wIndex} className="flex flex-col gap-1">
                     {week.map((day, dIndex) => (
-                      <div
-                        key={dIndex}
-                        style={{ backgroundColor: day ? getGreenHeatColor(day.count) : 'transparent' }}
-                        className={`w-3 h-3 rounded-[2px] transition-all duration-300 ${day ? (day.count > 0 ? 'border border-green-400/10' : 'border border-gray-200') : ''}`}
-                        title={day ? `${day.count} submissions on ${day.dateString}` : ''}
-                      />
+                      <HeatSquare key={dIndex} day={day} />
                     ))}
                   </div>
                 ))}

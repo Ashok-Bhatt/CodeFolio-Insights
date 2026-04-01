@@ -1,25 +1,25 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams, Outlet } from 'react-router-dom';
-import DashboardSidebar from '../components/sidebars/DashboardSidebar.jsx';
+import { DashboardSidebar } from '../components/sidebars/export.js';
 import { useProfileCache, useProfileRefresh } from '../hooks/useProfiles.js';
-import { useUser } from '../hooks/export.js';
+import { useUser } from '../hooks/useUsers.js';
 import { Loader } from '../components/loaders/export.js';
 import { DashboardSkeleton } from '../components/skeletons/export.js';
 import { CircleAlert, Plus } from 'lucide-react';
 import { PageNotFound } from "../pages/export.js"
 
 const DashboardLayout = () => {
-    const { userId } = useParams();
-    const { data: cacheData, isLoading: isLoadingCache, isError: isCachingError } = useProfileCache(userId);
-    const { data: refreshData, isLoading: isRefreshing, refetch: triggerRefresh } = useProfileRefresh(userId);
-    const { data: userData, isLoading: isLoadingUser, isError: isUserError } = useUser(userId);
+    const { displayName } = useParams();
+    const { data: cacheData, isLoading: isLoadingCache, isError: isCachingError } = useProfileCache(displayName);
+    const { data: refreshData, isLoading: isRefreshing, refetch: triggerRefresh } = useProfileRefresh(displayName);
+    const { data: userData, isLoading: isLoadingUser, isError: isUserError } = useUser(displayName);
     const navigate = useNavigate();
 
     const data = refreshData || cacheData;
 
     // Stale Check Logic
     useEffect(() => {
-        if (!userId) return;
+        if (!displayName) return;
 
         if (!isLoadingCache) {
             if (!cacheData) {
@@ -34,7 +34,7 @@ const DashboardLayout = () => {
                 }
             }
         }
-    }, [userId, cacheData, isLoadingCache]);
+    }, [displayName, cacheData, isLoadingCache]);
 
     if (isLoadingUser || isLoadingCache) {
         return <DashboardSkeleton />;

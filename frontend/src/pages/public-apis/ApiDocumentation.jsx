@@ -2,7 +2,7 @@ import React, { useMemo, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Info } from "lucide-react";
 import { documentationData } from "../../constants/apiDocumentation.js";
-import ApiDocumentationSidebar from "../../components/sidebars/ApiDocumentationSidebar.jsx";
+import { ApiDocumentationSidebar } from "../../components/sidebars/export.js";
 import ApiPlayground from "../../components/ApiPlayground.jsx";
 
 const ApiDocumentation = () => {
@@ -43,7 +43,7 @@ const ApiDocumentation = () => {
     if (!currentEndpoint) return null;
 
     return (
-        <div className="flex h-[calc(100vh-140px)] w-full gap-6 animate-float-in">
+        <div className="flex-1 flex gap-6 p-8 overflow-hidden h-full animate-float-in">
             {/* Sidebar Component */}
             <ApiDocumentationSidebar
                 documentationData={documentationData}

@@ -4,10 +4,10 @@ const ContestAchievements = ({ achievements }) => {
     }
 
     return (
-        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 font-sans text-gray-800 w-full">
+        <div className="flex flex-col bg-white p-6 rounded-xl shadow-lg border border-gray-200 font-sans text-gray-800 w-full">
             <h3 className="text-xl font-bold text-gray-800 mb-6 text-center border-b pb-4 border-gray-100">Contest Rankings</h3>
 
-            <div className="flex flex-col space-y-8">
+            <div className="flex flex-col flex-1 space-y-8">
                 {achievements.map((item, index) => (
                     <div key={index} className="flex flex-col items-center">
 
@@ -15,14 +15,22 @@ const ContestAchievements = ({ achievements }) => {
                         <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">{item.platform}</h4>
 
                         <div className="flex items-center justify-between w-full px-4 max-w-xs">
-                            {/* Badge */}
+                            {/* Badge or Stars */}
                             <div className="flex-shrink-0">
-                                {item.badgeUrl && (
+                                {item.achievement.type === "badge" && item.achievement.badgeUrl && (
                                     <img
-                                        src={item.badgeUrl}
+                                        src={item.achievement.badgeUrl}
                                         alt={`${item.platform} Badge`}
-                                        className={`w-28 h-28 object-contain ${item.isDefaultBadge ? 'opacity-25 grayscale' : ''}`}
+                                        className={`w-28 h-28 object-contain ${item.achievement.isDefaultBadge ? 'opacity-25 grayscale' : ''}`}
                                     />
+                                )}
+
+                                {item.achievement.type === "stars" && item.achievement.stars && (
+                                    <div className="flex items-center gap-x-1">
+                                        {[...Array(item.achievement.stars)].map((_, i) => (
+                                            <span key={i} className="flex items-center justify-center h-6 w-6 bg-orange-400 text-white text-2xl">★</span>
+                                        ))}
+                                    </div>
                                 )}
                             </div>
 

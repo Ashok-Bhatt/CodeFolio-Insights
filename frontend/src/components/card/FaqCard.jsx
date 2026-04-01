@@ -1,4 +1,4 @@
-import { ChevronDown,  } from "lucide-react"
+import { ChevronDown } from "lucide-react"
 
 const FaqCard = ({ question, answer, icon: Icon, iconClasses, isOpen, onClick }) => {
     return (

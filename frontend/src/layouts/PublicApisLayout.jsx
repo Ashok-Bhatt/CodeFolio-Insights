@@ -1,8 +1,13 @@
 import { Outlet } from 'react-router-dom';
 import { BookOpen, FolderDot, HelpCircle } from 'lucide-react';
 import { TabNavigation } from '../components/export.js';
+import { Sidebar } from '../components/sidebars/export.js';
+import { usePreferenceStore } from '../store/export.js';
 
 const PublicApisLayout = () => {
+
+    const { pageView } = usePreferenceStore();
+
     const navTabs = [
         { name: 'Documentation', path: '/public-apis/documentation', Icon: BookOpen },
         { name: 'Projects', path: '/public-apis/projects', Icon: FolderDot },
@@ -10,16 +15,13 @@ const PublicApisLayout = () => {
     ];
 
     return (
-        <div className="flex flex-col h-full bg-slate-50/50">
-            {/* Header/Nav for Public APIs */}
-            <TabNavigation tabs={navTabs} />
+        <div className={`flex-1 flex ${pageView["Public APIs"] === "tab" ? "flex-col" : "flex-row"} min-w-0 bg-white overflow-hidden h-screen`}>
 
-            {/* Content Area */}
-            <div className="flex-1 overflow-hidden p-8">
-                <div className="flex flex-col mx-auto w-full h-full">
-                    <Outlet />
-                </div>
-            </div>
+            {pageView["Public APIs"] === "tab" ? <TabNavigation tabs={navTabs} /> : <Sidebar title='Public APIs' items={navTabs} />}
+
+            <main className="flex-1 flex flex-col bg-slate-50/50 overflow-hidden">
+                <Outlet />
+            </main>
         </div>
     );
 };

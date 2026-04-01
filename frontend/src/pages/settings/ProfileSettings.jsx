@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { useUpdateUser } from '../hooks/useUsers';
-import { ProfileInfoForm } from '../components/export';
-import { useAuthStore } from '../store/export';
+import { useUpdateUser } from '../../hooks/useUsers.js';
+import { ProfileInfoForm } from '../../components/export.js';
+import { useAuthStore } from '../../store/export.js';
 import toast from 'react-hot-toast';
 
-const SettingsProfile = () => {
+const ProfileSettings = () => {
     const { user, setUser } = useOutletContext();
     const setAuthUser = useAuthStore((state) => state.setUser);
     const [isEditing, setIsEditing] = useState(false);
@@ -99,4 +99,4 @@ const SettingsProfile = () => {
     );
 };
 
-export default SettingsProfile;
+export default ProfileSettings;

@@ -1,6 +1,7 @@
 import ApiProjectModel from "../models/api-project.model.js";
 import { generateApiKey } from "../utils/api-key.util.js";
 import mongoose from "mongoose";
+import ApiError from "../utils/api-error.util.js";
 
 const getProjects = async (userId) => {
     const projects = await ApiProjectModel
@@ -39,8 +40,8 @@ const updateProject = async (projectId, name, userId) => {
 
 const deleteProject = async (projectId, userId, defaultApiKey) => {
     const project = await ApiProjectModel.findOne({ _id: projectId, userId });
-    if (!project) throw new Error("Project not found or unauthorized");
-    if (project.apiKey === defaultApiKey) throw new Error("Cannot delete default API key project");
+    if (!project) throw new ApiError(404, "Project not found or unauthorized");
+    if (project.apiKey === defaultApiKey) throw new ApiError(403, "Cannot delete default API key project");
 
     await ApiProjectModel.findByIdAndDelete(projectId);
     return project;
@@ -48,7 +49,7 @@ const deleteProject = async (projectId, userId, defaultApiKey) => {
 
 const changeDailyApiLimit = async (projectId, newApiPointsDailyLimit) => {
     const project = await ApiProjectModel.findById(new mongoose.Types.ObjectId(projectId));
-    if (!project) throw new Error("Project not found!");
+    if (!project) throw new ApiError(404, "Project not found!");
 
     project.apiPointsDailyLimit = newApiPointsDailyLimit;
     await project.save();

@@ -25,4 +25,4 @@ const useHighlights = () => {
     return { highlights, loading, error };
 };
 
-export default useHighlights;
+export { useHighlights };

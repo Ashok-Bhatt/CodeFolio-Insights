@@ -2,11 +2,12 @@ import ApiProjectModel from "../models/api-project.model.js";
 import ApiPointsModel from "../models/api-points.model.js";
 import ApiLogsModel from "../models/api-logs.model.js";
 import { publicEndpointsRegex } from "../constants/regex.constants.js";
+import ApiError from "../utils/api-error.util.js";
 
-const getDailyApiUsageData = async (apiKey, lastDays) => {
+const getDailyApiUsageData = async (apiKey, lastDays, userId) => {
     const project = await ApiProjectModel.findOne({ apiKey });
-    if (!project) throw new Error("Project not found or invalid API Key");
-    if (project.userId.toString() !== req.user._id.toString()) throw new Error("Unauthorized access to this project");
+    if (!project) throw new ApiError(404, "Project not found or invalid API Key");
+    if (project.userId.toString() !== userId.toString()) throw new ApiError(403, "Unauthorized access to this project");
 
     const today = new Date();
     const dailyUsageData = [];
@@ -30,10 +31,10 @@ const getDailyApiUsageData = async (apiKey, lastDays) => {
     return dailyUsageData;
 }
 
-const getPublicApiRequestsData = async (apiKey, previousInterval) => {
+const getPublicApiRequestsData = async (apiKey, previousInterval, userId) => {
     const project = await ApiProjectModel.findOne({ apiKey });
-    if (!project) throw Error("Project not found or invalid API Key");
-    if (project.userId.toString() !== req.user._id.toString()) throw Error("Unauthorized access to this project");
+    if (!project) throw new ApiError(404, "Project not found or invalid API Key");
+    if (project.userId.toString() !== userId.toString()) throw new ApiError(403, "Unauthorized access to this project");
 
     const intervalEnding = Date.now();
     const intervalStarting = intervalEnding - previousInterval;
