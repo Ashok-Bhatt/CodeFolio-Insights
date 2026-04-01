@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-const OTPInput = ({ length = 6, value, onChange }) => {
+const OtpInput = ({ length = 6, value, onChange }) => {
     const [otp, setOtp] = useState(new Array(length).fill(""));
     const inputRefs = useRef([]);
 
@@ -75,4 +75,4 @@ const OTPInput = ({ length = 6, value, onChange }) => {
     );
 };
 
-export default OTPInput;
+export default OtpInput;

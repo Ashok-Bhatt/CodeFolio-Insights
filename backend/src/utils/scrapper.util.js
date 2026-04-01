@@ -1,9 +1,10 @@
 import { getBrowser } from "../config/browser.config.js";
+import ApiError from "./api-error.util.js";
 
 const configBrowserPage = async (url, waitUntilOption, waitSelector, waitForPageTime, waitForSelectorTime) => {
     const browser = await getBrowser();
     if (!browser) {
-        throw new Error("Browser instance not initialized");
+        throw new ApiError(500, "Browser instance not initialized");
     }
 
     const page = await browser.newPage();

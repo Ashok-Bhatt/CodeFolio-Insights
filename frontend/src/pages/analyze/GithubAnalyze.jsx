@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Search, TrendingUp, Code, Zap, Brain, FolderOpen, GitCommit, Star, GitFork, Users, UserPlus, GitPullRequest, AlertCircle, CheckCircle, Target, BarChart3 } from 'lucide-react';
+import { TrendingUp, Code, Zap, FolderOpen, GitCommit, Star, GitFork, Users, UserPlus, GitPullRequest, AlertCircle, CheckCircle, Target, BarChart3 } from 'lucide-react';
 import { useGithubAnalysis } from "../../hooks/useAnalyzer.js";
 import { useAuthStore } from '../../store/export.js';
 import { useProfileLinks } from '../../hooks/useProfiles.js';
 import { StatCard, AnalysisCard, VideoSuggestionCard } from '../../components/card/export.js';
 import { SubmissionHeatmap, DistributionChart } from '../../components/charts/export.js';
-import { ErrorContainer, ScoreMeter, MemeContainer, BadgeCollection } from '../../components/export.js';
+import { ErrorContainer, ScoreMeter, MemeContainer, BadgeCollection, UsernameInput } from '../../components/export.js';
 import { LANGUAGE_COLORS } from '../../constants/index.js';
 
 const GithubAnalyse = () => {
@@ -47,9 +47,9 @@ const GithubAnalyse = () => {
     ]
 
     return (
-        <main className="flex-1 overflow-y-auto p-8 space-y-8">
+        <div className="flex-1 space-y-8">
             <div className="text-center space-y-4 animate-float-in">
-                <h1 className="text-6xl font-black bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 bg-clip-text text-transparent leading-tight h-20">
+                <h1 className="text-4xl md:text-6xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent leading-tight h-20">
                     GitHub Analytics
                 </h1>
                 <p className="text-xl text-gray-500 max-w-3xl mx-auto leading-relaxed font-bold italic">
@@ -57,35 +57,16 @@ const GithubAnalyse = () => {
                 </p>
             </div>
 
-            <div className="bg-white/90 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-gray-100 animate-float-in" style={{ animationDelay: '100ms' }}>
-                <div className="flex items-center gap-4 mb-8">
-                    <div className="p-3 bg-gradient-to-br from-green-500 to-blue-600 rounded-2xl shadow-lg">
-                        <Code className="h-6 w-6 text-white" />
-                    </div>
-                    <div>
-                        <h3 className="text-2xl font-black text-gray-800">Analyze Your Profile</h3>
-                        <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">Enter GitHub username</p>
-                    </div>
-                </div>
-
-                <div className="flex flex-col md:flex-row gap-4">
-                    <div className="flex-1 relative">
-                        <input
-                            type="text" value={username} onChange={(e) => setUsername(e.target.value)}
-                            placeholder="Enter your GitHub username..."
-                            className="w-full p-4 pl-12 text-lg border-2 border-gray-100 rounded-2xl focus:ring-4 focus:ring-green-500/10 focus:border-green-500 outline-none transition-all bg-gray-50/50 font-bold"
-                        />
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                    </div>
-                    <button
-                        onClick={handleAnalyze} disabled={isFetching}
-                        className="flex items-center justify-center gap-3 bg-green-600 text-white font-black px-8 py-4 rounded-2xl shadow-xl hover:shadow-green-200 transition-all transform hover:-translate-y-1 disabled:opacity-50 uppercase tracking-widest text-sm"
-                    >
-                        {isFetching ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <Brain className="w-5 h-5" />}
-                        <span>{isFetching ? 'Analyzing...' : 'Deep Analysis'}</span>
-                    </button>
-                </div>
-            </div>
+            <UsernameInput
+                value={username}
+                onChange={setUsername}
+                onAnalyze={handleAnalyze}
+                isFetching={isFetching}
+                placeholder="Enter your GitHub username..."
+                title="Analyze Your Profile"
+                subtitle="Enter GitHub username"
+                Icon={Code}
+            />
 
             {analysisData && (
                 <div className="space-y-8">
@@ -170,14 +151,14 @@ const GithubAnalyse = () => {
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
                         <DistributionChart
                             title="Language Distribution"
-                            problemsData={languageData}
+                            data={languageData}
                             className="col-span-1"
                             includeLabels={true}
                         />
 
                         <DistributionChart
                             title="Repo Type Distribution"
-                            problemsData={repoTypeData}
+                            data={repoTypeData}
                             className="col-span-1"
                             includeLabels={true}
                         />
@@ -208,7 +189,7 @@ const GithubAnalyse = () => {
                     errorAdditionalHelp={["Check if username is correct", "Ensure profile is public", "Try again in a few minutes"]}
                 />
             )}
-        </main>
+        </div>
     );
 };
 

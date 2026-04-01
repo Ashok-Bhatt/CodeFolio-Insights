@@ -29,4 +29,3 @@ const useResponsiveCount = (containerRef, itemWidth, gap = 16) => {
 };
 
 export { useResponsiveCount };
-export default useResponsiveCount;

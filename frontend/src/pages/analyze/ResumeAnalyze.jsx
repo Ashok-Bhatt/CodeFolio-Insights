@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { ErrorContainer, ResumeUploadSection, ResumeAnalysisDisplay } from '../../components/export.js';
-import { useResumeAnalysis } from '../../hooks/export.js';
+import { useResumeAnalysis } from '../../hooks/useAnalyzer.js';
 import { ALLOWED_FILE_TYPES } from '../../constants/index.js';
 
 const ResumeAnalyse = () => {
@@ -111,9 +111,9 @@ const ResumeAnalyse = () => {
     }
 
     return (
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-auto">
+        <div className="flex-1">
             {content}
-        </main>
+        </div>
     );
 };
 

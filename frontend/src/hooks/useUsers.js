@@ -1,6 +1,6 @@
 import { axiosInstance, asyncWrapper } from "../api/export.js";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import useAuthStore from "../store/useAuthStore.js";
+import { useAuthStore } from "../store/export.js";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -74,15 +74,15 @@ const useVerifyOTP = () => {
     })
 }
 
-const useUser = (id) => {
+const useUser = (displayName) => {
     return useQuery({
-        queryKey: ["user", id],
+        queryKey: ["user", displayName],
         retry: 3,
         queryFn: asyncWrapper(async () => {
-            const response = await axiosInstance.get(`/api/user/${id}`);
+            const response = await axiosInstance.get(`/api/user/${displayName}`);
             return response.data;
         }),
-        enabled: !!id,
+        enabled: !!displayName,
     })
 }
 
@@ -148,7 +148,7 @@ const useLogout = () => {
         onSuccess: () => {
             useAuthStore.setState({ user: null, token: null });
             localStorage.removeItem("preference-storage");
-            navigate('/login');
+            navigate('/auth/login');
         }
     })
 }

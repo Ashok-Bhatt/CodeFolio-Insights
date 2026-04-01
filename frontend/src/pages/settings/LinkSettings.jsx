@@ -1,14 +1,14 @@
-import { useAuthStore } from '../store/export.js';
+import { useAuthStore } from '../../store/export.js';
 import { Link as LinkIcon } from 'lucide-react';
-import { transformBackendToFrontend } from '../utils/linkHelpers.js';
-import { LinkCard } from '../components/card/export.js';
-import { useProfileLinks, useUpdateProfileLink } from '../hooks/useProfiles.js';
-import { PLATFORMS_CONFIG } from '../constants/index.js';
+import { transformBackendToFrontend } from '../../utils/linkHelpers.js';
+import { LinkCard } from '../../components/card/export.js';
+import { useProfileLinks, useUpdateProfileLink } from '../../hooks/useProfiles.js';
+import { PLATFORMS_CONFIG } from '../../constants/index.js';
 
-const LinkPage = () => {
-    const userId = useAuthStore((state) => state?.user?._id);
+const LinkSettings = () => {
+    const displayName = useAuthStore((state) => state?.user?.displayName);
 
-    const { data: profile, refetch: fetchLinks } = useProfileLinks(userId);
+    const { data: profile } = useProfileLinks(displayName);
     const { mutate: updateProfileMutation, isPending, variables } = useUpdateProfileLink();
 
     const iconMap = {
@@ -27,7 +27,7 @@ const LinkPage = () => {
 
     const handleUpdate = (platformValue, newUsername) => {
         if (!newUsername.trim()) {
-            return; // Backend validator requires min length 1
+            return;
         }
 
         updateProfileMutation({
@@ -65,4 +65,4 @@ const LinkPage = () => {
     );
 };
 
-export default LinkPage;
+export default LinkSettings;

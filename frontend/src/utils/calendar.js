@@ -1,3 +1,10 @@
+const formatDate = (d) => {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+};
+
 const getStreaksAndActiveDays = (calendar) => {
 
   const allDates = Object.values(calendar)
@@ -11,17 +18,22 @@ const getStreaksAndActiveDays = (calendar) => {
   let maxStreak = 0;
   let currentStreak = 0;
   let tempStreak = 0;
-  const activeDays = allDates.filter((date)=>calendar[new Date(date).getFullYear()][date] > 0).length;
-  const totalContributions = allDates.filter((date)=>calendar[new Date(date).getFullYear()][date] > 0).reduce((acc, date)=>acc + calendar[new Date(date).getFullYear()][date], 0);
+  let activeDays = 0;
+  let totalContributions = 0;
 
   for (let i = 0; i < allDates.length; i++) {
-    if (calendar[new Date(allDates[i]).getFullYear()][allDates[i]] > 0) {
+    const dailyContribution = calendar[new Date(allDates[i]).getFullYear()][allDates[i]];
+
+    if (dailyContribution > 0) {
+      activeDays++;
+      totalContributions += dailyContribution;
       tempStreak++;
     } else {
       tempStreak = 0;
     }
 
     maxStreak = Math.max(maxStreak, tempStreak);
+
     if (new Date().toISOString().split('T')[0] === allDates[i]) {
       currentStreak = tempStreak;
     }
@@ -33,6 +45,14 @@ const getStreaksAndActiveDays = (calendar) => {
     activeDays,
     totalContributions
   };
+};
+
+const getFirstActiveYear = (calendar) => {
+  const years = Object.keys(calendar).map(Number).sort((a, b) => a - b);
+  for (const year of years) {
+    if (Object.values(calendar[year]).some(count => count > 0)) return year;
+  }
+  return new Date().getFullYear();
 };
 
 const getCombinedHeatmap = (...heatmaps) => {
@@ -63,7 +83,88 @@ const getCombinedHeatmap = (...heatmaps) => {
   return combinedHeatmap;
 };
 
+const normalizeDayOfWeek = (date) => {
+  const day = date.getDay();
+  return day === 0 ? 6 : day - 1;
+};
+
+const generateCalendarData = (calendarData, startDate, endDate) => {
+  const days = [];
+
+  for (let d = startDate; d <= endDate; d.setDate(d.getDate() + 1)) {
+    const key = formatDate(d);
+
+    days.push({
+      date: new Date(d),
+      count: calendarData[key] || 0,
+      dateString: key
+    });
+  }
+  return days;
+};
+
+const groupDataByMonth = (days) => {
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const months = [];
+    let currentMonth = { name: '', weeks: [] };
+    let currentWeek = Array(7).fill(null);
+
+    days.forEach((dayObj) => {
+        const monthName = monthNames[dayObj.date.getMonth()];
+        const dayOfWeek = dayObj.date.getDay() === 0 ? 6 : dayObj.date.getDay() - 1;
+
+        if (monthName !== currentMonth.name) {
+            if (currentMonth.name) months.push(currentMonth);
+            currentMonth = { name: monthName, weeks: [] };
+        }
+
+        currentWeek[dayOfWeek] = dayObj;
+        if (dayOfWeek === 6 || dayObj === days[days.length - 1]) {
+            currentMonth.weeks.push([...currentWeek]);
+            currentWeek = Array(7).fill(null);
+        }
+    });
+    
+    months.push(currentMonth);
+    return months;
+};
+
+const getEnrichedCalendar = (calendar) => {
+    if (!calendar) return null;
+    const currentYear = String(new Date().getFullYear());
+    const previousYear = String(Number(currentYear) - 1);
+
+    const enriched = { ...calendar };
+
+    if (calendar[currentYear]) {
+        const merged = { ...(calendar[previousYear] || {}), ...calendar[currentYear] };
+        
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const cutoff = new Date(today);
+        cutoff.setDate(cutoff.getDate() - 364);
+
+        const currentData = {};
+        Object.entries(merged).forEach(([dateStr, count]) => {
+            const d = new Date(dateStr);
+            if (d >= cutoff && d <= today) {
+                currentData[dateStr] = count;
+            }
+        });
+        enriched.current = currentData;
+    }
+
+    return enriched;
+};
+
 export {
   getStreaksAndActiveDays,
-  getCombinedHeatmap
+  getCombinedHeatmap,
+  normalizeDayOfWeek,
+  generateCalendarData,
+  groupDataByMonth,
+  formatDate,
+  getFirstActiveYear,
+  getEnrichedCalendar,
 }

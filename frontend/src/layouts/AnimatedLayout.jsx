@@ -27,8 +27,8 @@ const useOnScreen = (options) => {
     return [ref, isVisible];
 };
 
-// Animated component wrapper
-const Animated = ({ children, className = "", delay = 0 }) => {
+// AnimatedLayout component wrapper
+const AnimatedLayout = ({ children, className = "", delay = 0 }) => {
     const [ref, isVisible] = useOnScreen({ threshold: 0.1 });
     return (
         <div
@@ -42,4 +42,4 @@ const Animated = ({ children, className = "", delay = 0 }) => {
     );
 };
 
-export default Animated;
+export default AnimatedLayout;

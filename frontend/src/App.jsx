@@ -1,19 +1,17 @@
 import { useAuthStore } from './store/export.js';
 import { useCheckAuth } from './hooks/useUsers.js';
 import { useEffect } from 'react';
-import { Route, Routes, Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { Landing, LoginPage, SignupPage, CodingProfiles, SettingsPage, SettingsProfile, LinkPage, PageNotFound, Account, ContactUs } from './pages/export.js';
-import { HomeLayout, DashboardLayout, AnalyzerLayout, PublicApisLayout } from "./layouts/export.js";
+import { Route, Routes, Navigate } from 'react-router-dom';
+import { Landing, CodingProfiles, PageNotFound, ContactUs } from './pages/export.js';
+import { LoginPage, SignupPage } from './pages/auth/export.js';
+import { HomeLayout, DashboardLayout, AnalyzerLayout, PublicApisLayout, ProtectedLayout, SettingsLayout } from "./layouts/export.js";
 import { LeetCode, GFG, Code360, Interviewbit, CodeChef, HackerRank, Github } from './pages/platforms/export.js';
 import { LeetcodeAnalyze, GithubAnalyze, ResumeAnalyze } from './pages/analyze/export.js';
 import { ApiDocumentation, ApiProjects, ApiFaq } from './pages/public-apis/export.js';
-import { ProtectedRoute, AppearanceSettings } from './components/export.js';
+import { AppearanceSettings, ProfileSettings, LinkSettings, AccountSettings } from './pages/settings/export.js';
 
 const App = () => {
     const { data, isSuccess } = useCheckAuth();
-    const { user } = useAuthStore();
-    const location = useLocation();
-    const navigate = useNavigate();
 
     useEffect(() => {
         if (isSuccess && data) {
@@ -21,20 +19,21 @@ const App = () => {
         }
     }, [isSuccess, data]);
 
-    useEffect(() => {
-        if (user && ['/login', '/signup'].includes(location.pathname)) {
-            navigate(`/dashboard/${user._id}`);
-        }
-    }, [user, location.pathname, navigate]);
-
     return (
         <Routes>
             <Route path="/" element={<Landing />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<SignupPage />} />
-
+            <Route path="/auth/login" element={
+                <ProtectedLayout requiresAuthentication={false}> 
+                    <LoginPage />
+                </ProtectedLayout>
+            } />
+            <Route path="/auth/signup" element={
+                <ProtectedLayout requiresAuthentication={false}>
+                    <SignupPage />
+                </ProtectedLayout>
+            } />
             <Route path="/" element={<HomeLayout />}>
-                <Route path="dashboard/:userId" element={<DashboardLayout />}>
+                <Route path="dashboard/:displayName" element={<DashboardLayout />}>
                     <Route index element={<Navigate to="coding-profiles" replace />} />
                     <Route path="coding-profiles">
                         <Route index element={<CodingProfiles />} />
@@ -55,21 +54,35 @@ const App = () => {
                 </Route>
                 <Route path="public-apis" element={<PublicApisLayout />}>
                     <Route index element={<Navigate to="documentation" replace />} />
-                    <Route path="documentation" element={<ApiDocumentation />} />
-                    <Route path="projects" element={<ApiProjects />} />
+                    <Route path="documentation" element={
+                        <ApiDocumentation />} 
+                    />
+                    <Route path="projects" element={
+                        <ProtectedLayout requiresAuthentication={true}>
+                            <ApiProjects />
+                        </ProtectedLayout>
+                    } />
                     <Route path="faq" element={<ApiFaq />} />
                 </Route>
                 <Route path="/contact-us" element={<ContactUs />} />
-                <Route path="settings" element={
-                    <ProtectedRoute requiresAuthentication={true}>
-                        <SettingsPage />
-                    </ProtectedRoute>
-                }>
+                <Route path="settings" element={<SettingsLayout />}>
                     <Route index element={<Navigate to="profile" replace />} />
-                    <Route path="profile" element={<SettingsProfile />} />
-                    <Route path="appearance" element={<AppearanceSettings />} />
-                    <Route path="account" element={<Account />} />
-                    <Route path="links" element={<LinkPage />} />
+                    <Route path="profile" element={
+                        <ProtectedLayout requiresAuthentication={true}>
+                            <ProfileSettings />
+                        </ProtectedLayout>
+                    } />
+                    <Route path="appearance" element={ <AppearanceSettings /> } />
+                    <Route path="account" element={
+                        <ProtectedLayout requiresAuthentication={true}>
+                            <AccountSettings />
+                        </ProtectedLayout>
+                    } />
+                    <Route path="links" element={
+                        <ProtectedLayout requiresAuthentication={true}>
+                            <LinkSettings />
+                        </ProtectedLayout>
+                    } />
                 </Route>
             </Route>
             <Route path="/home" element={<Navigate to="/" replace />} />

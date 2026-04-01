@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Copy, Eye, EyeOff, Trash2, Globe, CheckCircle2, Edit2 } from "lucide-react";
+import { Copy, Eye, EyeOff, Trash2, CheckCircle2, Edit2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuthStore } from "../../store/export.js";
 import { useUpdateApiKey } from "../../hooks/useUsers.js";

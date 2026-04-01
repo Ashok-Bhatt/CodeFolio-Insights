@@ -2,10 +2,10 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { BarChart2, PlayCircle, ArrowRight, Github } from "lucide-react";
 import { DEFAULT_USERS, LANDING_FEATURES } from "../constants/index.js";
-import { Animated } from "../layouts/export.js";
+import { AnimatedLayout } from "../layouts/export.js";
 import { DashboardPreview, LandingNavbar } from "../components/export.js";
 import { FeatureCard } from "../components/card/export.js";
-import useHighlights from "../hooks/useHighlights.js";
+import { useHighlights } from "../hooks/useHighlights.js";
 import { useAuthStore } from "../store/export.js";
 
 export default function App() {
@@ -21,24 +21,24 @@ export default function App() {
                 <header className="container mx-auto px-4 pt-32 pb-12">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         <div className="space-y-6">
-                            <Animated>
+                            <AnimatedLayout>
                                 <h2 className="text-4xl md:text-5xl lg:text-7xl font-black leading-tight text-slate-800">
                                     Unified Developer{" "}
                                     <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
                                         Profile Analysis
                                     </span>
                                 </h2>
-                            </Animated>
-                            <Animated delay={100}>
+                            </AnimatedLayout>
+                            <AnimatedLayout delay={100}>
                                 <p className="text-lg text-slate-600 font-medium leading-relaxed">
                                     Enhance your tech career with comprehensive insights from all
                                     your coding profiles. Get AI-powered recommendations and
                                     visualize your growth journey.
                                 </p>
-                            </Animated>
-                            <Animated delay={200}>
+                            </AnimatedLayout>
+                            <AnimatedLayout delay={200}>
                                 <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 pt-4">
-                                    <Link to={authUser ? `/dashboard/${authUser._id}` : "/signup"}>
+                                    <Link to="/analyzer">
                                         <button className="px-8 py-4 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-black text-xs uppercase tracking-widest hover:from-indigo-700 hover:to-purple-700 transition-all flex items-center justify-center space-x-3 shadow-xl shadow-indigo-200 hover:shadow-indigo-300 transform hover:-translate-y-1">
                                             <span>Start Free Analysis</span>
                                             <ArrowRight className="w-4 h-4" />
@@ -49,8 +49,8 @@ export default function App() {
                                         <span>Watch Demo</span>
                                     </button>
                                 </div>
-                            </Animated>
-                            <Animated delay={300}>
+                            </AnimatedLayout>
+                            <AnimatedLayout delay={300}>
                                 <div className="flex items-center space-x-6 pt-6">
                                     <div className="flex -space-x-2">
                                         {(highlights.sampleUsers.length > 0 ? highlights.sampleUsers : DEFAULT_USERS).map((user, idx) => (
@@ -69,24 +69,24 @@ export default function App() {
                                         Trusted by developers worldwide
                                     </p>
                                 </div>
-                            </Animated>
+                            </AnimatedLayout>
                         </div>
 
                         {/* Dashboard Preview */}
-                        <Animated className="relative overflow-hidden" delay={200}>
+                        <AnimatedLayout className="relative overflow-hidden" delay={200}>
                             <div className="absolute -top-10 -left-10 w-40 h-40 bg-indigo-500/10 rounded-full filter blur-3xl animate-blob"></div>
                             <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-purple-500/10 rounded-full filter blur-3xl animate-blob animation-delay-4000"></div>
                             <div className="relative bg-white/80 backdrop-blur-md p-6 rounded-3xl border border-white shadow-2xl transform hover:-translate-y-2 transition-all duration-500 hover:shadow-indigo-500/10">
                                 <DashboardPreview />
                             </div>
-                        </Animated>
+                        </AnimatedLayout>
                     </div>
                 </header>
 
                 {/* Features Section */}
                 <section id="features" className="py-24 bg-white">
                     <div className="container mx-auto px-4">
-                        <Animated className="text-center mb-20">
+                        <AnimatedLayout className="text-center mb-20">
                             <h2 className="text-3xl md:text-5xl font-black text-slate-800 mb-6">
                                 Comprehensive Profile Analysis
                             </h2>
@@ -94,12 +94,12 @@ export default function App() {
                                 Connect all your professional profiles in one place and get
                                 actionable insights to boost your tech career.
                             </p>
-                        </Animated>
+                        </AnimatedLayout>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {LANDING_FEATURES.map((feature, index) => (
-                                <Animated key={feature.title} delay={index * 100}>
+                                <AnimatedLayout key={feature.title} delay={index * 100}>
                                     <FeatureCard {...feature} />
-                                </Animated>
+                                </AnimatedLayout>
                             ))}
                         </div>
                     </div>

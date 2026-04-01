@@ -4,12 +4,35 @@ import { persist } from "zustand/middleware";
 const usePreferenceStore = create(
     persist(
         (set) => ({
-            theme: "light",
+            colorMode: "light",
             isSidebarOpen: true,
+            themeVariant: "blue",
+            layout: "comfortable",
+            pageView: {
+                "Analyzers": "tab",
+                "Public APIs": "tab",
+                "Settings": "tab",
+            },
 
-            setTheme: (theme) => set({ theme }),
+            setColorMode: (colorMode) => set({ colorMode }),
             toggleSidebar: () => set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
-            setSidebarOpen: (isOpen) => set({ isSidebarOpen: isOpen }),
+            setThemeVariant: (themeVariant) => set({ themeVariant }),
+
+            setPageView: (pageName, viewType) => set((state) => {
+                if ((pageName !== "Analyzers" && pageName !== "Public APIs" && pageName !== "Settings") || (viewType !== "tab" && viewType !== "sidebar")) {
+                    return state;
+                }
+
+                return { pageView: { ...state.pageView, [pageName]: viewType } }
+            }),
+
+            setLayout: (layout) => set((state) => {
+                if (layout !== "compact" && layout !== "comfortable" && layout !== "spacious") {
+                    return state;
+                }
+
+                return { layout };
+            }),
         }),
         {
             name: "preference-storage",

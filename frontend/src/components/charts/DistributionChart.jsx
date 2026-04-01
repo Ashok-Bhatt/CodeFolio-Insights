@@ -1,7 +1,22 @@
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from 'recharts';
 import { PieChart as PieChartIcon } from "lucide-react";
 
-const DistributionCard = ({ problemsData, title = "Problem Difficulty", className = "", includeLabels = true }) => {
+const DistributionCard = ({ data, title = "Problem Difficulty", className = "", includeLabels = true }) => {
+    const total = data?.reduce((acc, item) => acc + item.value, 0) || 0;
+
+    if (!total) return (
+        <div className={`bg-white/90 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-gray-100 animate-float-in ${className}`}>
+            <div className="flex items-center gap-3 mb-8">
+                <div className="p-2 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl shadow-lg">
+                    <PieChartIcon className="w-5 h-5 text-white" />
+                </div>
+                <h3 className="text-xl font-black text-gray-800 uppercase tracking-widest">{title}</h3>
+            </div>
+            <div className="flex items-center justify-center h-64">
+                <p className="text-gray-500 text-lg font-black uppercase tracking-widest">No Data Available</p>
+            </div>
+        </div>
+    )
 
     return (
         <div className={`bg-white/90 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-gray-100 animate-float-in ${className}`}>
@@ -17,7 +32,7 @@ const DistributionCard = ({ problemsData, title = "Problem Difficulty", classNam
                     <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                             <Pie
-                                data={problemsData}
+                                data={data}
                                 cx="50%"
                                 cy="50%"
                                 innerRadius={60}
@@ -26,7 +41,7 @@ const DistributionCard = ({ problemsData, title = "Problem Difficulty", classNam
                                 dataKey="value"
                                 stroke="none"
                             >
-                                {problemsData.map((entry, index) => (
+                                {data.map((entry, index) => (
                                     <Cell
                                         key={`cell-${index}`}
                                         fill={entry.color}
@@ -49,7 +64,7 @@ const DistributionCard = ({ problemsData, title = "Problem Difficulty", classNam
                 {includeLabels && (
                     <div className="w-full lg:w-1/2 max-h-64 overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
                         <div className="grid grid-cols-1 gap-2 pb-2">
-                            {problemsData.map((item) => (
+                            {data.map((item) => (
                                 <div key={item.name} className="flex items-center justify-between p-3 px-5 rounded-2xl bg-gray-50/50 border border-gray-100 group transition-all hover:bg-white hover:shadow-md">
                                     <div className="flex items-center gap-3 min-w-0">
                                         <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: item.color }} />

@@ -2,7 +2,6 @@ import axios from "axios";
 import { LEETCODE_GRAPHQL_ENDPOINT, LEETCODE_GRAPHQL_QUERIES, LEETCODE_HEADERS } from "../../constants/index.js";
 import { getNormalizedLeetCodeHeatmap } from "../../utils/calendar.util.js";
 
-
 const makeApiCall = async (query, variables = {}) => {
     try {
         const { data } = await axios.post(

@@ -4,31 +4,31 @@ import { optionalAuth, protectRoute } from "../middlewares/auth.middleware.js";
 import { getAnalytics } from "../middlewares/analytics.middleware.js";
 import validate from "../middlewares/validate.middleware.js";
 import { profileUpdateValidationSchema } from "../validators/profiles.validate.js";
-import { userIdValidationSchema } from "../validators/user.validate.js";
+import { displayNameValidationSchema } from "../validators/user.validate.js";
 
 const router = Router();
 
 router.get(
-    "/fetch/:userId",
-    optionalAuth, 
-    getAnalytics, 
-    validate(userIdValidationSchema), 
+    "/fetch/:displayName",
+    optionalAuth,
+    getAnalytics,
+    validate(displayNameValidationSchema),
     refreshProfileData
 );
 
 router.get(
-    "/cache/:userId",
+    "/cache/:displayName",
     getAnalytics,
     optionalAuth,
-    validate(userIdValidationSchema),
+    validate(displayNameValidationSchema),
     getProfileCache
 );
 
 router.get(
-    "/:userId",
+    "/:displayName",
     getAnalytics,
     optionalAuth,
-    validate(userIdValidationSchema),
+    validate(displayNameValidationSchema),
     getProfiles
 );
 

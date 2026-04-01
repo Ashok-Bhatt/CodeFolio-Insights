@@ -8,6 +8,7 @@ import redisClient from "../config/redis.config.js";
 import { getGithubProfileAnalysis, getLeetCodeProfileAnalysis, getResumeAnalysis } from "../utils/gemini.util.js";
 import { getScoreComparison, savePlatformScore } from "./score.service.js";
 import ScoreModel from "../models/score.model.js";
+import ApiError from "../utils/api-error.util.js";
 
 const getAnalysisGithubData = async (username) => {
     try {
@@ -150,7 +151,7 @@ const analyzeGithub = async (username) => {
 
     // Scoring
     const scoreData = await getGithubScore(githubData);
-    if (!scoreData) throw new Error("Something went wrong while scoring github data! Try Again!");
+    if (!scoreData) throw new ApiError(500, "Something went wrong while scoring github data! Try Again!");
 
     // Getting AI Analysis on Github Data
     const githubAnalysisContext = { ...githubData, scoreData }
@@ -178,7 +179,7 @@ const analyzeLeetCode = async (username) => {
 
     // Scoring
     const scoreData = await getLeetCodeScore(leetCodeData);
-    if (!scoreData) throw new Error("Something went wrong while scoring leetcode data! Try Again!");
+    if (!scoreData) throw new ApiError(500, "Something went wrong while scoring leetcode data! Try Again!");
 
     // Getting AI Analysis on LeetCode Data
     const leetCodeAnalysisContext = { ...leetCodeData, scoreData };
@@ -199,12 +200,12 @@ const analyzeLeetCode = async (username) => {
 const analyzeResume = async (file, experienceInYears = "0 - 2 Years (New Grad)", jobDescription = "", userId = null) => {
     // Extracting the PDF Content
     const { noOfPages, pdfText } = await getPdfContent(file.path);
-    if (noOfPages == 0) throw new Error("Something went wrong while parsing pdf content! Try Again!");
+    if (noOfPages == 0) throw new ApiError(400, "Something went wrong while parsing pdf content! Try Again!");
 
     // Getting AI Analysis on Resume Data
     const resumeAnalysis = await getResumeAnalysis({ resumeContent: pdfText, experienceInYears, noOfResumePages: noOfPages, jobDescription: jobDescription });
 
-    if (!resumeAnalysis || Object.keys(resumeAnalysis).length == 0) throw new Error("Something Went Wrong while analyzing the resume");
+    if (!resumeAnalysis || Object.keys(resumeAnalysis).length == 0) throw new ApiError(500, "Something Went Wrong while analyzing the resume");
 
     // Scoring Logic
     const scoreAnalysis = resumeAnalysis["scoreAnalysis"];
