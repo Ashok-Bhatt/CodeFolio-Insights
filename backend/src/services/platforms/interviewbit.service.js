@@ -2,21 +2,31 @@ import axios from "axios";
 import { configBrowserPage } from "../../utils/scrapper.util.js";
 import { getNormalizedInterviewBitHeatmap } from "../../utils/calendar.util.js";
 import { INTERVIEWBIT_HEADERS } from "../../constants/platform.constants.js";
+import ApiError from "../../utils/api-error.util.js";
 
 const getUserInfo = async (username) => {
-    const profileRes = await axios.get(`https://www.interviewbit.com/v2/profile/username?id=${username}`, { headers: INTERVIEWBIT_HEADERS });
-    const profileData = profileRes.data;
+    try {
+        const [profileRes, problemsRes, submissionAnalysisRes] = await Promise.all([
+            axios.get(`https://www.interviewbit.com/v2/profile/username?id=${username}`, { headers: INTERVIEWBIT_HEADERS }),
+            axios.get(`https://www.interviewbit.com/v2/problem_list/problems_solved_overview_count?username=${username}`, { headers: INTERVIEWBIT_HEADERS }),
+            axios.get(`https://www.interviewbit.com/v2/profile/username/submission-analysis/?id=${username}`, { headers: INTERVIEWBIT_HEADERS })
+        ]);
 
-    const problemsRes = await axios.get(`https://www.interviewbit.com/v2/problem_list/problems_solved_overview_count?username=${username}`, { headers: INTERVIEWBIT_HEADERS });
-    const problemsData = problemsRes.data;
+        const profileData = profileRes.data;
+        const problemsData = problemsRes.data;
+        const submissionAnalysisData = submissionAnalysisRes.data;
 
-    const submissionAnalysisRes = await axios.get(`https://www.interviewbit.com/v2/profile/username/submission-analysis/?id=${username}`, { headers: INTERVIEWBIT_HEADERS });
-    const submissionAnalysisData = submissionAnalysisRes.data;
+        delete profileData.is_friend;
+        delete profileData.id;
 
-    delete profileData.is_friend;
-    delete profileData.id;
-
-    return { profile: profileData, problems: problemsData, submissionAnalysis: submissionAnalysisData };
+        return { profile: profileData, problems: problemsData, submissionAnalysis: submissionAnalysisData };
+    } catch (error) {
+        if (error.response?.status === 404 || error.response?.status === 403) {
+            return null; // Return null so fetcher can throw a descriptive error
+        } else {
+            throw new ApiError(500, "Failed to connect to InterviewBit service.");
+        }
+    }
 };
 
 const getUserSubmissions = async (username, year) => {
@@ -52,7 +62,7 @@ const getUserBadges = async (username) => {
 
         return data;
     } catch (error) {
-        throw new Error("Something went wrong while fetching InterviewBit badges!");
+        throw new ApiError(500, "Something went wrong while fetching InterviewBit badges!");
     } finally {
         if (page) await page.close();
     }

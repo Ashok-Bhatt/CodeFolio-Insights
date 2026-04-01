@@ -2,6 +2,7 @@ import axios from "axios";
 import { configBrowserPage } from "../../utils/scrapper.util.js";
 import { getNormalizedGfgHeatmap } from "../../utils/calendar.util.js";
 import { GFG_HEADERS } from "../../constants/platform.constants.js";
+import ApiError from "../../utils/api-error.util.js";
 
 const getUserInfo = async (username) => {
     const profilePageUrl = `https://www.geeksforgeeks.org/user/${username}`;
@@ -12,6 +13,9 @@ const getUserInfo = async (username) => {
         page = await configBrowserPage(profilePageUrl, 'domcontentloaded', '.NewProfile_container__licgi', 30000, 30000);
         const userProfileData = await page.evaluate((username) => {
             const getText = (element) => element?.textContent || "NA";
+            const profileContainer = document.querySelector(".NewProfile_container__licgi");
+            if (!profileContainer) return null;
+
             const avatar = document.querySelector(".NewProfile_container__licgi img")?.getAttribute("src") || "NA";
             const guestName = getText(document.querySelector(".NewProfile_name__N_Nlw"));
             const userTagline = getText(document.querySelector(".NewProfile_designation__fujtZ"));
@@ -31,6 +35,8 @@ const getUserInfo = async (username) => {
                 experienceInYears: experienceText === "NA" ? 0 : parseInt(experienceText.split(" ")[2]) || 0,
             };
         }, username);
+
+        if (!userProfileData) return null;
 
         await page.close();
 
@@ -72,7 +78,10 @@ const getUserInfo = async (username) => {
 
         return { ...userProfileData, ...userCodingData };
     } catch (error) {
-        throw new Error("Something went wrong while fetching GFG user info!");
+        if (error.name === 'TimeoutError' || error.message.includes('selector')) {
+            return null;
+        }
+        throw new ApiError(500, "Failed to connect to GeeksForGeeks service.");
     } finally {
         if (page) await page.close();
     }
@@ -89,7 +98,7 @@ const getUserSubmissions = async (username, year) => {
 
 const getQuestionOfToday = async () => {
     const response = await axios.get("https://practiceapi.geeksforgeeks.org/api/vr/problems-of-day/problem/today/");
-    if (!response.data) throw new Error("Could not fetch GFG question of today.");
+    if (!response.data) throw new ApiError(500, "Could not fetch GFG question of today.");
     return response.data;
 };
 
@@ -127,7 +136,7 @@ const getInstitutionTopThreeRankedUsers = async (institution) => {
         });
         return { institution, users: data };
     } catch (error) {
-        throw new Error("Something went wrong while fetching GFG institution top three ranked users!");
+        throw new ApiError(500, "Something went wrong while fetching GFG institution top three ranked users!");
     } finally {
         if (page) await page.close();
     }
@@ -150,7 +159,7 @@ const getInstitutionInfo = async (institution) => {
         });
         return { institution, data };
     } catch (error) {
-        throw new Error("Something went wrong while fetching GFG institution info!");
+        throw new ApiError(500, "Something went wrong while fetching GFG institution info!");
     } finally {
         if (page) await page.close();
     }
@@ -158,7 +167,7 @@ const getInstitutionInfo = async (institution) => {
 
 const getMonthlyPotds = async (year, month) => {
     const response = await axios.get(`https://practiceapi.geeksforgeeks.org/api/vr/problems-of-day/problems/previous/?year=${year}&month=${month}`);
-    if (!response.data) throw new Error("Could not fetch GFG monthly POTDs.");
+    if (!response.data) throw new ApiError(500, "Could not fetch GFG monthly POTDs.");
     return response.data;
 };
 

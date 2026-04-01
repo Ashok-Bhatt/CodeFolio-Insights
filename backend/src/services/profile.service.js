@@ -4,17 +4,18 @@ import redisClient from '../config/redis.config.js';
 import { PLATFORMS } from '../constants/index.js';
 import * as platformsFetching from '../utils/fetching/platforms.fetch.util.js';
 import mongoose from 'mongoose';
+import ApiError from '../utils/api-error.util.js';
 
 const getProfiles = async (displayName, currentUser) => {
     const user = await UserModel.findOne({ displayName });
-    if (!user) throw new Error("User not found.");
+    if (!user) throw new ApiError(404, "User not found.");
 
     const userId = user._id;
     const isAdmin = !!currentUser && currentUser.isAdmin;
     const isOwner = !!currentUser && currentUser._id.equals(userId);
     const isPublic = user.profileVisibility === true;
 
-    if (!isAdmin && !isOwner && !isPublic) throw new Error("Profile visibility is set to private.");
+    if (!isAdmin && !isOwner && !isPublic) throw new ApiError(403, "Profile visibility is set to private.");
 
     const profiles = await ProfileModel.findOneAndUpdate(
         { userId: userId },
@@ -26,7 +27,7 @@ const getProfiles = async (displayName, currentUser) => {
         }
     );
 
-    if (!profiles) throw new Error("Failed to retrieve the user data.");
+    if (!profiles) throw new ApiError(500, "Failed to retrieve the user data.");
     return profiles;
 };
 
@@ -45,19 +46,19 @@ const updateProfile = async (userId, platformName, platformUsername) => {
 
         if (!profile) {
             await session.abortTransaction();
-            throw new Error("Failed to update the user data.");
+            throw new ApiError(500, "Failed to update the user data.");
         }
 
         const profilesData = await redisClient.get(`profileData:${userId}`);
-        const platformrefreshedData = await PLATFORMS[platformName].fetchFunction(platformUsername);
+        const platformRefreshedData = await PLATFORMS[platformName].fetchFunction(platformUsername);
 
-        if (!platformrefreshedData) {
+        if (!platformRefreshedData) {
             await session.abortTransaction();
-            throw new Error("Failed to fetch the user data.");
+            throw new ApiError(500, "Failed to fetch the user data.");
         }
 
         let mergedData = { ...profilesData };
-        mergedData[platformName] = platformrefreshedData;
+        mergedData[platformName] = platformRefreshedData;
 
         await session.commitTransaction();
         if (mergedData) await redisClient.set(`profileData:${userId}`, mergedData);
@@ -76,14 +77,14 @@ const updateProfile = async (userId, platformName, platformUsername) => {
 
 const getProfileCache = async (displayName, currentUser) => {
     const user = await UserModel.findOne({ displayName });
-    if (!user) throw new Error("User not found.");
+    if (!user) throw new ApiError(404, "User not found.");
 
     const userId = user._id;
     const isAdmin = !!currentUser && currentUser.isAdmin;
     const isOwner = !!currentUser && currentUser._id.equals(userId);
     const isPublic = user.profileVisibility === true;
 
-    if (!isAdmin && !isOwner && !isPublic) throw new Error("Profile visibility is set to private.");
+    if (!isAdmin && !isOwner && !isPublic) throw new ApiError(403, "Profile visibility is set to private.");
 
     const cachedDataParams = await redisClient.get(`profileData:${userId}`);
     return cachedDataParams || null;
@@ -91,21 +92,21 @@ const getProfileCache = async (displayName, currentUser) => {
 
 const refreshProfileData = async (displayName, currentUser) => {
     const user = await UserModel.findOne({ displayName });
-    if (!user) throw new Error("User not found.");
+    if (!user) throw new ApiError(404, "User not found.");
 
     const userId = user._id;
     const isAdmin = currentUser && currentUser.isAdmin;
     const isOwner = currentUser && currentUser._id.equals(userId);
     const isPublic = user.profileVisibility === true;
 
-    if (!isAdmin && !isOwner && !isPublic) throw new Error("Profile visibility is set to private.");
+    if (!isAdmin && !isOwner && !isPublic) throw new ApiError(403, "Profile visibility is set to private.");
 
     const profileLinks = await ProfileModel.findOneAndUpdate(
         { userId },
         { userId },
         { new: true, upsert: true, setDefaultsOnInsert: true }
     );
-    if (!profileLinks) throw new Error("Failed to configure user profiles.");
+    if (!profileLinks) throw new ApiError(500, "Failed to configure user profiles.");
 
     const cachedData = await redisClient.get(`profileData:${userId}`) || {};
 

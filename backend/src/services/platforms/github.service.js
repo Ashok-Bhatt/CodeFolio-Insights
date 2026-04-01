@@ -1,4 +1,5 @@
 import { configBrowserPage } from "../../utils/scrapper.util.js";
+import ApiError from "../../utils/api-error.util.js";
 
 const getGithubBadges = async (username) => {
     const url = `https://github.com/${username}?tab=achievements`;
@@ -30,7 +31,7 @@ const getGithubBadges = async (username) => {
 
         return data;
     } catch (error) {
-        throw new Error("Something went wrong while fetching Github badges!");
+        throw new ApiError(500, "Something went wrong while fetching Github badges!");
     } finally {
         if (page) await page.close();
     }

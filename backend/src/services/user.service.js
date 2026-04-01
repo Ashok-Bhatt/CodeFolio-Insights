@@ -6,6 +6,7 @@ import { destroyFile, uploadFile } from "../utils/cloudinary.util.js";
 import bcrypt from "bcrypt";
 import { addProfileView } from "./profile-view.service.js";
 import mongoose from "mongoose";
+import ApiError from "../utils/api-error.util.js";
 
 const getSearchQuery = (searchField, searchOrder, cursor) => {
     const compare = searchOrder == 1 ? '$gt' : '$lt';
@@ -33,24 +34,24 @@ const getSortQuery = (searchField, searchOrder) => {
 
 const getUser = async (displayName, currentUser, viewerDeviceToken, viewerSignedDeviceToken) => {
     const user = await UserModel.findOne({ displayName });
-    if (!user) throw new Error("User not found.");
+    if (!user) throw new ApiError(404, "User not found.");
 
     const userId = user._id;
     const isAdmin = !!currentUser && currentUser.isAdmin;
     const isOwner = !!currentUser && currentUser._id.equals(userId);
     const isPublic = user.profileVisibility === true;
 
-    if (!isAdmin && !isOwner && !isPublic) throw new Error("Profile visibility is set to private.");
+    if (!isAdmin && !isOwner && !isPublic) throw new ApiError(403, "Profile visibility is set to private.");
 
     if (viewerDeviceToken && !viewerSignedDeviceToken) {
-        throw new Error("Invalid device token!");
+        throw new ApiError(401, "Invalid device token!");
     }
 
     const viewerId = currentUser?._id;
     const newDeviceToken = await addProfileView(userId, viewerId, viewerDeviceToken);
 
     const queriedUser = await UserModel.findById(userId).select("-googleId -password").lean();
-    if (!queriedUser) throw new Error("Invalid user id!");
+    if (!queriedUser) throw new ApiError(404, "Invalid user id!");
 
     const profileLinks = await ProfileModel.findOne({ userId }).select("-_id -userId -createdAt -updatedAt");
     queriedUser.profileLinks = profileLinks || {};
@@ -68,7 +69,7 @@ const getUsers = async (params) => {
     const { limit = 10, searchQuery = "", searchField, searchOrder = 0, cursorToken } = params;
     const effectiveLimit = Math.min(limit, 100);
 
-    if (searchOrder !== 1 && searchOrder !== -1) throw new Error("The value of search order should be 1 or -1 only!");
+    if (searchOrder !== 1 && searchOrder !== -1) throw new ApiError(400, "The value of search order should be 1 or -1 only!");
 
     let cursor = null;
     if (cursorToken) {
@@ -109,7 +110,7 @@ const getUsers = async (params) => {
 
 const updateUserInfo = async (userId, updatedFields, file) => {
     const queriedUser = await UserModel.findById(userId);
-    if (!queriedUser) throw new Error("Invalid user id!");
+    if (!queriedUser) throw new ApiError(404, "Invalid user id!");
 
     const updatedUser = await UserModel.findByIdAndUpdate(
         userId,
@@ -120,7 +121,7 @@ const updateUserInfo = async (userId, updatedFields, file) => {
         }
     );
 
-    if (!updatedUser) throw new Error("Could not update the user info");
+    if (!updatedUser) throw new ApiError(500, "Could not update the user info");
 
     if (file) {
         const previousProfileImageUrl = updatedUser.profile;
@@ -131,7 +132,7 @@ const updateUserInfo = async (userId, updatedFields, file) => {
             updatedUser.profile = newProfileImageUrl;
             await updatedUser.save();
         } else {
-            throw new Error("Couldn't upload new profile image!");
+            throw new ApiError(500, "Couldn't upload new profile image!");
         }
     }
 
@@ -140,14 +141,14 @@ const updateUserInfo = async (userId, updatedFields, file) => {
 
 const updateDisplayName = async (userId, displayName) => {
     const queriedUser = await UserModel.findById(userId);
-    if (!queriedUser) throw new Error("Invalid user id!");
+    if (!queriedUser) throw new ApiError(404, "Invalid user id!");
 
     const existingUser = await UserModel.findOne({ 
         displayName, 
         _id: { $ne: userId } 
     });
     
-    if (existingUser) throw new Error("Display name already taken!");
+    if (existingUser) throw new ApiError(400, "Display name already taken!");
 
     queriedUser.displayName = displayName;
     await queriedUser.save();
@@ -156,17 +157,17 @@ const updateDisplayName = async (userId, displayName) => {
 };
 
 const changePassword = async (userId, oldPassword, newPassword) => {
-    if (oldPassword === newPassword) throw new Error("old and new password are same");
+    if (oldPassword === newPassword) throw new ApiError(400, "old and new password are same");
 
     const user = await UserModel.findById(userId);
-    if (!user) throw new Error("User not found!");
+    if (!user) throw new ApiError(404, "User not found!");
 
     if (!user.password) {
-        throw new Error("You are logged in through third party login services, and not general password login");
+        throw new ApiError(400, "You are logged in through third party login services, and not general password login");
     }
 
     const isMatch = await bcrypt.compare(oldPassword, user.password);
-    if (!isMatch) throw new Error("Wrong password!");
+    if (!isMatch) throw new ApiError(401, "Wrong password!");
 
     user.password = await bcrypt.hash(newPassword, await bcrypt.genSalt(10));
     await user.save();
@@ -176,7 +177,7 @@ const changePassword = async (userId, oldPassword, newPassword) => {
 
 const toggleProfileVisibility = async (userId) => {
     const user = await UserModel.findById(userId);
-    if (!user) throw new Error("User not found!");
+    if (!user) throw new ApiError(404, "User not found!");
 
     user.profileVisibility = !user.profileVisibility;
     await user.save();
@@ -203,7 +204,7 @@ const getUserHighlights = async () => {
 
 const toggle2FA = async (userId) => {
     const user = await UserModel.findById(userId);
-    if (!user) throw new Error("User not found!");
+    if (!user) throw new ApiError(404, "User not found!");
 
     user.enable2FA = !user.enable2FA;
     await user.save();
@@ -216,7 +217,7 @@ const toggle2FA = async (userId) => {
 
 const updateUserApiKey = async (user, apiKey) => {
     const existingApiKey = await ApiProjectModel.findOne({ apiKey });
-    if (!existingApiKey) throw new Error("This API Key does not exist!");
+    if (!existingApiKey) throw new ApiError(404, "This API Key does not exist!");
 
     user.apiKey = apiKey;
     await user.save();

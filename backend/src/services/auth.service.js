@@ -6,10 +6,11 @@ import { sendOtpEmail } from '../utils/sendgrid.util.js';
 import { generateApiKey } from '../utils/api-key.util.js';
 import { generateOTP } from '../utils/otp.util.js';
 import { OTP_EXPIRY_TIME } from '../constants/index.js'
+import ApiError from '../utils/api-error.util.js';
 
 const signup = async (name, email, password) => {
     let user = await UserModel.findOne({ email });
-    if (user) throw new Error('User with this email already exists');
+    if (user) throw new ApiError(400, 'User with this email already exists');
 
     // Hash password and OTP
     const salt = await bcrypt.genSalt(10);
@@ -33,7 +34,7 @@ const signup = async (name, email, password) => {
     const emailSent = await sendOtpEmail(email, otp);
     if (!emailSent) {
         await VerificationModel.findByIdAndDelete(verification._id);
-        throw new Error('Error sending verification email');
+        throw new ApiError(500, 'Error sending verification email');
     }
 
     return { verificationId: verification._id };
@@ -42,11 +43,11 @@ const signup = async (name, email, password) => {
 const login = async (email, password) => {
     let user = await UserModel.findOne({ email });
 
-    if (!user) throw new Error('Invalid Credentials');
-    if (!user.password) throw new Error('Invalid Credentials');
+    if (!user) throw new ApiError(401, 'Invalid Credentials');
+    if (!user.password) throw new ApiError(401, 'Invalid Credentials');
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) throw new Error('Invalid Credentials');
+    if (!isMatch) throw new ApiError(401, 'Invalid Credentials');
 
     // If 2FA is disabled, return user
     if (!user.enable2FA) {
@@ -70,7 +71,7 @@ const login = async (email, password) => {
     const emailSent = await sendOtpEmail(user.email, otp);
     if (!emailSent) {
         await VerificationModel.findByIdAndDelete(verification._id);
-        throw new Error('Error sending verification email');
+        throw new ApiError(500, 'Error sending verification email');
     }
 
     return { verificationId: verification._id, requires2FA: true };
@@ -78,11 +79,11 @@ const login = async (email, password) => {
 
 const verifyOTP = async (otp, verificationId) => {
     const verification = await VerificationModel.findById(verificationId);
-    if (!verification) throw new Error('Verification record not found or expired');
+    if (!verification) throw new ApiError(404, 'Verification record not found or expired');
 
     // Verify OTP
     const isOTPValid = await bcrypt.compare(otp, verification.otp);
-    if (!isOTPValid) throw new Error('Invalid verification code');
+    if (!isOTPValid) throw new ApiError(400, 'Invalid verification code');
 
     let user;
     if (verification.type === 'signup') {
@@ -112,7 +113,7 @@ const verifyOTP = async (otp, verificationId) => {
         user = await UserModel.findById(verification.userId);
     }
 
-    if (!user) throw new Error('User not found');
+    if (!user) throw new ApiError(404, 'User not found');
 
     // Clean up
     await VerificationModel.findByIdAndDelete(verification._id);

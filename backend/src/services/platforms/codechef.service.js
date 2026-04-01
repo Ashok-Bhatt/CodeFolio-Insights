@@ -1,5 +1,6 @@
 import { configBrowserPage } from "../../utils/scrapper.util.js";
 import { getNormalizedCodeChefHeatmap } from "../../utils/calendar.util.js";
+import ApiError from "../../utils/api-error.util.js";
 
 const getUserInfo = async (username, includeAchievements, includeContests) => {
     const url = `https://www.codechef.com/users/${username}`;
@@ -11,6 +12,8 @@ const getUserInfo = async (username, includeAchievements, includeContests) => {
         const data = await page.evaluate(async (username, includeAchievements, includeContests) => {
 
             const getText = (element) => element?.textContent || "NA";
+            const profileContainer = document.querySelector(".user-details-container");
+            if (!profileContainer) return null;
 
             const problemsSolvedElement = Array.from(document.querySelectorAll(".rating-data-section.problems-solved h3"));
             const profileImageElement = document.querySelector(".profileImage");
@@ -96,7 +99,10 @@ const getUserInfo = async (username, includeAchievements, includeContests) => {
 
         return data;
     } catch (error) {
-        throw new Error("Something went wrong while fetching CodeChef user info!");
+        if (error.name === 'TimeoutError' || error.message.includes('selector')) {
+            return null;
+        }
+        throw new ApiError(500, "Failed to connect to CodeChef service.");
     } finally {
         if (page) await page.close();
     }
@@ -143,7 +149,7 @@ const getUserSubmissions = async (username) => {
         return getNormalizedCodeChefHeatmap(heatmapData);
 
     } catch (error) {
-        throw new Error("Something went wrong while fetching CodeChef user submissions!");
+        throw new ApiError(500, "Something went wrong while fetching CodeChef user submissions!");
     } finally {
         if (page) await page.close();
     }
