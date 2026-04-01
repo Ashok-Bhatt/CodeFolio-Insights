@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import conf from '../../config/config.js';
 import { useLogin, useVerifyOTP } from '../../hooks/useUsers.js';
-import OtpInput from '../../components/OtpInput.jsx';
+import OTPInput from '../../components/OTPInput.jsx';
 
 const LoginPage = () => {
     const [formData, setFormData] = useState({ email: '', password: '' });
@@ -112,7 +112,7 @@ const LoginPage = () => {
                     <form className="space-y-6" onSubmit={handleVerifyOTP}>
                         <div>
                             <label className="block text-sm font-bold text-slate-700 mb-2 text-center">Verification Code</label>
-                            <OtpInput value={otp} onChange={(val) => setOtp(val)} />
+                            <OTPInput value={otp} onChange={(val) => setOtp(val)} />
                             <p className="mt-4 text-xs text-center text-slate-400 italic text-slate-400 font-medium">
                                 * Don't forget to check your spam folder!
                             </p>
